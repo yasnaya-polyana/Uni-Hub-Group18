@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -7,8 +7,8 @@ services:
     restart: always
     environment:
       POSTGRES_DB: uni_hub_db
-      POSTGRES_USER: uni_hub_user
-      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     volumes:
@@ -25,7 +25,25 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://uni_hub_user:password123@db:5432/uni_hub_db
+      DATABASE_URL: postgresql://uni_hub_user:password123@db:5432/uni_hub_db
+      POSTGRES_DB: uni_hub_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      SECRET_KEY: secret-key
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
+  local_pgdata:
+  pgadmin-data:

@@ -26,12 +26,14 @@ Uni Hub is a web-based platform designed to enhance campus community engagement.
 ## 🔧 Installation & Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/uni-hub.git
    cd uni-hub
    ```
 
 2. Create a `.env` file in the project root (replace with your values):
+
    ```
    DEBUG=True
    SECRET_KEY=your-secret-key
@@ -41,11 +43,13 @@ Uni Hub is a web-based platform designed to enhance campus community engagement.
    ```
 
 3. Build and start the Docker containers:
+
    ```bash
    docker-compose up --build
    ```
 
 4. Run migrations:
+
    ```bash
    docker-compose exec web python manage.py migrate
    ```
@@ -55,8 +59,19 @@ Uni Hub is a web-based platform designed to enhance campus community engagement.
    docker-compose exec web python manage.py createsuperuser
    ```
 
- http://localhost:8000
+Web App: http://localhost:8000
+PgAdmin: http://localhost:8888
 
+## PGAdmin User
+
+admin@admin.com
+password
+
+## Server Details
+
+host: db
+username: admin
+password: password
 
 ## 👥 Contributing
 
