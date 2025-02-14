@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,12 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Custom apps
-    'users.apps.UsersConfig',  # for user profiles
-    'communities.apps.CommunitiesConfig',  # for community management
-    'events.apps.EventsConfig',  # for event management
-    'posts.apps.PostsConfig',  # for post management
 ]
 
 MIDDLEWARE = [
@@ -131,9 +124,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Add custom user model
-AUTH_USER_MODEL = 'users.CustomUser'
 
 # Add media settings for user uploads
 MEDIA_URL = '/media/'
