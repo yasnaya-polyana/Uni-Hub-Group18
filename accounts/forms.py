@@ -9,37 +9,38 @@ from .models import CustomUser, Course
 #
 #
 class CustomUserCreationForm(UserCreationForm):
-    # Specify Field Attributes and Form Styling
-    #
+    username = forms.CharField(
+        required=True,
+        label='Username',
+        min_length=3,
+        max_length=30,
+        validators=[
+            RegexValidator(
+                r'^[a-zA-Z0-9._]*$',
+                'Username can only contain letters, numbers, dots and underscores.'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'class': 'input input-bordered w-full',
+            'placeholder': 'Choose a unique username'
+        })
+    )
+
     first_name = forms.CharField(
         required=True,
         label='First Name',
         widget=forms.TextInput(attrs={
-            'placeholder': 'John'
-        })
-    )
-    last_name = forms.CharField(
-        required=True,
-        label="Last Name",
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Doe'
-        })
-    )
-    username = forms.CharField(
-        widget=forms.EmailInput(attrs={
-            'placeholder': 'Get creative...'
+            'class': 'input input-bordered w-full',
+            'placeholder': 'Your first name'
         })
     )
 
-    # Student ID Validation
-    # Regex for numbers only
-    student_id = forms.CharField(
+    last_name = forms.CharField(
         required=True,
-        label="Student ID",
-        max_length=8,
-        validators=[RegexValidator(r'^[0-9]*$', 'Only numbers are allowed.')],
+        label='Last Name',
         widget=forms.TextInput(attrs={
-            'placeholder': 'XXXXXXXX'
+            'class': 'input input-bordered w-full',
+            'placeholder': 'Your last name'
         })
     )
 
@@ -51,22 +52,70 @@ class CustomUserCreationForm(UserCreationForm):
         })
     )
 
-    password2 = forms.CharField(
-        label="Confirm Password"
+    student_id = forms.CharField(
+        required=True,
+        label='Student ID',
+        max_length=8,
+        validators=[
+            RegexValidator(
+                r'^[0-9]{8}$', 
+                'Student ID must be exactly 8 digits.'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'class': 'input input-bordered w-full',
+            'placeholder': '12345678'
+        })
     )
-    
+
+    password1 = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'input input-bordered w-full',
+            'placeholder': 'Create a strong password'
+        })
+    )
+
+    password2 = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'input input-bordered w-full',
+            'placeholder': 'Repeat your password'
+        })
+    )
+
     class Meta:
         model = CustomUser
+        fields = ('username', 'email', 'first_name', 'last_name', 
+                 'student_id', 'password1', 'password2')
 
-        # All fields which are shown upon sign-up
-        #
-        fields = ('username', 'email', 'first_name', 'last_name', 'student_id', 'password1', 'password2')
-        
-    # Initialise all forms with default CSS styling
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'input input-bordered w-full'
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and not email.endswith('@live.uwe.ac.uk'):
+            raise forms.ValidationError('Please use your UWE student email address.')
+        return email
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if CustomUser.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError('This username is already taken.')
+        return username
+
+    def clean_student_id(self):
+        student_id = self.cleaned_data.get('student_id')
+        if CustomUser.objects.filter(student_id=student_id).exists():
+            raise forms.ValidationError('This Student ID is already registered.')
+        return student_id
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            self.add_error('password2', 'The passwords do not match.')
+
+        return cleaned_data
 
 # User Login Form
 #
