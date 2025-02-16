@@ -5,22 +5,50 @@
 {% block content %}
 <div class="max-w-md mx-auto">
     <h2 class="text-2xl font-bold mb-6">Sign Up</h2>
-    <form method="post" class="space-y-4">
+    <form method="post">
         {% csrf_token %}
-        {% for field in form %}
-        <div class="form-control">
-            <label class="label">
-                <span class="label-text">{{ field.label }}</span>
-            </label>
-            {{ field }}
-            {% if field.errors %}
-            <label class="label">
-                <span class="label-text-alt text-error">{{ field.errors|join:", " }}</span>
-            </label>
+        <div class="grid grid-cols-2 gap-4">  {# Use grid for side-by-side layout #}
+            <div class="form-control">
+                <label class="label" for="{{ form.first_name.id_for_label }}">
+                    <span class="label-text">{{ form.first_name.label }}</span>
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.first_name.errors|join:", " }}</span>
+                    </label>
+                {% endif %}
+            </div>
+            <div class="form-control">
+                <label class="label" for="{{ form.last_name.id_for_label }}">
+                    <span class="label-text">{{ form.last_name.label }}</span>
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.last_name.errors|join:", " }}</span>
+                    </label>
+                {% endif %}
+            </div>
+        </div>  {# End of the grid container #}
+    
+        {% for field in form %}  {# Render other fields below #}
+            {% if field.name != 'first_name' and field.name != 'last_name' %} {# Skip first and last name #}
+                <div class="form-control mt-4">  {# Add margin top for spacing #}
+                    <label class="label" for="{{ field.id_for_label }}">
+                        <span class="label-text">{{ field.label }}</span>
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ field.errors|join:", " }}</span>
+                        </label>
+                    {% endif %}
+                </div>
             {% endif %}
-        </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+    
+        <button type="submit" class="btn btn-primary mt-4">Submit</button>
     </form>
     <p class="mt-4 text-center">
         Already have an account? <a href="{% url 'login' %}" class="text-primary">Login</a>

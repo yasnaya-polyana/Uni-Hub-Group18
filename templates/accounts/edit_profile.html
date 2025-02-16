@@ -15,11 +15,12 @@
             {{ field }}
             {% if field.errors %}
             <label class="label">
-                <span class="label-text-alt text-error">{{ field.errors|join:", " }}</span>
+                <span class="label-text-alt text-error">{{ field.errors|join:"<br/> " }}</span>
             </label>
             {% endif %}
         </div>
         {% endfor %}
+
         <button type="submit" class="btn btn-primary w-full">Save Changes</button>
     </form>
 </div>

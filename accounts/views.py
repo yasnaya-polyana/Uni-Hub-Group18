@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.views.generic import TemplateView
 from .forms import CustomUserCreationForm, CustomLoginForm, ProfileEditForm
 
+from .decorators import anonymous_required
+
 # Create your views here.
 
 class HomeView(TemplateView):
@@ -21,6 +23,7 @@ def signup_view(request):
         form = CustomUserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
+@anonymous_required
 def login_view(request):
     if request.method == 'POST':
         form = CustomLoginForm(data=request.POST)
