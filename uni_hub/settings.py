@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "accounts"
+
+    # 3rd party
+    "accounts",    
+    "rest_framework"
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -88,6 +91,15 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+# Rest API
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+}
+
+AUTH_USER_MODEL
 
 
 # Password validation
