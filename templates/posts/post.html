@@ -1,3 +1,4 @@
+{# {% extends "" %} #}
 <div class="bg-base-100 shadow-xl rounded-box p-6">
   <div class="flex justify-between">
     <p class="text-xs font-bold" title="@{{ post.user.username }}">
@@ -5,25 +6,34 @@
       <span class="italic font-light">@{{ post.user.username }}</span>
     </p>
     <span class="flex items-center justify-center">
-      <p class="text-xs">{{ post.created_at|date("DATETIME_FORMAT")}}</p>
-      <button onclick="deletePost({{ post.id }})">
-        <span class="material-icons-outlined text-sm ml-2 hover:text-blue-400">delete</span>
-      </button>
+      <p class="text-xs">{{ post.created_at|date("DATETIME_FORMAT") }}</p>
+      <details class="dropdown dropdown-end">
+        <summary class="btn bg-transparent p-0 ml-2 border-none h-fit min-h-fit focus:outline-black">
+          <span class="material-icons-outlined text-sm hover:text-blue-400">more_vert</span>
+        </summary>
+        <ul class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+          <li>
+            <button onclick="deletePost({{ post.id }})">
+              <span class="hover:text-blue-400">Delete</span>
+            </button>
+          </li>
+        </ul>
+      </details>
     </span>
   </div>
   <div class="divider my-2"></div>
-  <a href="/posts/{{ post.id }}">
+  <a href="/posts/{{ post.id }}" class="focus:outline-black">
     <div class="space-y-4">
-      <h3 class="text-xl font-semibold">{{ post.title|default("No title.")}}</h3>
-      <p>{{ post.body|parse_md|default("")|safe }}</p>
+      <h3 class="text-xl font-semibold">{{ post.title|default("No title.") }}</h3>
+      <p>{{ post.body|parse_md|default("") |safe }}</p>
       <div class="divider mb-0"></div>
       <div class="flex space-x-6">
         <button onclick="likePost({{ post.id }})">
           <span class="flex items-center justify-center">
             {% if post.interactions.filter(interaction="like", user_id=user.id, post_id=post.id).count() == 0 %}
-            <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">favorite_outline</span>
+              <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">favorite_outline</span>
             {% else %}
-            <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-red-400">favorite</span>
+              <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-red-400">favorite</span>
             {% endif %}
             <span class="font-light ml-1">{{ post.interactions.filter(interaction="like").count()|default(0) }}</span>
           </span>
