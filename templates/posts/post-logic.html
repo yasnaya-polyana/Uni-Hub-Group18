@@ -1,0 +1,25 @@
+<script>
+  function deletePost(postID) {
+    fetch(`/posts/${postID}/`, {
+      method: "DELETE",
+      headers: { "X-CSRFToken": "{{csrf_token}}" },
+    })
+      .then((res) => res.text()) // or res.json()
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
+
+  function likePost(postID) {
+    fetch(`/posts/${postID}/interact/like`, {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{csrf_token}}" },
+    })
+      .then((res) => res.text()) // or res.json()
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
+</script>

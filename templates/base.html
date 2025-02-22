@@ -1,58 +1,64 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniHub - {% block title %}{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css" rel="stylesheet" type="text/css" />
+    <title>UniHub -
+      {% block title %}{% endblock %}
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css"
+          rel="stylesheet"
+          type="text/css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+          rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body>
+  </head>
+  <body class="h-[100vh]">
     <div class="navbar bg-base-100">
-        <div class="navbar-start">
-            <a href="{% url 'home' %}" class="btn btn-ghost text-xl">UniHub</a>
-        </div>
-        <div class="navbar-end">
-            {% if user.is_authenticated %}
-                <div class="dropdown dropdown-end">
-                    <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-                        <div class="w-10 rounded-full">
-                            {% if user.profile_picture %}
-                                <img src="{{ user.profile_picture.url }}" alt="Profile" />
-                            {% else %}
-                                <div class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center">
-                                    {{ user.username|make_list|first|upper }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </label>
-                    <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                        <li><a href="{% url 'profile' %}">Profile</a></li>
-                        <li>
-                            <form method="post" action="{% url 'logout' %}">
-                                {% csrf_token %}
-                                <button type="submit">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <main class="container mx-auto px-4 py-8">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} mb-4">
-                    {{ message }}
-                </div>
-            {% endfor %}
+      <div class="navbar-start">
+        <a href="{% url 'home' %}" class="btn btn-ghost text-xl">UniHub</a>
+      </div>
+      <div class="navbar-end">
+        {% if user.is_authenticated %}
+          <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+              <div class="w-10 rounded-full">
+                {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture.url }}" alt="Profile" />
+                {% else %}
+                  <div class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center">
+                    {{ user.username|make_list|first|upper }}
+                  </div>
+                {% endif %}
+              </div>
+            </label>
+            <ul tabindex="0"
+                class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li>
+                <a href="{% url 'profile' %}">Profile</a>
+              </li>
+              <li>
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit">Logout</button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
+          <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
         {% endif %}
-        
-        {% block content %}{% endblock %}
+      </div>
+    </div>
+    <main class="container mx-auto px-4 py-8 h-full">
+      {% if messages %}
+        {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
     </main>
-</body>
-</html> 
+  </body>
+</html>
+

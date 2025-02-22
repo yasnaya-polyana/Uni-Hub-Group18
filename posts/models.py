@@ -1,0 +1,34 @@
+from django.contrib import admin
+from django.db import models
+
+from accounts.models import CustomUser
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=60)
+    body = models.TextField(max_length=1000)
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    parent_post = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, related_name="comments"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class PostAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "title", "parent_post", "created_at")
+
+
+class Interaction(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="interactions"
+    )
+    interaction = models.CharField(max_length=20)
+
+
+admin.site.register(Post, PostAdmin)
+admin.site.register(Interaction)

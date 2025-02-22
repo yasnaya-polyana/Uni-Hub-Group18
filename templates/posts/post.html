@@ -1,0 +1,45 @@
+<div class="bg-base-100 shadow-xl rounded-box p-6">
+  <div class="flex justify-between">
+    <p class="text-xs font-bold" title="@{{ post.user.username }}">
+      {{ post.user.first_name }} {{ post.user.last_name }}
+      <span class="italic font-light">@{{ post.user.username }}</span>
+    </p>
+    <span class="flex items-center justify-center">
+      <p class="text-xs">{{ post.created_at }}</p>
+      <button onclick="deletePost({{ post.id }})">
+        <span class="material-icons-outlined text-sm ml-2 hover:text-blue-400">delete</span>
+      </button>
+    </span>
+  </div>
+  <div class="divider my-2"></div>
+  <a href="/posts/{{ post.id }}">
+    <div class="space-y-4">
+      <h3 class="text-xl font-semibold">{{ post.title|default:"No title." }}</h3>
+      <p>{{ post.md_body|default:""|safe }}</p>
+      <div class="divider mb-0"></div>
+      <div class="flex space-x-6">
+        <button onclick="likePost({{ post.id }})">
+          <span class="flex items-center justify-center">
+            <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">favorite_outline</span>
+            <span class="font-light ml-1">{{ post.interactions.count|default:0 }}</span>
+          </span>
+        </button>
+        <a href="/posts/{{ post.id }}/comment">
+          <span class="flex items-center justify-center">
+            <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">chat</span>
+            <span class="font-light ml-1">{{ post.comments.count }}</span>
+          </span>
+        </a>
+      </div>
+    </a>
+    {% if expanded %}
+      <div class="flex flex-col space-y-4">
+        {% for post in post.comments.all %}
+          {% with expanded=False %}
+            {% include "posts/post.html" %}
+          {% endwith %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
