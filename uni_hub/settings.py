@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from django_jinja.builtins import DEFAULT_EXTENSIONS
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,9 +42,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 3rd party
+    "rest_framework",
+    "django_jinja",
+    # local
     "accounts",
     "posts",
-    "rest_framework",
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
@@ -62,6 +65,26 @@ ROOT_URLCONF = "uni_hub.urls"
 
 
 TEMPLATES = [
+    {
+        "BACKEND": "django_jinja.jinja2.Jinja2",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+            "extensions": DEFAULT_EXTENSIONS
+            + [
+                "django_jinja.builtins.extensions.DjangoExtraFiltersExtension",
+            ],
+            "filters": {
+                "parse_md": "posts.filters.parse_md",
+            },
+        },
+    },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],

@@ -29,7 +29,7 @@ def post_view(request, post_id: int):
         post = Post.objects.get(id=post_id)
         parse_md(post)
 
-        return render(request, "posts/post-page.html", {"post": post})
+        return render(request, "posts/post-page.jinja", {"post": post})
     elif request.method == "DELETE":
         return post_delete(request, post_id)
 
@@ -42,7 +42,7 @@ def posts_view(request):
         clean_body = bleach.clean(post.body)
         post.md_body = md.convert(clean_body)
 
-    return render(request, "posts/post-feed.html", {"posts": latest_posts_list})
+    return render(request, "posts/post-feed.jinja", {"posts": latest_posts_list})
 
 
 def post_create(request):

@@ -18,7 +18,7 @@
   <body class="h-[100vh]">
     <div class="navbar bg-base-100">
       <div class="navbar-start">
-        <a href="{% url 'home' %}" class="btn btn-ghost text-xl">UniHub</a>
+        <a href="/" class="btn btn-ghost text-xl">UniHub</a>
       </div>
       <div class="navbar-end">
         {% if user.is_authenticated %}
@@ -37,10 +37,10 @@
             <ul tabindex="0"
                 class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
               <li>
-                <a href="{% url 'profile' %}">Profile</a>
+                <a href="/profile">Profile</a>
               </li>
               <li>
-                <form method="post" action="{% url 'logout' %}">
+                <form method="post" action="/logout">
                   {% csrf_token %}
                   <button type="submit">Logout</button>
                 </form>
@@ -48,8 +48,8 @@
             </ul>
           </div>
         {% else %}
-          <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
-          <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+          <a href="/login" class="btn btn-ghost">Login</a>
+          <a href="/signup" class="btn btn-primary">Sign Up</a>
         {% endif %}
       </div>
     </div>
@@ -61,4 +61,3 @@
     </main>
   </body>
 </html>
-
