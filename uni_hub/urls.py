@@ -58,6 +58,7 @@ urlpatterns = [
          name='password_reset_complete'),
 
     # API
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
 
+    path('dashboard/', views.dashboard_view, name='dashboard'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex gap-4">
+    <!-- Left Sidebar - Events and Communities -->
+    <div class="w-1/4 space-y-4">
+        <!-- My Events Section -->
+        <div class="bg-base-100 p-4 rounded-box shadow-lg">
+            <h2 class="text-xl font-bold mb-4">My Events</h2>
+            <div class="space-y-2">
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-sm">Tech Meetup</h3>
+                        <p class="text-xs text-base-content/60">Tomorrow at 6 PM</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-sm">Study Group</h3>
+                        <p class="text-xs text-base-content/60">Friday at 2 PM</p>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="btn btn-ghost btn-sm w-full mt-2">View All Events</a>
+        </div>
+
+        <!-- Communities Section -->
+        <div class="bg-base-100 p-4 rounded-box shadow-lg">
+            <h2 class="text-xl font-bold mb-4">My Communities</h2>
+            <div class="space-y-2">
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-sm">Computer Science Society</h3>
+                        <p class="text-xs text-base-content/60">150 members</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-sm">Engineering Club</h3>
+                        <p class="text-xs text-base-content/60">89 members</p>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="btn btn-ghost btn-sm w-full mt-2">View All Communities</a>
+        </div>
+    </div>
+
+    <!-- Main Content - Your Feed -->
+    <div class="w-3/4 space-y-4">
+        <h1 class="text-2xl font-bold mb-4">Your Feed</h1>
+        
+        <!-- Create Post Card -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <textarea class="textarea textarea-bordered w-full" placeholder="What's on your mind?"></textarea>
+                <div class="card-actions justify-end mt-2">
+                    <button class="btn btn-primary">Post</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feed Posts -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="avatar placeholder">
+                        <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                            <span>CS</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold">Computer Science Society</h3>
+                        <p class="text-sm text-base-content/60">2 hours ago</p>
+                    </div>
+                </div>
+                <p>No functionality yet just ui.</p>
+                <div class="card-actions justify-end mt-4">
+                    <button class="btn btn-ghost btn-sm">Like</button>
+                    <button class="btn btn-ghost btn-sm">Comment</button>
+                    <button class="btn btn-ghost btn-sm">Repost</button>
+                    <button class="btn btn-ghost btn-sm">Share</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="avatar placeholder">
+                        <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                            <span>EC</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold">Oscar</h3>
+                        <p class="text-sm text-base-content/60">5 hours ago</p>
+                    </div>
+                </div>
+                <p>Should it be like twitter and show users posts that they follow? (Like this)</p>
+                <div class="card-actions justify-end mt-4">
+                    <button class="btn btn-ghost btn-sm">Like</button>
+                    <button class="btn btn-ghost btn-sm">Comment</button>
+                    <button class="btn btn-ghost btn-sm">Repost</button>
+                    <button class="btn btn-ghost btn-sm">Share</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
