@@ -42,9 +42,23 @@ def post_create(request):
             return redirect("posts")
     else:
         form = PostCreationForm()
-    return render(
-        request, "posts/create-post.html", {"form": form, "is_comment": False}
+        return render(
+            request, "posts/create-post.html", {"form": form, "is_comment": False}
+        )
+
+
+def post_repost(request, post_id: int):
+    reposted_post = Post.objects.get(id=post_id)
+
+    post = Post(
+        title="REPOST",
+        body=f"/posts/${post_id}",
+        ref_post=reposted_post,
+        user=request.user,
     )
+    post.save()
+
+    return HttpResponse(status=204)
 
 
 def post_comment(request, post_id: int):

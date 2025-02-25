@@ -11,7 +11,10 @@ class Post(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     parent_post = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, related_name="comments"
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="comments"
+    )
+    ref_post = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="reposts"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

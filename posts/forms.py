@@ -23,6 +23,11 @@ class PostCreationForm(forms.ModelForm):
         ),
     )
 
+    post_ref = forms.CharField(
+        required=False,
+        label="Post Ref",
+    )
+
     body = forms.CharField(
         required=True,
         label="Body",
@@ -44,7 +49,4 @@ class PostCreationForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = (
-            "title",
-            "body",
-        )
+        fields = ("title", "body", "post_ref")

@@ -82,6 +82,7 @@ TEMPLATES = [
             ],
             "filters": {
                 "parse_md": "posts.filters.parse_md",
+                "translate_repost": "posts.filters.translate_repost",
             },
         },
     },
