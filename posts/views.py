@@ -50,14 +50,19 @@ def post_create(request):
 def post_repost(request, post_id: int):
     reposted_post = Post.objects.get(id=post_id)
 
-    post = Post(
-        title="REPOST",
-        body=f"/posts/${post_id}",
-        ref_post=reposted_post,
-        user=request.user,
-    )
-    post.save()
+    try:
+        repost = reposted_post.reposts.get(user_id=request.user.id)
+    except:
+        repost = Post(
+            title="REPOST",
+            body=f"/posts/${post_id}",
+            ref_post=reposted_post,
+            user=request.user,
+        )
+        repost.save()
+        return HttpResponse(status=204)
 
+    repost.delete()
     return HttpResponse(status=204)
 
 

@@ -52,6 +52,16 @@
           <span class="font-light ml-1">{{ (post|translate_repost).comments.count() }}</span>
         </span>
       </a>
+      <button onclick="repostPost({{ (post|translate_repost).id }})">
+        <span class="flex items-center justify-center">
+          {% if (post|translate_repost).reposts.filter(user_id=user.id).count() == 0 %}
+            <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">repeat</span>
+          {% else %}
+            <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-blue-400">repeat</span>
+          {% endif %}
+          <span class="font-light ml-1">{{ (post|translate_repost).reposts.count() |default(0) }}</span>
+        </span>
+      </button>
     </div>
     {% if expanded %}
       <div class="flex flex-col space-y-4">
