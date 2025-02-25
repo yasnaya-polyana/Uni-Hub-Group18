@@ -16,7 +16,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="h-[100vh]">
-    <div class="navbar bg-base-100">
+    <div class="navbar bg-base-100 h-[5%]">
       <div class="navbar-start">
         <a href="/" class="btn btn-ghost text-xl">UniHub</a>
       </div>
@@ -37,10 +37,10 @@
             <ul tabindex="0"
                 class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
               <li>
-                <a href="/profile">Profile</a>
+                <a href="/profile/">Profile</a>
               </li>
               <li>
-                <form method="post" action="/logout">
+                <form method="post" action="/logout/">
                   {% csrf_token %}
                   <button type="submit">Logout</button>
                 </form>
@@ -48,16 +48,20 @@
             </ul>
           </div>
         {% else %}
-          <a href="/login" class="btn btn-ghost">Login</a>
-          <a href="/signup" class="btn btn-primary">Sign Up</a>
+          <a href="/login/" class="btn btn-ghost">Login</a>
+          <a href="/signup/" class="btn btn-primary">Sign Up</a>
         {% endif %}
       </div>
     </div>
-    <main class="container mx-auto px-4 py-8 h-full">
+    <main class="container mx-auto px-4 py-8 h-[95%]">
       {% if messages %}
         {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
       {% endif %}
       {% block content %}{% endblock %}
     </main>
+    <div role="alert"
+         id="alert-box"
+         class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
   </body>
+  {% include "base-logic.html" %}
 </html>

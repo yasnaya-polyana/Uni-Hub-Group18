@@ -34,7 +34,6 @@ urlpatterns = [
     path("profile/edit/", views.edit_profile, name="edit_profile"),
     path("posts/", post_views.posts_view, name="posts"),
     path("posts/<int:post_id>/", post_views.post_view, name="post"),
-    path("posts/<int:post_id>/delete", post_views.post_delete, name="post_delete"),
     path("posts/<int:post_id>/comment", post_views.post_comment, name="post_comment"),
     path(
         "posts/<int:post_id>/interact/<str:interaction>",

@@ -12,26 +12,13 @@ from posts.models import Interaction, Post
 log = logging.getLogger("app")
 
 
-def post_delete(request, post_id: int):
-    Post.objects.get(id=post_id).delete()
-
-    return redirect("/posts")
-
-
 def post_view(request, post_id: int):
-    md = markdown.Markdown(extensions=["fenced_code", TailwindExtension()])
-
-    def parse_md(post: Post):
-        clean_body = bleach.clean(post.body)
-        post.md_body = md.convert(clean_body)
-
     if request.method == "GET":
         post = Post.objects.get(id=post_id)
-        parse_md(post)
-
         return render(request, "posts/post-page.jinja", {"post": post})
     elif request.method == "DELETE":
-        return post_delete(request, post_id)
+        Post.objects.get(id=post_id).delete()
+        return redirect("/posts")
 
 
 def posts_view(request):
@@ -70,7 +57,7 @@ def post_comment(request, post_id: int):
             post.user = request.user
             post.parent_post = parent_post
             post.save()
-            return redirect("posts")
+            return redirect(f"/posts/{post_id}/")
     else:
         form = PostCreationForm()
     return render(request, "posts/create-post.html", {"form": form, "is_comment": True})
