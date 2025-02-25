@@ -20,6 +20,8 @@ from django.contrib.auth import views as auth_views
 from accounts import views
 from django.conf import settings
 from django.conf.urls.static import static
+from communities import views as community_views
+from events import views as event_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -61,4 +63,8 @@ urlpatterns = [
     path('api/', include('api.urls')),
 
     path('dashboard/', views.dashboard_view, name='dashboard'),
+
+    path('communities/', community_views.community_list, name='community_list'),
+    path('communities/<int:community_id>/', community_views.community_detail, name='community_detail'),
+    path('events/', event_views.events_list, name='events'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

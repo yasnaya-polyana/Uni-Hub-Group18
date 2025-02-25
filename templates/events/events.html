@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Events{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Events</h1>
+        <button class="btn btn-primary">Create Event</button>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Event Card -->
+        <div class="card bg-base-100 shadow-lg">
+            <figure class="px-4 pt-4">
+                <img src="https://placehold.co/600x400" class="rounded-xl" alt="Event Image"/>
+            </figure>
+            <div class="card-body">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="card-title">Tech Meetup</h2>
+                        <p class="text-sm text-base-content/60">Computer Science Society</p>
+                    </div>
+                    <div class="badge badge-primary">Upcoming</div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-sm">
+                        <i class="fas fa-calendar"></i> March 20, 2024
+                    </p>
+                    <p class="text-sm">
+                        <i class="fas fa-clock"></i> 14:00 - 16:00
+                    </p>
+                    <p class="text-sm">
+                        <i class="fas fa-location-dot"></i> Room 2B, Engineering Building
+                    </p>
+                </div>
+                <p>Join us for an exciting tech meetup where we'll discuss the latest trends in AI and Machine Learning.</p>
+                <div class="card-actions justify-end mt-2">
+                    <button class="btn btn-primary btn-sm">RSVP</button>
+                    <button class="btn btn-ghost btn-sm">Share</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add more event cards here -->
+    </div>
+</div>
+{% endblock %} 
