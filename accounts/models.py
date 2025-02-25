@@ -25,3 +25,13 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+# Follow Model
+#
+#
+class Follow(models.Model):
+    follower = models.ForeignKey(CustomUser, related_name='following', on_delete=models.CASCADE)
+    followee = models.ForeignKey(CustomUser, related_name='followers', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('follower', 'followee')

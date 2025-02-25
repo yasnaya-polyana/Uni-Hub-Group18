@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import TemplateView
 from .forms import CustomUserCreationForm, CustomLoginForm, ProfileEditForm
-
+from .models import CustomUser, Follow
 from .decorators import anonymous_required
 
 # Create your views here.
@@ -50,9 +50,26 @@ def edit_profile(request):
         form = ProfileEditForm(instance=request.user)
     return render(request, 'accounts/edit_profile.html', {'form': form})
 
+#viewing your own profile
 @login_required
 def profile_view(request):
-    return render(request, 'accounts/profile.html')
+    profile_user = request.user
+    return render(request, 'accounts/profile.html', {'profile_user': profile_user})
+
+#viewing different user profiles
+@login_required
+def user_profile_view(request, username):
+    profile_user = get_object_or_404(CustomUser, username=username)
+    is_following = Follow.objects.filter(follower=request.user, followee=profile_user).exists()
+
+    if request.method == 'POST':
+        if 'follow' in request.POST:
+            Follow.objects.get_or_create(follower=request.user, followee=profile_user)
+        elif 'unfollow' in request.POST:
+            Follow.objects.filter(follower=request.user, followee=profile_user).delete()
+        return redirect('user-profile', username=username)
+
+    return render(request, 'accounts/profile.html', {'profile_user': profile_user, 'is_following': is_following})
 
 def logout_view(request):
     logout(request)
