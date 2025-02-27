@@ -21,6 +21,8 @@ from accounts import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+from communities import views as community_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.HomeView.as_view(), name='home'),
@@ -58,6 +60,13 @@ urlpatterns = [
          name='password_reset_complete'),
 
     # API
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+
+    # Communities
+    path('communities/', community_views.community_list, name='community_list'),
+    path('communities/<int:community_id>/', community_views.community_detail, name='community_detail'),
+    path('communities/create', community_views.community_create, name='community_create'),
+    path("communities/<int:community_id>/join", community_views.community_join, name="community_join"),
+    path("communities/<int:community_id>/leave", community_views.community_leave, name="community_leave")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
