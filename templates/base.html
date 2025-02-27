@@ -6,6 +6,7 @@
     <title>UniHub - {% block title %}{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="navbar bg-base-100">
@@ -14,6 +15,19 @@
         </div>
         <div class="navbar-end">
             {% if user.is_authenticated %}
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost btn-circle" id="notifications-button">
+                        <div class="indicator">
+                            <span class="indicator-item badge badge-secondary" id="notifications-count"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v2a2 2 0 11-4 0v-2m4 0H9" />
+                            </svg>
+                        </div>
+                    </label>
+                    <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 hidden" id="notifications-dropdown">
+                        <li><span>Loading...</span></li>
+                    </ul>
+                </div>
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle avatar">
                         <div class="w-10 rounded-full">
@@ -54,5 +68,39 @@
         
         {% block content %}{% endblock %}
     </main>
+
+    <script>
+        $(document).ready(function() {
+            var notificationsLoaded = false;
+
+            $('#notifications-button').on('click', function() {
+                var dropdown = $('#notifications-dropdown');
+                dropdown.toggleClass('hidden');
+
+                if (!dropdown.hasClass('hidden') && !notificationsLoaded) {
+                    $.ajax({
+                        url: '{% url "get_notifications" %}',
+                        method: 'GET',
+                        success: function(data) {
+                            dropdown.empty();
+                            if (data.length > 0) {
+                                data.forEach(function(notification) {
+                                    var item = $('<li><a href="' + notification.link + '" class="' + (notification.is_read ? '' : 'font-bold') + '">' + notification.title + '</a></li>');
+                                    dropdown.append(item);
+                                });
+                            } else {
+                                dropdown.append('<li><span>No notifications</span></li>');
+                            }
+                            $('#notifications-count').text(data.length);
+                            notificationsLoaded = true;
+                        },
+                        error: function() {
+                            dropdown.html('<li><span>Error loading notifications</span></li>');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
-</html> 
+</html>

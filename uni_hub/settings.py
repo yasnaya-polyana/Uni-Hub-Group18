@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 
     # 3rd party
     "accounts",    
-    "rest_framework"
+    "rest_framework",
+    "notifications"
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
