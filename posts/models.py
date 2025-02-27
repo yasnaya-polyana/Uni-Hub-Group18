@@ -1,10 +1,18 @@
+import nanoid
 from django.contrib import admin
 from django.db import models
 
 from accounts.models import CustomUser
 
 
+def generate_nanoid():
+    return nanoid.generate()
+
+
 class Post(models.Model):
+    pkid = models.BigAutoField(primary_key=True, editable=False)
+    id = models.CharField(default=generate_nanoid, editable=False, unique=True)
+
     title = models.CharField(max_length=60)
     body = models.TextField(max_length=1000)
 

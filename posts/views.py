@@ -12,7 +12,7 @@ from posts.models import Interaction, Post
 log = logging.getLogger("app")
 
 
-def post_view(request, post_id: int):
+def post_view(request, post_id: str):
     if request.method == "GET":
         post = Post.objects.get(id=post_id)
         return render(request, "posts/post-page.jinja", {"post": post})
@@ -47,7 +47,7 @@ def post_create(request):
         )
 
 
-def post_repost(request, post_id: int):
+def post_repost(request, post_id: str):
     reposted_post = Post.objects.get(id=post_id)
 
     try:
@@ -66,7 +66,7 @@ def post_repost(request, post_id: int):
     return HttpResponse(status=204)
 
 
-def post_comment(request, post_id: int):
+def post_comment(request, post_id: str):
     parent_post = Post.objects.get(id=post_id)
 
     if request.method == "POST":
@@ -85,7 +85,9 @@ def post_comment(request, post_id: int):
 def post_interact(request, post_id: int, interaction: str):
     post = Post.objects.get(id=post_id)
     try:
-        interaction = Interaction.objects.get(post_id=post_id, user_id=request.user.id)
+        interaction = Interaction.objects.get(
+            post_id=post.pkid, user_id=request.user.id
+        )
     except:
         interaction = Interaction(user=request.user, post=post, interaction=interaction)
         interaction.save()
