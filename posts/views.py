@@ -76,10 +76,12 @@ def post_comment(request, post_id: str):
             post.user = request.user
             post.parent_post = parent_post
             post.save()
-            return redirect(f"/posts/{post_id}/")
+            return redirect("post", post_id=post_id)
     else:
         form = PostCreationForm()
-    return render(request, "posts/create-post.html", {"form": form, "is_comment": True})
+    return render(
+        request, "posts/create-post.jinja", {"form": form, "is_comment": True}
+    )
 
 
 def post_interact(request, post_id: int, interaction: str):

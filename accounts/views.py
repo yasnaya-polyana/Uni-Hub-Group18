@@ -85,6 +85,11 @@ def user_profile_view(request, username):
     )
 
 
+@login_required
+def my_profile_view(request):
+    return redirect("user", username=request.user.username)
+
+
 def logout_view(request):
     logout(request)
     return redirect("home")

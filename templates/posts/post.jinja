@@ -2,19 +2,32 @@
   {% if (post|translate_repost).parent_post and not is_ui_child %}
   <a
     class="mb-1 text-xs italic"
-    href="/posts/{{ (post|translate_repost).parent_post.id }}"
+    href="{{ url('post', post_id=(post|translate_repost).parent_post.id) }}"
     >Go to parent post</a
   >
   {% endif %}
   <div class="flex justify-between">
+    <div class="flex space-x-2 items-center justify-center">
+    <div class="w-10 rounded-[100%] overflow-hidden">
+      {% if user.profile_picture %}
+      <img src="{{ user.profile_picture.url }}" alt="" class="overflow-hidden aspect-square" />
+      {% else %}
+      <div
+        class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center"
+      >
+        {{ user.username|make_list|first|upper }}
+      </div>
+      {% endif %}
+    </div>
     <p
-      class="text-xs font-bold"
+      class="text-sm font-bold"
       title="@{{ (post|translate_repost).user.username }}"
     >
       {{ (post|translate_repost).user.first_name }} {{
       (post|translate_repost).user.last_name }}
       <span class="italic font-light">@{{ post.user.username }}</span>
     </p>
+    </div>
     <span class="flex items-center justify-center">
       <p class="text-xs">{{ post.created_at|date("DATETIME_FORMAT") }}</p>
       <details class="dropdown dropdown-end">
@@ -45,7 +58,7 @@
   <div class="divider my-2"></div>
   <div class="space-y-4">
     <a
-      href="/posts/{{ (post|translate_repost).id }}"
+      href="{{ url('post', post_id=(post|translate_repost).id) }}"
       class="focus:outline-black"
     >
       <h3
@@ -76,7 +89,7 @@
           >
         </span>
       </button>
-      <a href="/posts/{{ (post|translate_repost).id }}/comment">
+      <a href="{{ url('post_comment', post_id=(post|translate_repost).id) }}">
         <span class="flex items-center justify-center">
           <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400"
             >chat</span
@@ -108,7 +121,7 @@
     {% if expanded %}
     <div class="flex flex-col space-y-4">
       {% for post in (post|translate_repost).comments.all() %} {% with
-      expanded=False, is_ui_child=True %} {% include "posts/post.html" %} {%
+      expanded=False, is_ui_child=True %} {% include "posts/post.jinja" %} {%
       endwith %} {% endfor %}
     </div>
     {% endif %}

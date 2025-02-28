@@ -1,4 +1,5 @@
 {% extends 'base/index.jinja' %}
+{% include 'posts/post-logic.jinja' %}
 {% block title %}{{ community.name }}{% endblock %}
 {% block content %}
   <div class="max-w-6xl mx-auto">
@@ -11,6 +12,7 @@
         <!-- Create Post -->
         <!-- Pinned Posts -->
         <!-- Regular Posts -->
+        {% include 'communities/post.jinja' %}
         {% for post in community.posts.all() %}
           {% include 'posts/post.jinja' %}
         {% endfor %}

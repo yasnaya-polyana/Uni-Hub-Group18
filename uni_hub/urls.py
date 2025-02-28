@@ -27,25 +27,57 @@ from events import views as event_views
 from posts import views as post_views
 
 urlpatterns = [
+    # Admin
     path("admin/", admin.site.urls),
+    # Root
     path("", views.HomeView.as_view(), name="home"),
-    path("signup/", views.signup_view, name="signup"),
+    # Dashboard
+    path("dashboard/", views.dashboard_view, name="dashboard"),
+    # Auth
     path("login/", views.login_view, name="login"),
+    path("signup/", views.signup_view, name="signup"),
     path("logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
-    path("profile/", views.profile_view, name="profile"),
+    # Users
+    path("u/<str:username>/", views.user_profile_view, name="user"),
+    path("profile/", views.my_profile_view, name="my_profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),
-    path("profile/<str:username>/", views.user_profile_view, name="user-profile"),
-    path("posts/", post_views.posts_view, name="posts"),
-    path("posts/create/", post_views.post_create, name="post_create"),
-    path("posts/<str:post_id>/", post_views.post_view, name="post"),
-    path("posts/<str:post_id>/comment", post_views.post_comment, name="post_comment"),
-    path("posts/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
+    # Posts
+    path("p/", post_views.posts_view, name="posts"),
+    path("p/create/", post_views.post_create, name="post_create"),
+    path("p/<str:post_id>/", post_views.post_view, name="post"),
+    path("p/<str:post_id>/comment", post_views.post_comment, name="post_comment"),
+    path("p/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
     path(
-        "posts/<str:post_id>/interact/<str:interaction>",
+        "p/<str:post_id>/interact/<str:interaction>",
         post_views.post_interact,
         name="post_interact",
     ),
-    # Password Reset URLs
+    # Communities
+    path("c/", community_views.community_list, name="community_list"),
+    path(
+        "c/<int:community_id>/",
+        community_views.community_detail,
+        name="community_detail",
+    ),
+    path("c/create", community_views.community_create, name="community_create"),
+    path(
+        "c/<int:community_id>/join",
+        community_views.community_join,
+        name="community_join",
+    ),
+    path(
+        "c/<int:community_id>/leave",
+        community_views.community_leave,
+        name="community_leave",
+    ),
+    path(
+        "c/<int:community_id>/delete",
+        community_views.community_delete,
+        name="community_delete",
+    ),
+    # Events
+    path("events/", event_views.events_list, name="events"),
+    # Password Reset
     path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(
@@ -78,32 +110,4 @@ urlpatterns = [
     ),
     # API
     path("api/", include("api.urls")),
-    path("dashboard/", views.dashboard_view, name="dashboard"),
-    # Communities
-    path("communities/", community_views.community_list, name="community_list"),
-    path(
-        "communities/<int:community_id>/",
-        community_views.community_detail,
-        name="community_detail",
-    ),
-    path(
-        "communities/create", community_views.community_create, name="community_create"
-    ),
-    path(
-        "communities/<int:community_id>/join",
-        community_views.community_join,
-        name="community_join",
-    ),
-    path(
-        "communities/<int:community_id>/leave",
-        community_views.community_leave,
-        name="community_leave",
-    ),
-    path(
-        "communities/<int:community_id>/delete",
-        community_views.community_delete,
-        name="community_delete",
-    ),
-    # Events
-    path("events/", event_views.events_list, name="events"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,6 @@
 <script>
   function deletePost(postID) {
-    fetch(`/posts/${postID}/`, {
+    fetch(`/p/${postID}/`, {
       method: "DELETE",
       headers: { "X-CSRFToken": "{{csrf_token}}" },
     })
@@ -13,7 +13,7 @@
   }
 
   function likePost(postID) {
-    fetch(`/posts/${postID}/interact/like`, {
+    fetch(`/p/${postID}/interact/like`, {
       method: "POST",
       headers: { "X-CSRFToken": "{{csrf_token}}" },
     })
@@ -25,7 +25,7 @@
   }
 
   function repostPost(postID) {
-    fetch(`/posts/${postID}/repost`, {
+    fetch(`/p/${postID}/repost`, {
       method: "POST",
       headers: { "X-CSRFToken": "{{csrf_token}}" },
     })
