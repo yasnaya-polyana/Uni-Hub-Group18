@@ -1,0 +1,12 @@
+<div>
+  <div class="flex justify-between">
+    {% include 'posts/user-info.jinja' %}
+    <div class="flex items-center justify-center">
+      <p class="text-xs">{{ post.created_at|date("DATETIME_FORMAT") }}</p>
+      {% include 'posts/dropdown.jinja' %}
+    </div>
+  </div>
+  <h3 class="text-xl font-semibold mb-0 mt-2 w-fit">
+    {{ (post|translate_repost).title }}
+  </h3>
+</div>
