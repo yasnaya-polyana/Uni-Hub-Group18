@@ -45,10 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'communities',
     'events',
-    'common',
-    'posts',
-    'notifications',
-
+    'common'
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
