@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base/index.jinja' %}
 
 {% block title %}Profile{% endblock %}
 
@@ -30,9 +30,9 @@
 
         <div class="space-y-4">
             <h3 class="text-xl font-semibold">Bio</h3>
-            <p>{{ user.bio|default:"No bio yet." }}</p>
+            <p>{{ user.bio|default("No bio yet.") }}</p>
             
-            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            <a href="{{ url('edit_profile') }}" class="btn btn-primary">Edit Profile</a>
         </div>
     </div>
 </div>

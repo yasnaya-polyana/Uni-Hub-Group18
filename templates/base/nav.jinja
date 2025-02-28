@@ -1,0 +1,50 @@
+<div class="navbar bg-base-100 h-[5%]">
+  <div class="navbar-start">
+    <a href="/" class="btn btn-ghost text-xl">UniHub</a>
+  </div>
+
+  <div class="navbar-center">
+  <a href="/posts" class="btn btn-warning">Posts</a>
+    <a href="/communities" class="btn btn-ghost">Communities</a>
+    {% if user.is_authenticated %}
+    <a href="/dashboard" class="btn btn-ghost">Dashboard</a>
+    {% endif %}
+  </div>
+
+  <div class="navbar-end">
+    {% if user.is_authenticated %}
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+        <div class="w-10 rounded-full">
+          {% if user.profile_picture %}
+          <img src="{{ user.profile_picture.url }}" alt="Profile" />
+          {% else %}
+          <div
+            class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center"
+          >
+            {{ user.username|make_list|first|upper }}
+          </div>
+          {% endif %}
+        </div>
+      </label>
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+      >
+        <li>
+          <a href="/profile/">Profile</a>
+        </li>
+        <li>
+          <form method="post" action="/logout/">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+    {% else %}
+    <a href="/login/" class="btn btn-ghost">Login</a>
+    <a href="/signup/" class="btn btn-primary">Sign Up</a>
+    {% endif %}
+  </div>
+</div>

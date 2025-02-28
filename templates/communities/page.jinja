@@ -1,0 +1,22 @@
+{% extends 'base/index.jinja' %}
+{% block title %}{{ community.name }}{% endblock %}
+{% block content %}
+  <div class="max-w-6xl mx-auto">
+    <!-- Community Header -->
+    {% include 'communities/page-header.jinja' %}
+    <!-- Main Content Area -->
+    <div class="flex gap-4">
+      <!-- Posts Column -->
+      <div class="w-3/4">
+        <!-- Create Post -->
+        <!-- Pinned Posts -->
+        <!-- Regular Posts -->
+        {% for post in community.posts.all() %}
+          {% include 'posts/post.jinja' %}
+        {% endfor %}
+      </div>
+      <!-- Sidebar -->
+      {% include 'communities/page-sidebar.jinja' %}
+  </div>
+{% endblock %}
+

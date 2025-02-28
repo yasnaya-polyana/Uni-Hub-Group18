@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  {% include 'base/head.jinja' %}
+  <body class="h-[100vh]">
+    {% include 'base/nav.jinja' %}
+    <main class="container mx-auto px-4 py-8 h-[95%]">
+      {% if messages %}
+        {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+    <div role="alert"
+         id="alert-box"
+         class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
+  </body>
+  {% include "base/logic.jinja" %}
+</html>

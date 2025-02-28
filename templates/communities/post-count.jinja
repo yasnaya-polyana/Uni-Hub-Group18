@@ -1,0 +1,6 @@
+{{ community.posts.count() }}
+{% if community.posts.count() == 1 %}
+    post
+{% else %}
+    posts
+{% endif %}

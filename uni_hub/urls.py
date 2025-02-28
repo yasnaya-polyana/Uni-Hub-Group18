@@ -22,6 +22,8 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from accounts import views
+from communities import views as community_views
+from events import views as event_views
 from posts import views as post_views
 
 urlpatterns = [
@@ -33,6 +35,7 @@ urlpatterns = [
     path("profile/", views.profile_view, name="profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),
     path("posts/", post_views.posts_view, name="posts"),
+    path("posts/create/", post_views.post_create, name="post_create"),
     path("posts/<str:post_id>/", post_views.post_view, name="post"),
     path("posts/<str:post_id>/comment", post_views.post_comment, name="post_comment"),
     path("posts/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
@@ -41,12 +44,11 @@ urlpatterns = [
         post_views.post_interact,
         name="post_interact",
     ),
-    path("posts/create/", post_views.post_create, name="post_create"),
     # Password Reset URLs
     path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(
-            template_name="accounts/password_reset.html",
+            template_name="accounts/password_reset.jinja",
             subject_template_name="registration/password_reset_subject.txt",
             email_template_name="registration/password_reset_email.html",
         ),
@@ -55,24 +57,52 @@ urlpatterns = [
     path(
         "password_reset/done/",
         auth_views.PasswordResetDoneView.as_view(
-            template_name="accounts/password_reset_done.html"
+            template_name="accounts/password_reset_done.jinja"
         ),
         name="password_reset_done",
     ),
     path(
         "reset/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(
-            template_name="accounts/password_reset_confirm.html"
+            template_name="accounts/password_reset_confirm.jinja"
         ),
         name="password_reset_confirm",
     ),
     path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
-            template_name="accounts/password_reset_complete.html"
+            template_name="accounts/password_reset_complete.jinja"
         ),
         name="password_reset_complete",
     ),
     # API
     path("api/", include("api.urls")),
+    path("dashboard/", views.dashboard_view, name="dashboard"),
+    # Communities
+    path("communities/", community_views.community_list, name="community_list"),
+    path(
+        "communities/<int:community_id>/",
+        community_views.community_detail,
+        name="community_detail",
+    ),
+    path(
+        "communities/create", community_views.community_create, name="community_create"
+    ),
+    path(
+        "communities/<int:community_id>/join",
+        community_views.community_join,
+        name="community_join",
+    ),
+    path(
+        "communities/<int:community_id>/leave",
+        community_views.community_leave,
+        name="community_leave",
+    ),
+    path(
+        "communities/<int:community_id>/delete",
+        community_views.community_delete,
+        name="community_delete",
+    ),
+    # Events
+    path("events/", event_views.events_list, name="events"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

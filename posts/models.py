@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.db import models
 
 from accounts.models import CustomUser
+from communities.models import Communities
 
 
 def generate_nanoid():
@@ -17,6 +18,14 @@ class Post(models.Model):
     body = models.TextField(max_length=1000)
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    community = models.ForeignKey(
+        Communities,
+        on_delete=models.CASCADE,
+        related_name="posts",
+        null=True,
+        blank=True,
+    )
 
     parent_post = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="comments"

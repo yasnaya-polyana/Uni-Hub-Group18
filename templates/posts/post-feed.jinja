@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'base/index.jinja' %}
 {% block title %}Posts{% endblock %}
 {% block content %}
   {% include "posts/post-logic.html" %}
   <div class="flex flex-col max-w-2xl mx-auto space-y-4">
     <a class="self-center" href="./create">Create new post</a>
     {% for post in posts %}
-      {% include "posts/post.html" %}
+      {% include "posts/post.jinja" %}
     {% endfor %}
   </div>
 {% endblock %}

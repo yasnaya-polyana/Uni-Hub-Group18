@@ -45,8 +45,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_jinja",
     # local
+    "common",
     "accounts",
     "posts",
+    "communities",
+    "events",
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
@@ -179,7 +182,7 @@ DEFAULT_FROM_EMAIL = "noreply@unihub.com"
 
 # Authentication URLs
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "home"
 
 # Email settings for password reset

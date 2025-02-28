@@ -43,7 +43,7 @@ def post_create(request):
     else:
         form = PostCreationForm()
         return render(
-            request, "posts/create-post.html", {"form": form, "is_comment": False}
+            request, "posts/create-post.jinja", {"form": form, "is_comment": False}
         )
 
 

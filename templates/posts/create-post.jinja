@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base/index.jinja' %}
 {% block title %}
   {% if is_comment %}
     Create Comment
@@ -30,7 +30,7 @@
           {{ form.title }}
           {% if form.title.errors %}
             <label class="label">
-              <span class="label-text-alt text-error">{{ form.title.errors|join:", " }}</span>
+              <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
             </label>
           {% endif %}
         </div>
@@ -41,7 +41,7 @@
           {{ form.body }}
           {% if form.body.errors %}
             <label class="label">
-              <span class="label-text-alt text-error">{{ form.body.errors|join:", " }}</span>
+              <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
             </label>
           {% endif %}
         </div>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base/index.jinja' %}
 
 {% block title %}Edit Profile{% endblock %}
 
@@ -15,7 +15,7 @@
             {{ field }}
             {% if field.errors %}
             <label class="label">
-                <span class="label-text-alt text-error">{{ field.errors|join:"<br/> " }}</span>
+                <span class="label-text-alt text-error">{{ field.errors|join("<br/> ") }}</span>
             </label>
             {% endif %}
         </div>
