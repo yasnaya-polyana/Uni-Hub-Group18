@@ -47,6 +47,7 @@ urlpatterns = [
     path("p/<str:post_id>/", post_views.post_view, name="post"),
     path("p/<str:post_id>/comment", post_views.post_comment, name="post_comment"),
     path("p/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
+    path("p/<str:post_id>/pin", post_views.post_pin, name="post_pin"),
     path(
         "p/<str:post_id>/interact/<str:interaction>",
         post_views.post_interact,

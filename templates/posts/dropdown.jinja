@@ -10,8 +10,19 @@
       class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
     >
       <li>
-        <button onclick="deletePost({{ post.id }})">
+        <button onclick="deletePost('{{ post.id }}')">
           <span class="hover:text-blue-400">Delete</span>
+        </button>
+      </li>
+      <li>
+        <button onclick="pinPost('{{ post.id }}')">
+          <span class="hover:text-blue-400">
+            {% if post.is_pinned %}
+                Unpin
+            {% else %}
+                Pin
+            {% endif %}
+          </span>
         </button>
       </li>
     </ul>

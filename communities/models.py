@@ -29,14 +29,16 @@ class Communities(SoftDeleteModel):
     updated_at = models.DateTimeField(auto_now=True)
 
     def members_count(self):
-        return self.community_members.filter(deleted_at__isnull=True).count()
+        return self.community_members.filter(
+            # deleted_at__isnull=True
+        ).count()
 
     def __str__(self):
         return self.name
 
 
-# Community Member (Soft Delete Enabled)
-class CommunityMember(SoftDeleteModel):
+# Community Member (Soft Delete Disabled)
+class CommunityMember(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     community = models.ForeignKey(
         Communities, on_delete=models.CASCADE, related_name="community_members"

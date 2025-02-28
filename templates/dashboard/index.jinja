@@ -22,51 +22,10 @@
         </div>
 
         <!-- Feed Posts -->
-        <div class="card bg-base-100 shadow-lg">
-            <div class="card-body">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="avatar placeholder">
-                        <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
-                            <span>CS</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-bold">Computer Science Society</h3>
-                        <p class="text-sm text-base-content/60">2 hours ago</p>
-                    </div>
-                </div>
-                <p>No functionality yet just ui.</p>
-                <div class="card-actions justify-end mt-4">
-                    <button class="btn btn-ghost btn-sm">Like</button>
-                    <button class="btn btn-ghost btn-sm">Comment</button>
-                    <button class="btn btn-ghost btn-sm">Repost</button>
-                    <button class="btn btn-ghost btn-sm">Share</button>
-                </div>
-            </div>
-        </div>
+        {% for post in posts %}
+            {% include 'posts/post.jinja' %}
+        {% endfor %}
 
-        <div class="card bg-base-100 shadow-lg">
-            <div class="card-body">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="avatar placeholder">
-                        <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
-                            <span>EC</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-bold">Oscar</h3>
-                        <p class="text-sm text-base-content/60">5 hours ago</p>
-                    </div>
-                </div>
-                <p>Should it be like twitter and show users posts that they follow? (Like this)</p>
-                <div class="card-actions justify-end mt-4">
-                    <button class="btn btn-ghost btn-sm">Like</button>
-                    <button class="btn btn-ghost btn-sm">Comment</button>
-                    <button class="btn btn-ghost btn-sm">Repost</button>
-                    <button class="btn btn-ghost btn-sm">Share</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %} 

@@ -1,17 +1,9 @@
+{% if community.posts.filter(is_pinned=True).count() > 0 %}
 <div class="mb-4">
-  <h2 class="text-lg font-bold mb-2">📌 Pinned Posts</h2>
-  <div class="card bg-base-100 shadow-lg border-l-4 border-primary">
-    <div class="card-body">
-      <div class="flex items-center gap-2">
-        <div class="badge badge-primary">Admin</div>
-        <h3 class="font-bold">Important Announcement</h3>
-      </div>
-      <p>This is a pinned post from the community admin.</p>
-      <div class="card-actions justify-end">
-        <button class="btn btn-ghost btn-sm">Comment</button>
-        <button class="btn btn-ghost btn-sm">Share</button>
-      </div>
-    </div>
-  </div>
+    <h2 class="text-lg font-bold mb-2">📌 Pinned Posts</h2>
+    {% for post in community.posts.filter(is_pinned=True) %}
+      {% include 'posts/post.jinja' %}
+    {% endfor %}
 </div>
-
+<div class="divider"></div>
+{% endif %}

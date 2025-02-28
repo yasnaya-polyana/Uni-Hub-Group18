@@ -84,6 +84,14 @@ def post_comment(request, post_id: str):
     )
 
 
+def post_pin(request, post_id: int):
+    post = Post.objects.get(id=post_id)
+    post.is_pinned = not post.is_pinned
+    post.save()
+
+    return HttpResponse(status=204)
+
+
 def post_interact(request, post_id: int, interaction: str):
     post = Post.objects.get(id=post_id)
     try:

@@ -11,11 +11,13 @@
       <div class="w-3/4">
         <!-- Create Post -->
         <!-- Pinned Posts -->
+        {% include 'communities/pinned-posts.jinja' %}
         <!-- Regular Posts -->
-        {% include 'communities/post.jinja' %}
-        {% for post in community.posts.all() %}
+        <div class="flex flex-col space-y-4">
+        {% for post in community.posts.filter(is_pinned=False) %}
           {% include 'posts/post.jinja' %}
         {% endfor %}
+        </div>
       </div>
       <!-- Sidebar -->
       {% include 'communities/page-sidebar.jinja' %}

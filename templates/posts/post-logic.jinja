@@ -24,6 +24,18 @@
       });
   }
 
+  function pinPost(postID) {
+    fetch(`/p/${postID}/pin`, {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{csrf_token}}" },
+    })
+      .then((res) => res.text()) // or res.json()
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
+
   function repostPost(postID) {
     fetch(`/p/${postID}/repost`, {
       method: "POST",

@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 
+from posts.models import Post
+
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm
 from .models import CustomUser, Follow
@@ -97,4 +99,6 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    return render(request, "dashboard/index.jinja")
+    posts = Post.objects.filter(community__members=request.user).order_by("-created_at")
+
+    return render(request, "dashboard/index.jinja", {"posts": posts})

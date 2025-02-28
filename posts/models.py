@@ -27,6 +27,8 @@ class Post(models.Model):
         blank=True,
     )
 
+    is_pinned = models.BooleanField(default=False)
+
     parent_post = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="comments"
     )
