@@ -23,6 +23,8 @@ from django.conf.urls.static import static
 from communities import views as community_views
 from events import views as event_views
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.HomeView.as_view(), name='home'),
@@ -64,7 +66,13 @@ urlpatterns = [
 
     path('dashboard/', views.dashboard_view, name='dashboard'),
 
+    # Communities
     path('communities/', community_views.community_list, name='community_list'),
     path('communities/<int:community_id>/', community_views.community_detail, name='community_detail'),
+    path('communities/create', community_views.community_create, name='community_create'),
+    path("communities/<int:community_id>/join", community_views.community_join, name="community_join"),
+    path("communities/<int:community_id>/leave", community_views.community_leave, name="community_leave"),
+
+    # Events
     path('events/', event_views.events_list, name='events'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
