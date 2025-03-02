@@ -30,7 +30,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
-    path('get_notifications', notif_views.get_notifications, name='get_notifications'),
+    path('get_notifications/', notif_views.get_notifications, name='get_notifications'),
+    path('get_unread_notifications_count/', notif_views.get_unread_notifications_count, name='get_unread_notifications_count'),
 
     # Password Reset URLs
     path('password_reset/', 
