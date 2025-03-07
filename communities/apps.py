@@ -9,26 +9,26 @@ class CommunitiesConfig(AppConfig):
     name = "communities"
 
     def ready(self):
-        from accounts.models import CustomUser
-        from posts.models import Post
+        try:
+            from accounts.models import CustomUser
+            from posts.models import Post
 
-        from .models import Communities
+            from .models import Communities
 
-        config = Config.config["communities"]
+            config = Config.config.get("communities") or {}
 
-        init_with = config["init_with"]
+            init_with = config.get("init_with") or []
 
-        for com_data in init_with:
-            name = com_data["name"]
-            auto_populate_test_data = com_data["auto_populate_with_test_data"]
-            del com_data["auto_populate_with_test_data"]
+            for com_data in init_with:
+                name = com_data["name"]
+                auto_populate_test_data = com_data["auto_populate_with_test_data"]
+                del com_data["auto_populate_with_test_data"]
 
-            owner_username = com_data["owner_username"]
-            del com_data["owner_username"]
+                owner_username = com_data["owner_username"]
+                del com_data["owner_username"]
 
-            user = CustomUser.objects.get(username=owner_username)
+                user = CustomUser.objects.get(username=owner_username)
 
-            try:
                 com = Communities(**com_data)
                 com.owner = user
                 com.save()
@@ -64,10 +64,9 @@ Suspendisse potenti. Vestibulum lectus dolor, aliquam in diam cursus, rutrum luc
                             )
                             comment.save()
 
-                    print(f"Created demo data for #{name} community.")
+                        print(f"Created demo data for #{name} community.")
 
-            except IntegrityError:
-                pass
-            except ProgrammingError:
-                pass
-
+        except IntegrityError:
+            pass
+        except ProgrammingError:
+            pass

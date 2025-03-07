@@ -15,21 +15,21 @@
     {% if user.is_authenticated %}
       {% if membership %}
         <!-- Leave Community Button -->
-        <form action="{{ url('community_leave', community.community_id) }}"
+        <form action="{{ url('community_leave', community.id) }}"
               method="post">
           {% csrf_token %}
           <button class="btn btn-danger ml-auto" type="submit">Leave Community</button>
         </form>
       {% else %}
         <!-- Join Community Button -->
-        <form action="{{ url('community_join', community.community_id) }}"
+        <form action="{{ url('community_join', community.id) }}"
               method="post">
           {% csrf_token %}
           <button class="btn btn-primary ml-auto" type="submit">Join Community</button>
         </form>
       {% endif %}
       {% if user.is_superuser %}
-        <form action="{{ url('community_delete', community.community_id) }}"
+        <form action="{{ url('community_delete', community.id) }}"
               method="post">
           {% csrf_token %}
           <button class="btn btn-error ml-auto" type="submit">Delete</button>

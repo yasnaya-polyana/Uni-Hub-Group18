@@ -22,9 +22,11 @@
         </div>
 
         <!-- Feed Posts -->
+        {% with expanded=False, is_ui_child=True %}
         {% for post in posts %}
             {% include 'posts/post.jinja' %}
         {% endfor %}
+        {% endwith %}
 
     </div>
 </div>

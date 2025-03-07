@@ -6,7 +6,8 @@ from common.models import SoftDeleteModel
 
 # Communities
 class Communities(SoftDeleteModel):
-    community_id = models.AutoField(primary_key=True)
+    pkid = models.BigAutoField(primary_key=True, editable=False)
+    id = models.CharField(max_length=25, unique=True)
 
     owner = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="owned_communities"

@@ -15,12 +15,12 @@ users:
 
 communities:
   init_with:
-    # - id: uwe
-    - name: UWE
+    - id: uwe
+      name: UWE
       owner_username: admin
       auto_populate_with_test_data: yes
 
-    # - id: comp-sci
-    - name: Computer Science
+    - id: comp-sci
+      name: Computer Science
       owner_username: admin
       auto_populate_with_test_data: yes

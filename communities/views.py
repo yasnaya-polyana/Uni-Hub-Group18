@@ -12,8 +12,18 @@ def community_create(request):
     if request.method == "POST":
         form = CreateCommunityForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
-            return redirect("/communities")
+
+            com = form.save(commit=False)
+            print(com.id)
+
+            check_community = Communities.all_objects.filter(id=com.id).count()
+            if check_community > 0:
+                return render(
+                    request, "communities/restore.jinja", {"community_id": com.id}
+                )
+
+            com.save()
+            return redirect("/c")
     else:
         form = CreateCommunityForm(user=request.user)
 
@@ -31,8 +41,8 @@ def community_list(request):
 
 
 @login_required
-def community_detail(request, community_id):
-    community = get_object_or_404(Communities, pk=community_id)
+def community_detail(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
 
     # get active memberships
     membership = CommunityMember.objects.filter(
@@ -50,8 +60,8 @@ def community_detail(request, community_id):
 
 
 @login_required
-def community_join(request, community_id):
-    community = get_object_or_404(Communities, pk=community_id)
+def community_join(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
     user = request.user
 
     is_already_member = (
@@ -85,8 +95,8 @@ def community_join(request, community_id):
 
 
 @login_required
-def community_delete(request, community_id):
-    community = get_object_or_404(Communities, pk=community_id)
+def community_delete(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
     user = request.user
 
     if not user.is_superuser:
@@ -98,8 +108,21 @@ def community_delete(request, community_id):
 
 
 @login_required
-def community_leave(request, community_id):
-    community = get_object_or_404(Communities, pk=community_id)
+def community_restore(request, community_id: str):
+    community = get_object_or_404(Communities.all_objects, id=community_id)
+    user = request.user
+
+    if not user.is_superuser:
+        return HttpResponse(status=403)
+
+    community.restore()
+
+    return redirect("community_list")
+
+
+@login_required
+def community_leave(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
     user = request.user
 
     membership = CommunityMember.objects.filter(user=user, community=community).first()
