@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  {% include 'base/head.jinja' %}
-  <body class="h-[100vh]">
-    {% include 'base/nav.jinja' %}
-    <main class="container mx-auto px-4 py-8 h-[95%]">
-      {% if messages %}
-        {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
-      {% endif %}
-      {% block content %}{% endblock %}
-    </main>
-    <div role="alert"
-         id="alert-box"
-         class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
-  </body>
-  {% include "base/logic.jinja" %}
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>UniHub - {% block title %}{% endblock %}</title>
+      <link
+        href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css"
+        rel="stylesheet"
+        type="text/css"
+      />
+      <link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet"
+      />
+      <link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+        rel="stylesheet"
+      />
+      <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="h-[100vh]">
+        {% include 'base/nav.jinja' %}
+        <main class="container mx-auto px-4 py-8 h-[95%]">
+          {% if messages %}
+            {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
+          {% endif %}
+          {% block content %}{% endblock %}
+        </main>
+        <div role="alert"
+             id="alert-box"
+             class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
+    </body>
+    {% include "base/logic.jinja" %}
 </html>
