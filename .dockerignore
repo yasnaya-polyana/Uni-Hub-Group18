@@ -1,0 +1,41 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+.eggs/
+*.pyc
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# Development
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+media/
+static/
+postgres_data/
+local_pgdata/
+pgadmin-data/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/ 

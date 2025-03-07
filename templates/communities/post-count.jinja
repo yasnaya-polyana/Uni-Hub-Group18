@@ -1,0 +1,7 @@
+{% set post_count = community.posts.filter(parent_post__isnull=True).count() %}
+{{ post_count }}
+{% if post_count == 1 %}
+    post
+{% else %}
+    posts
+{% endif %}

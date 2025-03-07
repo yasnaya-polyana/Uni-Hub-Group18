@@ -1,0 +1,58 @@
+{% extends 'base/index.jinja' %}
+{% block title %}
+  {% if is_comment %}
+    Create Comment
+  {% else %}
+    Create Post
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <div class="max-w-md mx-auto">
+    {% if is_comment %}
+      <h2 class="text-2xl font-bold mb-6">Create Comment</h2>
+    {% else %}
+      <h2 class="text-2xl font-bold mb-6">Create Post</h2>
+    {% endif %}
+    {% if form.errors %}
+      <div class="alert alert-error mb-4">
+        <div class="flex-1">
+          <label>Please correct the errors below.</label>
+        </div>
+      </div>
+    {% endif %}
+    <form method="post" class="space-y-4">
+      {% csrf_token %} {# Username and Email #}
+      <div class="space-y-4">
+        <div class="form-control">
+          <label class="label" for="{{ form.title.id_for_label }}">
+            <span class="label-text">{{ form.title.label }}</span>
+          </label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
+            </label>
+          {% endif %}
+        </div>
+        <div class="form-control">
+          <label class="label" for="{{ form.body.id_for_label }}">
+            <span class="label-text">{{ form.body.label }}</span>
+          </label>
+          {{ form.body }}
+          {% if form.body.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
+            </label>
+          {% endif %}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-full mt-6">
+        {% if is_comment %}
+          Create Comment
+        {% else %}
+          Create Post
+        {% endif %}
+      </button>
+    </form>
+  </div>
+{% endblock %}

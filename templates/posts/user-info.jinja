@@ -1,0 +1,12 @@
+<div class="flex space-x-2 items-center justify-center">
+    {% include 'posts/profile-picture.jinja' %}
+    <p
+        class="text-sm font-bold"
+        title="@{{ (post|translate_repost).user.username }}"
+    >
+        {{ (post|translate_repost).user.first_name }} 
+        {{ (post|translate_repost).user.last_name }}
+        <span class="italic font-light">@{{ post.user.username }}</span>
+  </p>
+</div>
+

@@ -1,0 +1,33 @@
+{% extends 'base/index.jinja' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex gap-4">
+    <!-- Left Sidebar - Events and Communities -->
+    {% include 'dashboard/sidebar.jinja' %}
+
+    <!-- Main Content - Your Feed -->
+    <div class="w-3/4 space-y-4">
+        <h1 class="text-2xl font-bold mb-4">Your Feed</h1>
+        
+        <!-- Create Post Card -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <textarea class="textarea textarea-bordered w-full" placeholder="What's on your mind?"></textarea>
+                <div class="card-actions justify-end mt-2">
+                    <button class="btn btn-primary">Post</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feed Posts -->
+        {% with expanded=False, is_ui_child=True %}
+        {% for post in posts %}
+            {% include 'posts/post.jinja' %}
+        {% endfor %}
+        {% endwith %}
+
+    </div>
+</div>
+{% endblock %} 

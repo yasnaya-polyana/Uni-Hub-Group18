@@ -1,9 +1,13 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.core.validators import RegexValidator
 from django.contrib.auth import authenticate
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
-from .models import CustomUser, Course
+from django.core.validators import RegexValidator
+
+from config import Config
+
+from .models import Course, CustomUser
+
 
 # User Creation Form
 #
@@ -11,111 +15,127 @@ from .models import CustomUser, Course
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField(
         required=True,
-        label='Username',
+        label="Username",
         min_length=3,
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[a-zA-Z0-9._]*$',
-                'Username can only contain letters, numbers, dots and underscores.'
+                r"^[a-zA-Z0-9._]*$",
+                "Username can only contain letters, numbers, dots and underscores.",
             )
         ],
-        widget=forms.TextInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'Choose a unique username'
-        })
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Choose a unique username",
+            }
+        ),
     )
 
     first_name = forms.CharField(
         required=True,
-        label='First Name',
-        widget=forms.TextInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'Your first name'
-        })
+        label="First Name",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Your first name",
+            }
+        ),
     )
 
     last_name = forms.CharField(
         required=True,
-        label='Last Name',
-        widget=forms.TextInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'Your last name'
-        })
+        label="Last Name",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Your last name",
+            }
+        ),
     )
 
     email = forms.EmailField(
         required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'student@live.uwe.ac.uk'
-        })
+        widget=forms.EmailInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "student@live.uwe.ac.uk",
+            }
+        ),
     )
 
     student_id = forms.CharField(
         required=True,
-        label='Student ID',
+        label="Student ID",
         max_length=8,
         validators=[
-            RegexValidator(
-                r'^[0-9]{8}$', 
-                'Student ID must be exactly 8 digits.'
-            )
+            RegexValidator(r"^[0-9]{8}$", "Student ID must be exactly 8 digits.")
         ],
-        widget=forms.TextInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': '12345678'
-        })
+        widget=forms.TextInput(
+            attrs={"class": "input input-bordered w-full", "placeholder": "12345678"}
+        ),
     )
 
     password1 = forms.CharField(
-        label='Password',
-        widget=forms.PasswordInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'Create a strong password'
-        })
+        label="Password",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Create a strong password",
+            }
+        ),
     )
 
     password2 = forms.CharField(
-        label='Confirm Password',
-        widget=forms.PasswordInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'Repeat your password'
-        })
+        label="Confirm Password",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Repeat your password",
+            }
+        ),
     )
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 
-                 'student_id', 'password1', 'password2')
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "student_id",
+            "password1",
+            "password2",
+        )
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if email and not email.endswith('@live.uwe.ac.uk'):
-            raise forms.ValidationError('Please use your UWE student email address.')
+        email = self.cleaned_data.get("email")
+        if email and not email.endswith(f'@{Config.config["email_domain"]}'):
+            raise forms.ValidationError("Please use your UWE student email address.")
         return email
 
     def clean_username(self):
-        username = self.cleaned_data.get('username')
+        username = self.cleaned_data.get("username")
         if CustomUser.objects.filter(username__iexact=username).exists():
-            raise forms.ValidationError('This username is already taken.')
+            raise forms.ValidationError("This username is already taken.")
         return username
 
     def clean_student_id(self):
-        student_id = self.cleaned_data.get('student_id')
+        student_id = self.cleaned_data.get("student_id")
         if CustomUser.objects.filter(student_id=student_id).exists():
-            raise forms.ValidationError('This Student ID is already registered.')
+            raise forms.ValidationError("This Student ID is already registered.")
         return student_id
 
     def clean(self):
         cleaned_data = super().clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
 
         if password1 and password2 and password1 != password2:
-            self.add_error('password2', 'The passwords do not match.')
+            self.add_error("password2", "The passwords do not match.")
 
         return cleaned_data
+
 
 # User Login Form
 #
@@ -124,14 +144,15 @@ class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(
         label="Username",
         required=True,
-        widget=forms.TextInput(attrs={'class': 'input input-bordered w-full'})
+        widget=forms.TextInput(attrs={"class": "input input-bordered w-full"}),
     )
 
     password = forms.CharField(
         label="Password",
         required=True,
-        widget=forms.PasswordInput(attrs={'class': 'input input-bordered w-full'})
+        widget=forms.PasswordInput(attrs={"class": "input input-bordered w-full"}),
     )
+
 
 # Edit User Profile
 #
@@ -139,31 +160,38 @@ class CustomLoginForm(AuthenticationForm):
 class ProfileEditForm(forms.ModelForm):
     email = forms.EmailField(
         required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'input input-bordered w-full',
-            'placeholder': 'student@live.uwe.ac.uk'
-        })
+        widget=forms.EmailInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "student@live.uwe.ac.uk",
+            }
+        ),
     )
 
     course = forms.ModelChoiceField(
         queryset=Course.objects.all(),
         required=False,
-        widget=forms.Select(attrs={
-            "class": "select select-bordered w-full"
-        }),
-        empty_label=None
+        widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
+        empty_label=None,
     )
 
     profile_picture = forms.FileField(
         label="Profile Picture",
-        widget=forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'})
+        widget=forms.FileInput(
+            attrs={"class": "file-input file-input-bordered w-full"}
+        ),
     )
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'bio', 'profile_picture', 'course')
+        fields = ("email", "bio", "profile_picture", "course")
         widgets = {
-            'email': forms.EmailInput(attrs={'class': 'input input-bordered w-full'}),
-            'bio': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 4}),
-            'profile_picture': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'})
-        } 
+            "email": forms.EmailInput(attrs={"class": "input input-bordered w-full"}),
+            "bio": forms.Textarea(
+                attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
+            ),
+            "profile_picture": forms.FileInput(
+                attrs={"class": "file-input file-input-bordered w-full"}
+            ),
+        }
+
