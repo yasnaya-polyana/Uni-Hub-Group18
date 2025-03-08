@@ -41,9 +41,9 @@ $(document).ready(function() {
                         data.forEach(function(notification) {
                             var item;
                             if (notification.type === 'like') {
-                                item = $('<li><a href="' + notification.data.post_link + '" class="' + (notification.is_read ? '' : 'font-bold') + '">' + notification.data.username + ' liked your post</a></li>');
+                                item = $('<li><a href="' + notification.data.post_link + '" class="' + (notification.is_read ? '' : 'font-bold') + '">' + notification.data.sender_username + ' liked your post</a></li>');
                             } else if (notification.type === 'follow') {
-                                item = $('<li><a href="' + notification.data.profile_link + '" class="' + (notification.is_read ? '' : 'font-bold') + '">' + notification.data.username + ' started following you</a></li>');
+                                item = $('<li><a href="' + notification.data.profile_link + '" class="' + (notification.is_read ? '' : 'font-bold') + '">' + notification.data.follower_username + ' started following you</a></li>');
                             } else {
                                 item = $('<li><a href="#" class="' + (notification.is_read ? '' : 'font-bold') + '">Unknown notification type</a></li>');
                             }
