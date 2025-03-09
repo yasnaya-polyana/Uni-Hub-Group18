@@ -10,6 +10,7 @@
       <!-- Posts Column -->
       <div class="w-3/4">
         <!-- Create Post -->
+        {% include 'communities/create-post.jinja' %}
         <!-- Pinned Posts -->
         {% include 'communities/pinned-posts.jinja' %}
         <!-- Regular Posts -->
@@ -21,6 +22,6 @@
       </div>
       <!-- Sidebar -->
       {% include 'communities/page-sidebar.jinja' %}
+    </div>
   </div>
 {% endblock %}
-

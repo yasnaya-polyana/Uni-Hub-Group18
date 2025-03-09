@@ -32,17 +32,20 @@ def community_create(request):
 
 @login_required
 def community_list(request):
-    # filter these later???
-    communities = Communities.objects.all()
+    all_communities = Communities.objects.all()
+    user_communities = Communities.objects.filter(owner=request.user)
 
     return render(
-        request, "communities/community-list.jinja", {"communities": communities}
+        request,
+        "communities/community-list.jinja",
+        {"all_communities": all_communities, "user_communities": user_communities},
     )
 
 
 @login_required
 def community_detail(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
+    is_owner = request.user == community.owner
 
     # get active memberships
     membership = CommunityMember.objects.filter(
@@ -54,6 +57,8 @@ def community_detail(request, community_id: str):
     context = {
         "community": community,
         "membership": membership,
+        "owner_username": community.owner.username,
+        "is_owner": is_owner,
     }
 
     return render(request, "communities/page.jinja", context)

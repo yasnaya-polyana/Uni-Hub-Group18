@@ -32,7 +32,7 @@ class CreateCommunityForm(forms.ModelForm):
             instance.owner = self.user
         if commit:
             instance.save()
-            instance.members.add(self.user)
+            CommunityMember.objects.create(user=self.user, community=instance, role="admin")
         return instance
 
 

@@ -9,10 +9,22 @@
         <a href="{{ url('community_create') }}" class="btn btn-primary">Create Community</a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for community in communities %}
-            {% include 'communities/community-card.jinja' %}
-        {% endfor %}
+    <div class="mb-8">
+        <h2 class="text-xl font-bold mb-4">Your Created Communities</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for community in user_communities %}
+                {% include 'communities/community-card.jinja' %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-xl font-bold mb-4">All Communities</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for community in all_communities %}
+                {% include 'communities/community-card.jinja' %}
+            {% endfor %}
+        </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

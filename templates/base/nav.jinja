@@ -4,10 +4,10 @@
   </div>
 
   <div class="navbar-center">
-    <a href="{{ url('posts') }}" class="btn btn-warning">Posts</a>
-    <a href="{{ url('community_list') }}" class="btn btn-ghost">Communities</a>
+    <a href="{{ url('posts') }}" class="btn {% if request.path == url('posts') %}btn-warning{% else %}btn-ghost{% endif %}">Posts</a>
+    <a href="{{ url('community_list') }}" class="btn {% if request.path == url('community_list') %}btn-warning{% else %}btn-ghost{% endif %}">Communities</a>
     {% if user.is_authenticated %}
-    <a href="{{ url('dashboard') }}" class="btn btn-ghost">Dashboard</a>
+    <a href="{{ url('dashboard') }}" class="btn {% if request.path == url('dashboard') %}btn-warning{% else %}btn-ghost{% endif %}">Dashboard</a>
     {% endif %}
   </div>
 

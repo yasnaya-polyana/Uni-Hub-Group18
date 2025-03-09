@@ -1,4 +1,4 @@
-  <div class="w-1/4">
+<div class="w-1/4">
     <div class="bg-base-100 p-4 rounded-box shadow-lg">
       <h3 class="font-bold mb-2">About Community</h3>
       <div class="divider my-2"></div>
@@ -6,6 +6,10 @@
         <div>
           <h4 class="font-semibold">Created</h4>
           <p class="text-sm">{{ community.created_at|date("F j, Y") }}</p>
+        </div>
+        <div>
+          <h4 class="font-semibold">Created by</h4>
+          <p class="text-sm">{{ community.owner.username }}</p>
         </div>
         <div>
           <h4 class="font-semibold">Community Rules</h4>
@@ -19,4 +23,3 @@
     </div>
   </div>
 </div>
-

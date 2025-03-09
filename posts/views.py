@@ -17,8 +17,12 @@ def post_view(request, post_id: str):
         post = Post.objects.get(id=post_id)
         return render(request, "posts/post-page.jinja", {"post": post})
     elif request.method == "DELETE":
-        Post.objects.get(id=post_id).delete()
-        return redirect("/posts")
+        post = Post.objects.get(id=post_id)
+        if post.user == request.user:
+            post.delete()
+            return redirect("/posts")
+        else:
+            return HttpResponse(status=403) 
 
 
 def posts_view(request):
@@ -86,10 +90,12 @@ def post_comment(request, post_id: str):
 
 def post_pin(request, post_id: int):
     post = Post.objects.get(id=post_id)
-    post.is_pinned = not post.is_pinned
-    post.save()
-
-    return HttpResponse(status=204)
+    if post.user == request.user:
+        post.is_pinned = not post.is_pinned
+        post.save()
+        return HttpResponse(status=204)
+    else:
+        return HttpResponse(status=403)
 
 
 def post_interact(request, post_id: int, interaction: str):
