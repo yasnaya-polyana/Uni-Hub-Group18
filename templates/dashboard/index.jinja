@@ -39,15 +39,19 @@
 
         <!-- Feed Posts Section -->
         <div id="feed-section">
-            <h1 class="text-2xl font-bold mb-4">Your Feed</h1>
-            <div class="space-y-4">
-                {% with expanded=False, is_ui_child=True %}
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Your Feed</h2>
+                {% set container_id = 'feed-posts-container' %}
+                {% set default_sort = 'Newest' %}
+                {% include 'components/sort-posts.jinja' %}
+            </div>
+            
+            <div id="feed-posts-container" class="space-y-4">
                 {% for post in posts %}
                     <div class="mb-4">
                         {% include 'posts/post.jinja' %}
                     </div>
                 {% endfor %}
-                {% endwith %}
             </div>
             
             {% if posts|length == 0 %}
@@ -60,15 +64,19 @@
 
         <!-- My Posts Section (initially hidden) -->
         <div id="my-posts-section" class="hidden">
-            <h1 class="text-2xl font-bold mb-4">My Posts</h1>
-            <div class="space-y-4">
-                {% with expanded=False, is_ui_child=True %}
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">My Posts</h2>
+                {% set container_id = 'my-posts-container' %}
+                {% set default_sort = 'Newest' %}
+                {% include 'components/sort-posts.jinja' %}
+            </div>
+            
+            <div id="my-posts-container" class="space-y-4">
                 {% for post in my_posts %}
                     <div class="mb-4">
                         {% include 'posts/post.jinja' %}
                     </div>
                 {% endfor %}
-                {% endwith %}
             </div>
             
             {% if my_posts|length == 0 %}
@@ -103,4 +111,6 @@
         });
     });
 </script>
+
+{% include 'components/sort-posts-logic.jinja' %}
 {% endblock %} 

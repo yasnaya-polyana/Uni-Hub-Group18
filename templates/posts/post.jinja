@@ -1,4 +1,8 @@
-<div class="bg-base-100 shadow-xl rounded-box p-6">
+<div class="bg-base-100 shadow-xl rounded-box p-6" 
+     data-timestamp="{{ post.created_at|date('c') }}" 
+     data-likes="0" 
+     data-comments="0"
+     data-reposts="0">
     {% include 'posts/back-to-parent.jinja' %} 
     {% include 'posts/header.jinja' %}
   <div class="divider my-0"></div>

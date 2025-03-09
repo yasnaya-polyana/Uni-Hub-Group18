@@ -19,33 +19,14 @@
       />
       <script src="https://cdn.tailwindcss.com"></script>
       <script>
-        // Force clear the theme from localStorage
-        localStorage.clear();
-        
-        // Theme handling
-        document.addEventListener('DOMContentLoaded', function() {
-          // Get the toggle element
-          const themeToggle = document.getElementById('theme-toggle');
+        // Apply theme immediately to prevent flash of wrong theme
+        (function() {
+          // Get saved theme from localStorage or use default
+          const savedTheme = localStorage.getItem('theme') || 'cupcake';
           
-          // Set default theme to cupcake (a well-known DaisyUI theme)
-          const defaultTheme = 'cupcake';
-          
-          // Force apply the theme immediately
-          document.documentElement.dataset.theme = defaultTheme;
-          
-          // Set the toggle state based on the theme
-          if (themeToggle) {
-            themeToggle.checked = false;
-            
-            // Add event listener for toggle changes
-            themeToggle.addEventListener('change', function() {
-              const newTheme = this.checked ? 'dark' : 'cupcake';
-              document.documentElement.dataset.theme = newTheme;
-              localStorage.setItem('theme', newTheme);
-              console.log('Theme changed to:', newTheme);
-            });
-          }
-        });
+          // Apply theme to html element immediately
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
       </script>
     </head>
     <body class="h-[100vh]">
@@ -60,5 +41,29 @@
              id="alert-box"
              class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
     </body>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get the toggle element
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        if (themeToggle) {
+          // Get saved theme from localStorage or use default
+          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          
+          // Set the toggle state based on the saved theme
+          themeToggle.checked = savedTheme === 'dark';
+          
+          // Add event listener for toggle changes
+          themeToggle.addEventListener('change', function() {
+            const newTheme = this.checked ? 'dark' : 'cupcake';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            console.log('Theme changed to:', newTheme);
+          });
+        }
+      });
+    </script>
+    
     {% include "base/logic.jinja" %}
 </html>
