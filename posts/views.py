@@ -39,7 +39,10 @@ def post_create(request):
             post = form.save(commit=False)
             post.user = request.user
             post.save()
-            return redirect("posts")
+            
+            # Check if there's a next parameter or if we should redirect to dashboard
+            next_url = request.POST.get('next', 'dashboard')
+            return redirect(next_url)
     else:
         form = PostCreationForm()
         return render(

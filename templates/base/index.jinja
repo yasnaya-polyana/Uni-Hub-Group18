@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="cupcake">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,6 +18,35 @@
         rel="stylesheet"
       />
       <script src="https://cdn.tailwindcss.com"></script>
+      <script>
+        // Force clear the theme from localStorage
+        localStorage.clear();
+        
+        // Theme handling
+        document.addEventListener('DOMContentLoaded', function() {
+          // Get the toggle element
+          const themeToggle = document.getElementById('theme-toggle');
+          
+          // Set default theme to cupcake (a well-known DaisyUI theme)
+          const defaultTheme = 'cupcake';
+          
+          // Force apply the theme immediately
+          document.documentElement.dataset.theme = defaultTheme;
+          
+          // Set the toggle state based on the theme
+          if (themeToggle) {
+            themeToggle.checked = false;
+            
+            // Add event listener for toggle changes
+            themeToggle.addEventListener('change', function() {
+              const newTheme = this.checked ? 'dark' : 'cupcake';
+              document.documentElement.dataset.theme = newTheme;
+              localStorage.setItem('theme', newTheme);
+              console.log('Theme changed to:', newTheme);
+            });
+          }
+        });
+      </script>
     </head>
     <body class="h-[100vh]">
         {% include 'base/nav.jinja' %}

@@ -8,7 +8,7 @@ from posts.models import Post
 
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm
-from .models import CustomUser, Follow
+from .models import CustomUser, Follow, UserFollow
 
 # Create your views here.
 
@@ -69,22 +69,23 @@ def profile_view(request):
 @login_required
 def user_profile_view(request, username):
     profile_user = get_object_or_404(CustomUser, username=username)
-    is_following = Follow.objects.filter(
-        follower=request.user, followee=profile_user
-    ).exists()
-
-    if request.method == "POST":
-        if "follow" in request.POST:
-            Follow.objects.get_or_create(follower=request.user, followee=profile_user)
-        elif "unfollow" in request.POST:
-            Follow.objects.filter(follower=request.user, followee=profile_user).delete()
-        return redirect("user-profile", username=username)
-
-    return render(
-        request,
-        "accounts/profile.jinja",
-        {"profile_user": profile_user, "is_following": is_following},
-    )
+    user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+    
+    # Check if the current user is following this user
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = UserFollow.objects.filter(
+            follower=request.user, 
+            followed=profile_user
+        ).exists()
+    
+    context = {
+        'profile_user': profile_user,
+        'posts': user_posts,
+        'is_following': is_following,
+    }
+    
+    return render(request, 'accounts/profile.jinja', context)
 
 
 @login_required
@@ -99,6 +100,55 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    posts = Post.objects.filter(community__members=request.user).order_by("-created_at")
+    # Get posts from communities the user is a member of
+    community_posts = Post.objects.filter(community__members=request.user)
+    
+    # Get posts from users the current user follows
+    followed_users = request.user.user_following.values_list('followed', flat=True)
+    followed_posts = Post.objects.filter(user__in=followed_users, community__isnull=True)
+    
+    # Get the current user's own posts
+    user_posts = Post.objects.filter(user=request.user, community__isnull=True)
+    
+    # Combine and sort all posts
+    posts = (community_posts | followed_posts | user_posts).order_by("-created_at")
+    
+    # Get only the user's posts for the "My Posts" section
+    my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
+    
+    return render(request, "dashboard/index.jinja", {
+        "posts": posts,
+        "my_posts": my_posts
+    })
 
-    return render(request, "dashboard/index.jinja", {"posts": posts})
+@login_required
+def follow_user(request, username):
+    user_to_follow = get_object_or_404(CustomUser, username=username)
+    
+    # Don't allow users to follow themselves
+    if request.user == user_to_follow:
+        messages.error(request, "You cannot follow yourself.")
+        return redirect('user', username=username)
+    
+    # Check if already following
+    if UserFollow.objects.filter(follower=request.user, followed=user_to_follow).exists():
+        messages.info(request, f"You are already following {username}.")
+    else:
+        UserFollow.objects.create(follower=request.user, followed=user_to_follow)
+        messages.success(request, f"You are now following {username}.")
+    
+    return redirect('user', username=username)
+
+
+@login_required
+def unfollow_user(request, username):
+    user_to_unfollow = get_object_or_404(CustomUser, username=username)
+    
+    follow = UserFollow.objects.filter(follower=request.user, followed=user_to_unfollow).first()
+    if follow:
+        follow.delete()
+        messages.success(request, f"You have unfollowed {username}.")
+    else:
+        messages.info(request, f"You were not following {username}.")
+    
+    return redirect('user', username=username)
