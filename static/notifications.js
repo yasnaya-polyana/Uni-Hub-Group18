@@ -8,7 +8,16 @@ $(document).ready(function() {
             url: '/get_unread_notifications_count/',
             method: 'GET',
             success: function(data) {
-                $('#notifications-count').text(data.unread_count);
+                var notificationsCountElement = $('#notifications-count');
+                notificationsCountElement.text(data.unread_count);
+
+                // Hide the badge if there are no unread notifications
+                if (data.unread_count === 0) {
+                    notificationsCountElement.addClass('hidden');
+                } else {
+                    notificationsCountElement.removeClass('hidden');
+                }
+
                 // Check if the unread notifications count has changed
                 if (data.unread_count !== previousUnreadCount) {
                     notificationsLoaded = false; // Set to false if the count has changed
