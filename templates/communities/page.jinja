@@ -10,6 +10,27 @@
       <!-- Posts Column -->
       <div class="w-3/4">
         <!-- Create Post -->
+        {% if is_owner or is_moderator or user.is_superuser %}
+        <div class="card bg-base-100 shadow-lg mb-4">
+          <div class="card-body">
+            <h2 class="card-title">Create a Post</h2>
+            <form action="" method="post">
+              {% csrf_token %}
+              <div class="space-y-4">
+                <div class="form-control">
+                  <input type="text" name="title" placeholder="Post title" class="input input-bordered w-full" required>
+                </div>
+                <div class="form-control">
+                  <textarea name="body" class="textarea textarea-bordered w-full" placeholder="What's on your mind?" required></textarea>
+                </div>
+                <div class="card-actions justify-end mt-2">
+                  <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        {% endif %}
         <!-- Pinned Posts -->
         {% include 'communities/pinned-posts.jinja' %}
         <!-- Regular Posts -->
@@ -21,6 +42,6 @@
       </div>
       <!-- Sidebar -->
       {% include 'communities/page-sidebar.jinja' %}
+    </div>
   </div>
 {% endblock %}
-

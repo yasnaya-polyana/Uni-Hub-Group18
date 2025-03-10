@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="cupcake">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,6 +20,16 @@
       <script src="https://cdn.tailwindcss.com"></script>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="{{ static('notifications.js') }}"></script>
+      <script>
+        // Apply theme immediately to prevent flash of wrong theme
+        (function() {
+          // Get saved theme from localStorage or use default
+          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          
+          // Apply theme to html element immediately
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+      </script>
     </head>
     <body class="h-[100vh]">
         {% include 'base/nav.jinja' %}
@@ -33,5 +43,29 @@
              id="alert-box"
              class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
     </body>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get the toggle element
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        if (themeToggle) {
+          // Get saved theme from localStorage or use default
+          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          
+          // Set the toggle state based on the saved theme
+          themeToggle.checked = savedTheme === 'dark';
+          
+          // Add event listener for toggle changes
+          themeToggle.addEventListener('change', function() {
+            const newTheme = this.checked ? 'dark' : 'cupcake';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            console.log('Theme changed to:', newTheme);
+          });
+        }
+      });
+    </script>
+    
     {% include "base/logic.jinja" %}
 </html>

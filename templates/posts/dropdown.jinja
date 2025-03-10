@@ -1,3 +1,4 @@
+{% if post.user == request.user %}
 <details class="dropdown dropdown-end">
     <summary
       class="btn bg-transparent p-0 ml-2 border-none h-fit min-h-fit focus:outline-black"
@@ -27,4 +28,4 @@
       </li>
     </ul>
 </details>
-
+{% endif %}
