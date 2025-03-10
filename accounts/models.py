@@ -52,6 +52,19 @@ class Follow(models.Model):
         unique_together = ("follower", "followee")
 
 
+# Update the UserFollow model with different related_name values
+class UserFollow(models.Model):
+    follower = models.ForeignKey(CustomUser, related_name='user_following', on_delete=models.CASCADE)
+    followed = models.ForeignKey(CustomUser, related_name='user_followers', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'followed')
+        
+    def __str__(self):
+        return f"{self.follower.username} follows {self.followed.username}"
+
+
 from django.contrib import admin
 
 admin.site.register(CustomUser)

@@ -7,27 +7,110 @@
     <!-- Left Sidebar - Events and Communities -->
     {% include 'dashboard/sidebar.jinja' %}
 
-    <!-- Main Content - Your Feed -->
-    <div class="w-3/4 space-y-4">
-        <h1 class="text-2xl font-bold mb-4">Your Feed</h1>
-        
+    <!-- Main Content -->
+    <div class="w-3/4 space-y-8">
         <!-- Create Post Card -->
         <div class="card bg-base-100 shadow-lg">
             <div class="card-body">
-                <textarea class="textarea textarea-bordered w-full" placeholder="What's on your mind?"></textarea>
-                <div class="card-actions justify-end mt-2">
-                    <button class="btn btn-primary">Post</button>
-                </div>
+                <h2 class="card-title">Create a Post</h2>
+                <form action="{{ url('post_create') }}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="dashboard">
+                    <div class="space-y-4">
+                        <div class="form-control">
+                            <input type="text" name="title" placeholder="Post title" class="input input-bordered w-full" required>
+                        </div>
+                        <div class="form-control">
+                            <textarea name="body" class="textarea textarea-bordered w-full" placeholder="What's on your mind?" required></textarea>
+                        </div>
+                        <div class="card-actions justify-end mt-2">
+                            <button type="submit" class="btn btn-primary">Post</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Feed Posts -->
-        {% with expanded=False, is_ui_child=True %}
-        {% for post in posts %}
-            {% include 'posts/post.jinja' %}
-        {% endfor %}
-        {% endwith %}
+        <!-- Tabs for Feed and My Posts -->
+        <div class="tabs tabs-boxed">
+            <a class="tab tab-active" id="feed-tab">Your Feed</a>
+            <a class="tab" id="my-posts-tab">My Posts</a>
+        </div>
 
+        <!-- Feed Posts Section -->
+        <div id="feed-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Your Feed</h2>
+                {% set container_id = 'feed-posts-container' %}
+                {% set default_sort = 'Newest' %}
+                {% include 'components/sort-posts.jinja' %}
+            </div>
+            
+            <div id="feed-posts-container" class="space-y-4">
+                {% for post in posts %}
+                    <div class="mb-4">
+                        {% include 'posts/post.jinja' %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {% if posts|length == 0 %}
+                <div class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Your feed is empty. Follow more users or join communities to see posts here!</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- My Posts Section (initially hidden) -->
+        <div id="my-posts-section" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">My Posts</h2>
+                {% set container_id = 'my-posts-container' %}
+                {% set default_sort = 'Newest' %}
+                {% include 'components/sort-posts.jinja' %}
+            </div>
+            
+            <div id="my-posts-container" class="space-y-4">
+                {% for post in my_posts %}
+                    <div class="mb-4">
+                        {% include 'posts/post.jinja' %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {% if my_posts|length == 0 %}
+                <div class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>You haven't created any posts yet.</span>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const feedTab = document.getElementById('feed-tab');
+        const myPostsTab = document.getElementById('my-posts-tab');
+        const feedSection = document.getElementById('feed-section');
+        const myPostsSection = document.getElementById('my-posts-section');
+        
+        feedTab.addEventListener('click', function() {
+            feedTab.classList.add('tab-active');
+            myPostsTab.classList.remove('tab-active');
+            feedSection.classList.remove('hidden');
+            myPostsSection.classList.add('hidden');
+        });
+        
+        myPostsTab.addEventListener('click', function() {
+            myPostsTab.classList.add('tab-active');
+            feedTab.classList.remove('tab-active');
+            myPostsSection.classList.remove('hidden');
+            feedSection.classList.add('hidden');
+        });
+    });
+</script>
+
+{% include 'components/sort-posts-logic.jinja' %}
 {% endblock %} 

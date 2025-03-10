@@ -1,0 +1,83 @@
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sortOptions = document.querySelectorAll('.sort-option');
+    
+    sortOptions.forEach(option => {
+      option.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const sortType = this.dataset.sort;
+        const containerId = this.dataset.container;
+        const container = document.getElementById(containerId);
+        
+        if (!container) {
+          console.error(`Container with ID ${containerId} not found`);
+          return;
+        }
+        
+        const sortLabel = this.closest('.sort-posts-container').querySelector('.sort-label');
+        if (sortLabel) {
+          sortLabel.textContent = this.textContent;
+        }
+        
+        // Get all post elements in the container
+        const posts = Array.from(container.children);
+        
+        posts.sort((a, b) => {
+          switch (sortType) {
+            case 'newest':
+              return compareTimestamps(b, a); // Newest first (descending)
+            case 'oldest':
+              return compareTimestamps(a, b); // Oldest first (ascending)
+            case 'most-liked':
+              return compareLikes(b, a); // Most likes first (descending)
+            case 'most-commented':
+              return compareComments(b, a); // Most comments first (descending)
+            case 'most-reposted':
+              return compareReposts(b, a); // Most reposts first (descending)
+            default:
+              return 0;
+          }
+        });
+        
+        posts.forEach(post => {
+          container.appendChild(post);
+        });
+      });
+    });
+    
+    // compare timestamps
+    function compareTimestamps(postA, postB) {
+      const timestampA = postA.dataset.timestamp || postA.querySelector('[data-timestamp]')?.dataset.timestamp;
+      const timestampB = postB.dataset.timestamp || postB.querySelector('[data-timestamp]')?.dataset.timestamp;
+      
+      if (!timestampA || !timestampB) return 0;
+      
+      return new Date(timestampA) - new Date(timestampB);
+    }
+    
+    // compare likes
+    function compareLikes(postA, postB) {
+      const likesA = parseInt(postA.dataset.likes || postA.querySelector('[data-likes]')?.dataset.likes || 0);
+      const likesB = parseInt(postB.dataset.likes || postB.querySelector('[data-likes]')?.dataset.likes || 0);
+      
+      return likesA - likesB;
+    }
+    
+    // compare comments
+    function compareComments(postA, postB) {
+      const commentsA = parseInt(postA.dataset.comments || postA.querySelector('[data-comments]')?.dataset.comments || 0);
+      const commentsB = parseInt(postB.dataset.comments || postB.querySelector('[data-comments]')?.dataset.comments || 0);
+      
+      return commentsA - commentsB;
+    }
+    
+    // compare reposts
+    function compareReposts(postA, postB) {
+      const repostsA = parseInt(postA.dataset.reposts || postA.querySelector('[data-reposts]')?.dataset.reposts || 0);
+      const repostsB = parseInt(postB.dataset.reposts || postB.querySelector('[data-reposts]')?.dataset.reposts || 0);
+      
+      return repostsA - repostsB;
+    }
+  });
+</script> 

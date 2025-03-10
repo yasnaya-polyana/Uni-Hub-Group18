@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CreateCommunityForm
 from .models import Communities, CommunityMember
-
+from posts.forms import PostCreationForm
 
 @login_required
 def community_create(request):
@@ -47,6 +47,23 @@ def community_detail(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     is_owner = request.user == community.owner
 
+    # Check if the user is a moderator
+    is_moderator = CommunityMember.objects.filter(
+        user=request.user, community=community, role="moderator"
+    ).exists()
+
+    # Handle post creation
+    if request.method == "POST":
+        form = PostCreationForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.community = community
+            post.save()
+            return redirect("community_detail", community_id=community_id)
+    else:
+        form = PostCreationForm()
+
     # get active memberships
     membership = CommunityMember.objects.filter(
         user=request.user,
@@ -59,6 +76,8 @@ def community_detail(request, community_id: str):
         "membership": membership,
         "owner_username": community.owner.username,
         "is_owner": is_owner,
+        "is_moderator": is_moderator,
+        "form": form,
     }
 
     return render(request, "communities/page.jinja", context)
@@ -104,10 +123,11 @@ def community_delete(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     user = request.user
 
-    if not user.is_superuser:
+    if not user.is_superuser and user != community.owner:
         return HttpResponse(status=403)
 
     community.delete()
+    messages.success(request, f"Community '{community.name}' has been deleted.")
 
     return redirect("community_list")
 

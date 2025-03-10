@@ -9,6 +9,7 @@
         <a href="{{ url('community_create') }}" class="btn btn-primary">Create Community</a>
     </div>
 
+    {% if user_communities %}
     <div class="mb-8">
         <h2 class="text-xl font-bold mb-4">Your Created Communities</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -17,6 +18,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     <div>
         <h2 class="text-xl font-bold mb-4">All Communities</h2>
