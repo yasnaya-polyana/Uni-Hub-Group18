@@ -1,0 +1,26 @@
+{% extends 'base/index.jinja' %}
+{% include 'posts/post-logic.jinja' %}
+{% block title %}{{ community.name }}{% endblock %}
+{% block content %}
+  <div class="max-w-6xl mx-auto">
+    <!-- Community Header -->
+    {% include 'communities/page-header.jinja' %}
+    <!-- Main Content Area -->
+    <div class="flex gap-4">
+      <!-- Posts Column -->
+      <div class="w-3/4">
+        <!-- Create Post -->
+        <!-- Pinned Posts -->
+        {% include 'communities/pinned-posts.jinja' %}
+        <!-- Regular Posts -->
+        <div class="flex flex-col space-y-4">
+        {% for post in community.posts.filter(is_pinned=False, parent_post__isnull=True) %}
+          {% include 'posts/post.jinja' %}
+        {% endfor %}
+        </div>
+      </div>
+      <!-- Sidebar -->
+      {% include 'communities/page-sidebar.jinja' %}
+  </div>
+{% endblock %}
+

@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
-from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 # Create your models here.
+
 
 # Course Types
 #
@@ -14,14 +15,43 @@ class Course(models.Model):
     def __str__(self):
         return self.course_name
 
-# Student Account Creation 
+
+# Student Account Creation
 #
 #
 class CustomUser(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
-    student_id = models.CharField(max_length=8, validators=[MinLengthValidator(8), MaxLengthValidator(8)], unique=True, null=True, blank=False)
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    student_id = models.CharField(
+        max_length=8,
+        validators=[MinLengthValidator(8), MaxLengthValidator(8)],
+        unique=True,
+        null=True,
+        blank=False,
+    )
+    profile_picture = models.ImageField(
+        upload_to="profile_pics/", null=True, blank=True
+    )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.username
+
+
+# Follow Model
+#
+#
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        CustomUser, related_name="following", on_delete=models.CASCADE
+    )
+    followee = models.ForeignKey(
+        CustomUser, related_name="followers", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ("follower", "followee")
+
+
+from django.contrib import admin
+
+admin.site.register(CustomUser)

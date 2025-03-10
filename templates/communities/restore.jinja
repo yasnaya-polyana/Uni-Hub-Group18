@@ -1,0 +1,6 @@
+<h1>Community '{{ community_id }}' already exists.</h1>
+<form action="{{ url('community_restore', community_id) }}"
+      method="post">
+  {% csrf_token %}
+  <button class="btn btn-error ml-auto" type="submit">Restore Community</button>
+</form>

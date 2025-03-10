@@ -1,0 +1,32 @@
+<div class="card bg-base-100 shadow-lg">
+    <div class="card-body">
+        <div class="flex items-center gap-3 mb-4">
+            {% if community.icon_url %}
+                <div class="avatar">
+                    <div class="w-12 rounded-full">
+                        <img src="{{ community.icon_url }}" alt="{{ community.name }} Icon" />
+                    </div>
+                </div>
+            {% else %}
+                <div class="avatar placeholder">
+                    <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                        <span>{{ community.name[:2]|upper }}</span>
+                    </div>
+                </div>
+            {% endif %}
+            <div>
+                <h3 class="font-bold">{{ community.name }}</h3>
+                {% if community.members.count() == 1 %}
+                    <p class="text-sm text-base-content/60">{{ community.members.count() }} member</p>
+                {% else %}
+                    <p class="text-sm text-base-content/60">{{ community.members.count() }} members</p>
+                {% endif %}
+            </div>
+        </div>
+        <p>{{ community.description }}</p>
+        <div class="card-actions justify-end mt-4">
+            <a href="{{ url('community_detail', community_id=community.id) }}" class="btn btn-primary btn-sm">View Community</a>
+        </div>
+    </div>
+</div>
+
