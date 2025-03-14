@@ -49,10 +49,10 @@
         <li>
           <a href="{{ url('my_profile') }}" class="hover:bg-primary/10">Profile</a>
         </li>
-        <li>
-          <form method="post" action="{{ url('logout') }}">
+        <li class="hover:bg-primary/10 w-full text-left" onclick="document.getElementById('logout-form').submit();">
+          <form id="logout-form" method="post" action="{{ url('logout') }}">
             {% csrf_token %}
-            <button type="submit" class="hover:bg-primary/10 w-full text-left">Logout</button>
+            <button type="submit" class="w-full text-left">Logout</button>
           </form>
         </li>
       </ul>
