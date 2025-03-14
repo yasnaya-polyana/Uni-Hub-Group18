@@ -4,7 +4,7 @@
   </div>
 
   <div class="navbar-center">
-        <a href="{{ url('events') }}" class="btn {% if request.path == url('events') %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Events</a>
+    <a href="{{ url('events') }}" class="btn {% if request.path == url('events') %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Events</a>
     <a href="{{ url('community_list') }}" class="btn {% if '/c/' in request.path %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Communities</a>
     {% if user.is_authenticated %}
     <a href="{{ url('dashboard') }}" class="btn {% if request.path == url('dashboard') %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Dashboard</a>
@@ -29,18 +29,27 @@
 
     {% if user.is_authenticated %}
     <div class="dropdown dropdown-end">
-                    <label tabindex="0" class="btn btn-ghost btn-circle" id="notifications-button">
-                        <div class="indicator">
-                            <span class="indicator-item badge badge-secondary hidden" id="notifications-count"></span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v2a2 2 0 11-4 0v-2m4 0H9" />
-                            </svg>
-                        </div>
-                    </label>
-                    <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 hidden" id="notifications-dropdown">
-                        <li><span>Loading...</span></li>
-                    </ul>
-                </div>
+      <label tabindex="0" class="btn btn-ghost btn-circle" id="notifications-button" onclick="loadNotifications()">
+        <div class="indicator">
+            <span class="indicator-item badge badge-secondary hidden" id="notifications-count"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v2a2 2 0 11-4 0v-2m4 0H9" />
+            </svg>
+        </div>
+      </label>
+      <div tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-72 hidden" id="notifications-dropdown">
+        <div class="menu-title p-2 text-lg text-base-content font-bold border-b text-center"><span>Notifications</span></div>
+        <div id="notifications-container">
+            <br>
+            <ul id="notifications-list" class="text-center h-40 overflow-y-auto">
+                <li><span>Loading...</span></li>
+            </ul>
+        </div>
+        <div class="notification-footer p-1 text-center" id="dropdown-footer">
+        <a href="{{ url('notifications') }}" class="btn btn-ghost btn-sm w-full mt-2">View all notifications</a>
+        </div>
+      </div>
+    </div>
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
@@ -76,3 +85,4 @@
     {% endif %}
   </div>
 </div>
+{% include 'notifications/dropdown-logic.jinja' %}

@@ -57,6 +57,7 @@ urlpatterns = [
         name="post_interact",
     ),
     # Notifications
+    path('notifications/', notif_views.notifications_view, name='notifications'),
     path('get_notifications/', notif_views.get_notifications, name='get_notifications'),
     path('get_unread_notifications_count/', notif_views.get_unread_notifications_count, name='get_unread_notifications_count'),
     # Communities

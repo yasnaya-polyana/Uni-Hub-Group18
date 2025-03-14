@@ -4,7 +4,7 @@ from accounts.models import CustomUser
 # Create your models here.
 class Notification(models.Model):
     id = models.AutoField(primary_key=True)
-    username = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    username = models.ForeignKey(CustomUser, to_field='username', on_delete=models.CASCADE)
     type = models.CharField(max_length=50, default="default_type")
     data = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)

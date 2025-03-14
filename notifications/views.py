@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Notification
@@ -22,3 +22,8 @@ def get_notifications(request):
 def get_unread_notifications_count(request):
     unread_count = Notification.objects.filter(username=request.user, is_read=False).count()
     return JsonResponse({'unread_count': unread_count})
+
+@login_required
+def notifications_view(request):
+    notifications = Notification.objects.filter(username=request.user).order_by('-created_at')
+    return render(request, 'notifications/notifications.jinja', {'notifications': notifications})

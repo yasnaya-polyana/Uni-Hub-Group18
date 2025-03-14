@@ -9,6 +9,7 @@ from posts.models import Post
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm
 from .models import CustomUser, Follow, UserFollow
+from notifications.manager import NotificationManager
 
 # Create your views here.
 
@@ -136,6 +137,7 @@ def follow_user(request, username):
     else:
         UserFollow.objects.create(follower=request.user, followed=user_to_follow)
         messages.success(request, f"You are now following {username}.")
+        NotificationManager.send_follow(username, request.user.username)
     
     return redirect('user', username=username)
 

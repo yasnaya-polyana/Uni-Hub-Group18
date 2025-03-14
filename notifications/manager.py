@@ -1,26 +1,48 @@
 from .models import Notification
 from accounts.models import CustomUser
+from posts.models import Post
+from django.urls import reverse
 
 class NotificationManager:
     @staticmethod
-    def create_follow(username,follower_username):
+    def send_follow(username,follower_username):
         user = CustomUser.objects.get(username=username)
         follower = CustomUser.objects.get(username=follower_username)
+        profile_link = reverse('user', kwargs={'username': follower})
         notification = Notification.objects.create(
             username=user,
             type='follow',
-            data={'follower_username': follower.username}
+            data={'follower_username': follower.username,
+                  'profile_link':profile_link,
+                  }
             )
         return notification
     
     @staticmethod 
-    def create_like(username, sender_username, post_id):
+    def send_like(username,liker, post_id):
         user = CustomUser.objects.get(username=username)
-        sender = CustomUser.objects.get(username=sender_username)
+        liker = CustomUser.objects.get(username=liker)
+        post = Post.objects.get(id=post_id)
+        post_link = reverse('post', kwargs={'id':post})
         notification = Notification.objects.create(
             username=user,
             type='like',
-            data={'sender_username':sender.username
-                  #,'post_link': post_id (WIP // need to figure how the format of the url for posts)
+            data={'liker_username':liker.username
+                  ,'post_link': post_link
+                  }
+        )
+        return notification
+    
+    @staticmethod 
+    def send_comment(username,commenter, post_id):
+        user = CustomUser.objects.get(username=username)
+        commenter = CustomUser.objects.get(username=commenter)
+        post = Post.objects.get(id=post_id)
+        post_link = reverse('post', kwargs={'id':post})
+        notification = Notification.objects.create(
+            username=user,
+            type='comment',
+            data={'commenter_username':user.username
+                  ,'post_link': post_link
                   }
         )
