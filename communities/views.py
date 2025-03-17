@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CreateCommunityForm
+from .forms import CreateCommunityForm, EditCommunityForm
 from .models import Communities, CommunityMember
 from posts.forms import PostCreationForm
 
@@ -29,6 +29,24 @@ def community_create(request):
 
     return render(request, "communities/create.jinja", {"form": form})
 
+@login_required
+def community_edit(request, community_id):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    if not user.is_superuser and user != community.owner and not CommunityMember.objects.filter(user=user, community=community, role="moderator").exists():
+        return HttpResponse(status=403)
+
+    if request.method == "POST":
+        form = EditCommunityForm(request.POST, request.FILES, instance=community)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Community details updated successfully!")
+            return redirect("community_detail", community_id=community_id)
+    else:
+        form = EditCommunityForm(instance=community)
+    
+    return render(request, "communities/community-edit.jinja", {"form": form, "community": community})
 
 @login_required
 def community_list(request):
@@ -47,15 +65,17 @@ def community_detail(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     is_owner = request.user == community.owner
 
-    # Check if the user is a moderator
     is_moderator = CommunityMember.objects.filter(
         user=request.user, community=community, role="moderator"
     ).exists()
 
-    # Handle post creation
+    is_member = CommunityMember.objects.filter(
+        user=request.user, community=community, role="member"
+    ).exists()
+
     if request.method == "POST":
         form = PostCreationForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and (is_owner or is_moderator or is_member):
             post = form.save(commit=False)
             post.user = request.user
             post.community = community
@@ -64,11 +84,9 @@ def community_detail(request, community_id: str):
     else:
         form = PostCreationForm()
 
-    # get active memberships
     membership = CommunityMember.objects.filter(
         user=request.user,
         community=community,
-        # deleted_at__isnull=True
     ).first()
 
     context = {
@@ -77,9 +95,9 @@ def community_detail(request, community_id: str):
         "owner_username": community.owner.username,
         "is_owner": is_owner,
         "is_moderator": is_moderator,
+        "is_member": is_member,
         "form": form,
     }
-
     return render(request, "communities/page.jinja", context)
 
 
@@ -131,6 +149,35 @@ def community_delete(request, community_id: str):
 
     return redirect("community_list")
 
+@login_required
+def request_member(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    membership = CommunityMember.objects.filter(user=user, community=community).first()
+    if membership and membership.role == "subscriber":
+        membership.role = "member"
+        membership.save()
+        messages.success(request, f"You have requested to become a member of {community.name}.")
+    else:
+        messages.error(request, "You are not eligible to request member status.")
+
+    return redirect("community_detail", community_id=community_id)
+
+@login_required
+def request_mod(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    membership = CommunityMember.objects.filter(user=user, community=community).first()
+    if membership and membership.role == "member":
+        membership.role = "moderator"
+        membership.save()
+        messages.success(request, f"You have requested to become a moderator of {community.name}.")
+    else:
+        messages.error(request, "You are not eligible to request moderator status.")
+
+    return redirect("community_detail", community_id=community_id)
 
 @login_required
 def community_restore(request, community_id: str):

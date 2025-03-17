@@ -83,7 +83,10 @@ urlpatterns = [
         community_views.community_restore,
         name="community_restore",
     ),
-    # Events
+    path("c/<str:community_id>/request_member", community_views.request_member, name="request_member"),
+    path("c/<str:community_id>/request_mod", community_views.request_mod, name="request_mod"),
+    path('c/<str:community_id>/edit', community_views.community_edit, name='community_edit'),
+
     path("events/", event_views.events_list, name="events"),
     # Password Reset
     path(

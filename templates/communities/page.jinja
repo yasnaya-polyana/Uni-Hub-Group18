@@ -10,7 +10,7 @@
       <!-- Posts Column -->
       <div class="w-3/4">
         <!-- Create Post -->
-        {% if is_owner or is_moderator or user.is_superuser %}
+        {% if is_member or is_owner or is_moderator or user.is_superuser %}
         <div class="card bg-base-100 shadow-lg mb-4">
           <div class="card-body">
             <h2 class="card-title">Create a Post</h2>

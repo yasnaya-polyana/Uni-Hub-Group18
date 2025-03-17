@@ -1,4 +1,4 @@
-{% if post.user == request.user %}
+{% if post.user == request.user or is_moderator %}
 <details class="dropdown dropdown-end">
     <summary
       class="btn bg-transparent p-0 ml-2 border-none h-fit min-h-fit focus:outline-black"
@@ -15,6 +15,7 @@
           <span class="hover:text-blue-400">Delete</span>
         </button>
       </li>
+      {% if is_moderator or is_owner or is_superuser %}
       <li>
         <button onclick="pinPost('{{ post.id }}')">
           <span class="hover:text-blue-400">
@@ -26,6 +27,7 @@
           </span>
         </button>
       </li>
+      {% endif %}
     </ul>
 </details>
 {% endif %}
