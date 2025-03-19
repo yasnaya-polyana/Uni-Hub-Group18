@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -36,6 +37,18 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+# User Settings Model
+#
+#
+class UserSettings(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    like_notifications = models.BooleanField(default=True)
+    comment_notifications = models.BooleanField(default=True)
+    follow_notifications = models.BooleanField(default=True)
+    # Add other notification preferences as needed
+
+    def __str__(self):
+        return f"{self.user.username}'s Settings"
 
 # Follow Model
 #

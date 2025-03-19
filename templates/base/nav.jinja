@@ -72,6 +72,9 @@
           <a href="{{ url('my_profile') }}" class="hover:bg-primary/10">Profile</a>
         </li>
         <li>
+        <a href="{{ url('user_settings') }}">Settings</a>
+        </li>
+        <li>
           <form method="post" action="{{ url('logout') }}">
             {% csrf_token %}
             <button type="submit" class="hover:bg-primary/10 w-full text-left">Logout</button>
