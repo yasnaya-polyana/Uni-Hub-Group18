@@ -30,6 +30,13 @@
           document.documentElement.setAttribute('data-theme', savedTheme);
         })();
       </script>
+
+      <!-- Markdown Editor -->
+      <link
+        href="{{ static('simplemde/simplemde.min.css') }}"
+        rel="stylesheet"
+      />
+      <script src="{{ static('simplemde/simplemde.min.js') }}"></script>
     </head>
     <body class="h-[100vh]">
         {% include 'base/nav.jinja' %}

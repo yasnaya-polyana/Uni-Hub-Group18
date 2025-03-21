@@ -39,6 +39,7 @@ def posts_view(request):
 def post_create(request):
     if request.method == "POST":
         form = PostCreationForm(request.POST)
+        
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
@@ -49,9 +50,11 @@ def post_create(request):
             return redirect(next_url)
     else:
         form = PostCreationForm()
-        return render(
-            request, "posts/create-post.jinja", {"form": form, "is_comment": False}
-        )
+    
+    # bug fix: ValueError
+    return render(
+        request, "posts/create-post.jinja", {"form": form, "is_comment": False}
+    )
 
 
 def post_repost(request, post_id: str):
