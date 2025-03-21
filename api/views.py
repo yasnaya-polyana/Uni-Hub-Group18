@@ -1,4 +1,5 @@
 from rest_framework import generics
+from communities.models import Communities
 from accounts.models import CustomUser
 from .serializers import CustomUserSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +20,29 @@ class UserProfileDetail(generics.RetrieveAPIView):
         return user
     
 User = get_user_model()
+
+@login_required
+@require_GET
+def community_search_api(request):
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return JsonResponse([], safe=False)
+
+    communities = Communities.objects.filter(
+        Q(id__icontains=query) |
+        Q(name__icontains=query)
+    )[:10]  # Limit to 10 results
+
+    results = [
+        {
+            "display_name": community.name,
+            "id": community.id
+        }
+        for community in communities
+    ]
+
+    return JsonResponse(results, safe=False)
 
 @login_required
 @require_GET

@@ -29,6 +29,8 @@ class Post(models.Model):
 
     is_pinned = models.BooleanField(default=False)
 
+    mentioned_users = models.ManyToManyField(CustomUser, related_name="mentioned_in")
+
     parent_post = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="comments"
     )
@@ -38,7 +40,6 @@ class Post(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "title", "parent_post", "created_at")

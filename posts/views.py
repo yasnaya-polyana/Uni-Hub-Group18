@@ -1,5 +1,6 @@
 import logging
 
+import re
 import bleach
 import markdown
 from django.http import HttpResponse
@@ -8,6 +9,8 @@ from django.shortcuts import redirect, render
 from md_extensions.tailwind import TailwindExtension
 from posts.forms import PostCreationForm
 from posts.models import Interaction, Post
+
+from accounts.models import CustomUser
 
 log = logging.getLogger("app")
 
@@ -43,7 +46,17 @@ def post_create(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
+
             post.save()
+
+            # Find mentioned users
+            mention_pattern = re.compile(r'\[@([a-zA-Z0-9_]+)\]')
+            mentions = mention_pattern.findall(post.body)
+
+            # print mentioned users
+            for username in mentions:
+                m_user = CustomUser.objects.get(username = username)
+                post.mentioned_users.add(m_user)
             
             # Check if there's a next parameter or if we should redirect to dashboard
             next_url = request.POST.get('next', 'dashboard')

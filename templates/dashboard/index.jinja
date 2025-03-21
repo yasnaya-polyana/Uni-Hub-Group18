@@ -3,12 +3,14 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="flex gap-4">
+<div class="flex flex-col md:flex-row gap-4">
     <!-- Left Sidebar - Events and Communities -->
-    {% include 'dashboard/sidebar.jinja' %}
+    <div class="w-full md:w-1/4 mb-4 md:mb-0 order-1 md:order-1">
+        {% include 'dashboard/sidebar.jinja' %}
+    </div>
 
     <!-- Main Content -->
-    <div class="w-3/4 space-y-8">
+    <div class="w-full md:w-3/4 space-y-8 order-2 md:order-2">
         <!-- Create Post Card -->
         <div class="card bg-base-100 shadow-lg">
             <div class="card-body">
@@ -37,54 +39,57 @@
             <a class="tab" id="my-posts-tab">My Posts</a>
         </div>
 
-        <!-- Feed Posts Section -->
-        <div id="feed-section">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Your Feed</h2>
-                {% set container_id = 'feed-posts-container' %}
-                {% set default_sort = 'Newest' %}
-                {% include 'components/sort-posts.jinja' %}
-            </div>
-            
-            <div id="feed-posts-container" class="space-y-4">
-                {% for post in posts %}
-                    <div class="mb-4">
-                        {% include 'posts/post.jinja' %}
-                    </div>
-                {% endfor %}
-            </div>
-            
-            {% if posts|length == 0 %}
-                <div class="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>Your feed is empty. Follow more users or join communities to see posts here!</span>
+        <!-- Post Content Container (shared between tabs) -->
+        <div class="post-content">
+            <!-- Feed Posts Section -->
+            <div id="feed-section">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Your Feed</h2>
+                    {% set container_id = 'feed-posts-container' %}
+                    {% set default_sort = 'Newest' %}
+                    {% include 'components/sort-posts.jinja' %}
                 </div>
-            {% endif %}
-        </div>
+                
+                <div id="feed-posts-container" class="space-y-4">
+                    {% for post in posts %}
+                        <div class="mb-4 w-full">
+                            {% include 'posts/post.jinja' %}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                {% if posts|length == 0 %}
+                    <div class="alert">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Your feed is empty. Follow more users or join communities to see posts here!</span>
+                    </div>
+                {% endif %}
+            </div>
 
-        <!-- My Posts Section (initially hidden) -->
-        <div id="my-posts-section" class="hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">My Posts</h2>
-                {% set container_id = 'my-posts-container' %}
-                {% set default_sort = 'Newest' %}
-                {% include 'components/sort-posts.jinja' %}
-            </div>
-            
-            <div id="my-posts-container" class="space-y-4">
-                {% for post in my_posts %}
-                    <div class="mb-4">
-                        {% include 'posts/post.jinja' %}
-                    </div>
-                {% endfor %}
-            </div>
-            
-            {% if my_posts|length == 0 %}
-                <div class="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>You haven't created any posts yet.</span>
+            <!-- My Posts Section (initially hidden) -->
+            <div id="my-posts-section" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">My Posts</h2>
+                    {% set container_id = 'my-posts-container' %}
+                    {% set default_sort = 'Newest' %}
+                    {% include 'components/sort-posts.jinja' %}
                 </div>
-            {% endif %}
+                
+                <div id="my-posts-container" class="space-y-4">
+                    {% for post in my_posts %}
+                        <div class="mb-4 w-full">
+                            {% include 'posts/post.jinja' %}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                {% if my_posts|length == 0 %}
+                    <div class="alert">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>You haven't created any posts yet.</span>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

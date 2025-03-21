@@ -32,7 +32,7 @@ class PostCreationForm(forms.ModelForm):
         required=True,
         label="Body",
         min_length=3,
-        max_length=60,
+        max_length=1000,
         # Add validators?
     )
 
