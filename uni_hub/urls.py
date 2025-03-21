@@ -59,8 +59,9 @@ urlpatterns = [
     ),
     # Notifications
     path('notifications/', notif_views.notifications_view, name='notifications'),
-    path('get_notifications/', notif_views.get_notifications, name='get_notifications'),
+    path('get_unread_notifications/', notif_views.get_unread_notifications, name='get_unread_notifications'),
     path('get_unread_notifications_count/', notif_views.get_unread_notifications_count, name='get_unread_notifications_count'),
+    path('mark_all_as_read/', notif_views.mark_all_as_read, name='mark_all_as_read'),
     # Communities
     path("c/", community_views.community_list, name="community_list"),
     path("c/create", community_views.community_create, name="community_create"),

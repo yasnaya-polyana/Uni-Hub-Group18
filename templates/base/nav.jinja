@@ -38,7 +38,26 @@
         </div>
       </label>
       <div tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-72 hidden" id="notifications-dropdown">
-        <div class="menu-title p-2 text-lg text-base-content font-bold border-b text-center"><span>Notifications</span></div>
+        <div class="menu-title p-2 text-lg text-base-content font-bold border-b text-center flex justify-between items-center">
+          <span>Notifications</span>
+          <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle" onclick="toggleEllipsisMenu()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h.01M12 12h.01M18 12h.01M6 12h.01M12 12h.01M18 12h.01M6 12h.01M12 12h.01M18 12h.01" />
+              </svg>
+            </label>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 hidden" id="ellipsis-menu">
+              <li>
+                <button id="mark-all-as-read-button" class="flex items-center font-normal">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Mark all as read
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
         <div id="notifications-container">
             <br>
             <ul id="notifications-list" class="text-center h-40 overflow-y-auto">
