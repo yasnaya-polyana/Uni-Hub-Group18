@@ -36,6 +36,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not hasattr(self, 'usersettings'):
+            UserSettings.objects.create(user=self)
 
 # User Settings Model
 #
