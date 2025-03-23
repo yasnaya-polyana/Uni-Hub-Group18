@@ -6,28 +6,50 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import CreateCommunityForm, EditCommunityForm
 from .models import Communities, CommunityMember
 from posts.forms import PostCreationForm
+from notifications.manager import NotificationManager
+from accounts.models import CustomUser
 
 @login_required
 def community_create(request):
     if request.method == "POST":
         form = CreateCommunityForm(request.POST, user=request.user)
         if form.is_valid():
-
             com = form.save(commit=False)
-            print(com.id)
-
-            check_community = Communities.all_objects.filter(id=com.id).count()
-            if check_community > 0:
-                return render(
-                    request, "communities/restore.jinja", {"community_id": com.id}
-                )
-
+            com.status = 'pending'
             com.save()
+            
+            # Send notification to superuser
+            superuser = CustomUser.objects.filter(is_superuser=True).first()
+            NotificationManager.send_community_request(superuser, com)
+            
+            messages.success(request, "Community created and is pending approval.")
             return redirect("/c")
     else:
         form = CreateCommunityForm(user=request.user)
 
     return render(request, "communities/create.jinja", {"form": form})
+
+@login_required
+def approve_community(request, community_id: str):
+    if not request.user.is_superuser:
+        return HttpResponse(status=403)
+    
+    community = get_object_or_404(Communities, id=community_id)
+    community.status = 'approved'
+    community.save()
+    messages.success(request, f"Community '{community.name}' has been approved.")
+    return redirect("community_list")
+
+@login_required
+def reject_community(request, community_id: str):
+    if not request.user.is_superuser:
+        return HttpResponse(status=403)
+    
+    community = get_object_or_404(Communities, id=community_id)
+    community.status = 'rejected'
+    community.save()
+    messages.success(request, f"Community '{community.name}' has been rejected.")
+    return redirect("community_list")
 
 @login_required
 def community_edit(request, community_id):
@@ -50,8 +72,8 @@ def community_edit(request, community_id):
 
 @login_required
 def community_list(request):
-    all_communities = Communities.objects.all()
-    user_communities = Communities.objects.filter(owner=request.user)
+    all_communities = Communities.objects.filter(status='approved')
+    user_communities = Communities.objects.filter(owner=request.user, status='approved')
 
     return render(
         request,

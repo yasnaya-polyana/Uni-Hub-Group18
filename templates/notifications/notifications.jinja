@@ -1,0 +1,51 @@
+{% extends 'base/index.jinja' %}
+
+{% block title %}Notifications{% endblock %}
+{% block content %}
+
+<div class="card max-w-4xl mx-auto bg-base-100 shadow-lg p-5 pr-8 pl-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Notifications</h1>
+    </div>
+
+    <ul class="list-none">
+        {% for notification in notifications %}
+        <li class="flex items-center mb-4">
+            <img src="{{ notification.data.user_avatar_url }}" alt="" class="w-8 h-8 rounded-full mr-2">
+            <div class="flex-1">
+                {% if notification.type == 'like' %}
+                <a href="{{ notification.data.post_link }}">
+                    <strong>{{ notification.data.liker_username }}</strong> liked your post.
+                </a>
+                {% elif notification.type == 'follow' %}
+                <a href="{{ notification.data.profile_link }}">
+                    <strong>{{ notification.data.follower_username }}</strong> started following you.
+                </a>
+                {% elif notification.type == 'community_request' %}
+                <span>{{ notification.data.requester_username }} has requested to create {{ notification.data.community_name }}</span>
+                <div class="flex justify-end space-x-2">
+                    <form action="{{ url('approve_community', notification.data.community_id) }}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                    </form>
+                    <form action="{{ url('reject_community', notification.data.community_id) }}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                    </form>
+                </div>
+                {% else %}
+                <a href="#" class="{{ 'font-bold' if not notification.is_read else '' }}">
+                    Unknown notification type
+                </a>
+                {% endif %}
+            </div>
+            <div class="text-sm text-gray-500 text-right">{{ notification.created_at.strftime('%B %d, %Y, %I:%M %p') }}</div>
+        </li>
+        {% else %}
+        <li><span>No new notifications</span></li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+{% endblock %}

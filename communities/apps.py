@@ -31,6 +31,7 @@ class CommunitiesConfig(AppConfig):
 
                 com = Communities(**com_data)
                 com.owner = user
+                com.status = "approved"
                 com.save()
                 print(f"Created #{name} community.")
 

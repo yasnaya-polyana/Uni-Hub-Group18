@@ -7,8 +7,9 @@ from django.views.generic import TemplateView
 from posts.models import Post
 
 from .decorators import anonymous_required
-from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm
-from .models import CustomUser, Follow, UserFollow
+from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm, UserSettingsForm
+from .models import CustomUser, Follow, UserFollow, UserSettings
+from notifications.manager import NotificationManager
 
 # Create your views here.
 
@@ -56,6 +57,18 @@ def edit_profile(request):
     else:
         form = ProfileEditForm(instance=request.user)
     return render(request, "accounts/edit-profile.jinja", {"form": form})
+
+@login_required
+def user_settings_view(request):
+    user_settings, created = UserSettings.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = UserSettingsForm(request.POST, instance=user_settings)
+        if form.is_valid():
+            form.save()
+            return redirect('user_settings')
+    else:
+        form = UserSettingsForm(instance=user_settings)
+    return render(request, 'accounts/user_settings.jinja', {'form': form})
 
 
 # viewing your own profile
@@ -136,6 +149,7 @@ def follow_user(request, username):
     else:
         UserFollow.objects.create(follower=request.user, followed=user_to_follow)
         messages.success(request, f"You are now following {username}.")
+        NotificationManager.send_follow(username, request.user.username)
     
     return redirect('user', username=username)
 
