@@ -70,3 +70,17 @@ class NotificationManager:
             }
         )
         return notification
+
+    @staticmethod
+    def send_role_request(owner, community, requester, role):
+        notification = Notification.objects.create(
+            username=owner,
+            type='role_request',
+            data={
+                'community_id': community.id,
+                'community_name': community.name,
+                'requested_role': role,
+                'requester_username': requester.username
+            }
+        )
+        return notification

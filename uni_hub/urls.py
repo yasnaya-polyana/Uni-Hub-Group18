@@ -64,6 +64,8 @@ urlpatterns = [
     path('mark_all_as_read/', notif_views.mark_all_as_read, name='mark_all_as_read'),
     path('c/<str:community_id>/approve', notif_views.approve_community, name='approve_community'),
     path('c/<str:community_id>/reject', notif_views.reject_community, name='reject_community'),
+    path('c/<str:community_id>/approve_role/<str:role>', notif_views.approve_role, name='approve_role'),
+    path('c/<str:community_id>/reject_role/<str:role>', notif_views.reject_role, name='reject_role'),
 
     # Communities
     path("c/", community_views.community_list, name="community_list"),
@@ -93,8 +95,7 @@ urlpatterns = [
         community_views.community_restore,
         name="community_restore",
     ),
-    path("c/<str:community_id>/request_member", community_views.request_member, name="request_member"),
-    path("c/<str:community_id>/request_mod", community_views.request_mod, name="request_mod"),
+    path("c/<str:community_id>/request_role/<str:role>", community_views.request_role, name="request_role"),
     path('c/<str:community_id>/edit', community_views.community_edit, name='community_edit'),
 
     path("events/", event_views.events_list, name="events"),

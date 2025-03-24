@@ -21,21 +21,19 @@
             {% csrf_token %}
             <button class="btn btn-danger ml-auto" type="submit">Leave Community</button>
           </form>
-          {% if membership.role == 'subscriber' %}
+        {% if membership.role == 'subscriber' %}
             <!-- Request Member Button -->
-            <form action="{{ url('request_member', community.id) }}"
-                  method="post">
-              {% csrf_token %}
-              <button class="btn btn-secondary ml-2" type="submit">Request Member</button>
+            <form action="{{ url('request_role', community.id, 'member') }}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-secondary ml-2" type="submit" {% if membership.role == 'pending_member' %}disabled{% endif %}>Request Member</button>
             </form>
-          {% elif membership.role == 'member' %}
+        {% elif membership.role == 'member' %}
             <!-- Request Mod Button -->
-            <form action="{{ url('request_mod', community.id) }}"
-                  method="post">
-              {% csrf_token %}
-              <button class="btn btn-secondary ml-2" type="submit">Request Mod</button>
+            <form action="{{ url('request_role', community.id, 'moderator') }}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-secondary ml-2" type="submit" {% if membership.role == 'pending_moderator' %}disabled{% endif %}>Request Mod</button>
             </form>
-          {% endif %}
+        {% endif %}
         {% else %}
           <!-- Join Community Button -->
           <form action="{{ url('community_join', community.id) }}"

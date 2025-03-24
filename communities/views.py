@@ -30,28 +30,6 @@ def community_create(request):
     return render(request, "communities/create.jinja", {"form": form})
 
 @login_required
-def approve_community(request, community_id: str):
-    if not request.user.is_superuser:
-        return HttpResponse(status=403)
-    
-    community = get_object_or_404(Communities, id=community_id)
-    community.status = 'approved'
-    community.save()
-    messages.success(request, f"Community '{community.name}' has been approved.")
-    return redirect("community_list")
-
-@login_required
-def reject_community(request, community_id: str):
-    if not request.user.is_superuser:
-        return HttpResponse(status=403)
-    
-    community = get_object_or_404(Communities, id=community_id)
-    community.status = 'rejected'
-    community.save()
-    messages.success(request, f"Community '{community.name}' has been rejected.")
-    return redirect("community_list")
-
-@login_required
 def community_edit(request, community_id):
     community = get_object_or_404(Communities, id=community_id)
     user = request.user
@@ -172,32 +150,23 @@ def community_delete(request, community_id: str):
     return redirect("community_list")
 
 @login_required
-def request_member(request, community_id: str):
+def request_role(request, community_id: str, role: str):
     community = get_object_or_404(Communities, id=community_id)
     user = request.user
 
     membership = CommunityMember.objects.filter(user=user, community=community).first()
-    if membership and membership.role == "subscriber":
-        membership.role = "member"
+    if membership and membership.role == "subscriber" and role == "member":
+        membership.role = "pending_member"
         membership.save()
-        messages.success(request, f"You have requested to become a member of {community.name}.")
-    else:
-        messages.error(request, "You are not eligible to request member status.")
-
-    return redirect("community_detail", community_id=community_id)
-
-@login_required
-def request_mod(request, community_id: str):
-    community = get_object_or_404(Communities, id=community_id)
-    user = request.user
-
-    membership = CommunityMember.objects.filter(user=user, community=community).first()
-    if membership and membership.role == "member":
-        membership.role = "moderator"
+        NotificationManager.send_role_request(community.owner, community, user, role)
+        messages.success(request, f"You have requested to become a {role} of {community.name}.")
+    elif membership and membership.role == "member" and role == "moderator":
+        membership.role = "pending_moderator"
         membership.save()
-        messages.success(request, f"You have requested to become a moderator of {community.name}.")
+        NotificationManager.send_role_request(community.owner, community, user, role)
+        messages.success(request, f"You have requested to become a {role} of {community.name}.")
     else:
-        messages.error(request, "You are not eligible to request moderator status.")
+        messages.error(request, "You are not eligible to request this role.")
 
     return redirect("community_detail", community_id=community_id)
 
