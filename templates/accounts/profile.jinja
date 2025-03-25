@@ -133,8 +133,20 @@
                 {% for post in posts %}
                     <div class="card bg-base-200">
                         <div class="card-body">
-                            <h4 class="card-title">{{ post.title }}</h4>
-                            <p>{{ post.body|parse_md|default("")|safe }}</p>
+                            {% if post.ref_post %}
+                            <p class="text-md text-gray-500 mb-2">Reposted from @{{ post.ref_post.user.username }}</p>
+                                <div class="bg-base-100 p-4 rounded">
+                                    <div class="prose max-w-none">
+                                        {{ post.ref_post.body|parse_md|default("")|safe }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <h4 class="card-title">{{ post.title }}</h4>
+                                <div class="prose max-w-none">
+                                    {{ post.body|parse_md|default("")|safe }}
+                                </div>
+                            {% endif %}
+                    
                             <div class="card-actions justify-end">
                                 <a href="{{ url('post', post.id) }}" class="btn btn-sm">View Post</a>
                             </div>

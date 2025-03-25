@@ -14,9 +14,8 @@ class TailwindExtension(Extension):
         md.preprocessors.register(MentionPreprocessor(md), "mention_preprocessor", 25)
         md.preprocessors.register(CommunityPreprocessor(md), "community_preprocessor", 25)
         md.preprocessors.register(PostPreprocessor(md), "post_preprocessor", 25)
-        md.treeprocessors.register(TailwindTreeProcessor(md), "tailwind", 20)
+        md.treeprocessors.register(TailwindTreeProcessor(md), "tailwind", 25)
 
-# Tailwind Preprocessor
 class TailwindTreeProcessor(Treeprocessor):
     """Walk the root node and modify any discovered tag"""
 
@@ -27,19 +26,23 @@ class TailwindTreeProcessor(Treeprocessor):
         "h4": "text-xl font-bold mt-0 mb-2",
         "h5": "text-lg font-bold mt-0 mb-2",
         "h6": "text-base font-bold mt-0 mb-2",
-        "p": "mt-0 mb-4 text-normal",
-        "a": "text-blue-700 hover:text-blue-500",
-        "blockquote": "border-grey-300 border-l-4 text-normal italic mt-8 mb-8 pl-6 text-grey-800 text-lg",
-        "code": "bg-grey-300 p-2 rounded-lg text-sm",
+        "p": "mt-0 mb-4 text-base",
+        "a": "text-blue-700 hover:text-blue-500 underline",
+        "blockquote": "border-l-4 border-gray-300 italic pl-6 text-gray-800 text-lg my-6",
+        "code": "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono",
+        "pre": "bg-gray-100 p-4 rounded overflow-x-auto text-sm",
         "ul": "list-disc list-inside mt-4 mb-4",
         "ol": "list-decimal list-inside mt-4 mb-4",
+        "li": "mb-2",
     }
 
     def run(self, root):
         for node in root.iter():
-            tag_classes = self.classes.get(node.tag)
-            if tag_classes:
-                node.attrib["class"] = tag_classes
+            tag_class = self.classes.get(node.tag)
+            if tag_class:
+                existing = node.attrib.get("class", "")
+                node.attrib["class"] = f"{existing} {tag_class}".strip()
+
 
 # Regex for Mention [@]
 MENTION_PATTERN = re.compile(r'\[@([a-zA-Z0-9_]+)\]')

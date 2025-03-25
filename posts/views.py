@@ -29,7 +29,7 @@ def post_view(request, post_id: str):
 
 
 def posts_view(request):
-    md = markdown.Markdown(extensions=["fenced_code", TailwindExtension()])
+    md = markdown.Markdown(extensions=["extra", TailwindExtension()])
     latest_posts_list = Post.objects.filter(parent_post=None).order_by("-created_at")
 
     for post in latest_posts_list:

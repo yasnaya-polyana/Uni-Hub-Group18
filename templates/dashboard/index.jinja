@@ -11,28 +11,6 @@
 
     <!-- Main Content -->
     <div class="w-full md:w-3/4 space-y-8 order-2 md:order-2">
-        <!-- Create Post Card -->
-        <div class="card bg-base-100 shadow-lg">
-            <div class="card-body">
-                <h2 class="card-title">Create a Post</h2>
-                <form action="{{ url('post_create') }}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="dashboard">
-                    <div class="space-y-4">
-                        <div class="form-control">
-                            <input type="text" name="title" placeholder="Post title" class="input input-bordered w-full" required>
-                        </div>
-                        <div class="form-control">
-                            <textarea name="body" class="textarea textarea-bordered w-full" placeholder="What's on your mind?" required></textarea>
-                        </div>
-                        <div class="card-actions justify-end mt-2">
-                            <button type="submit" class="btn btn-primary">Post</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <!-- Tabs for Feed and My Posts -->
         <div class="tabs tabs-boxed">
             <a class="tab tab-active" id="feed-tab">Your Feed</a>
@@ -40,6 +18,7 @@
         </div>
 
         <!-- Post Content Container (shared between tabs) -->
+        {% if page_obj %}
         <div class="post-content">
             <!-- Feed Posts Section -->
             <div id="feed-section">
@@ -51,18 +30,18 @@
                 </div>
                 
                 <div id="feed-posts-container" class="space-y-4">
-                    {% for post in posts %}
-                        <div class="mb-4 w-full">
-                            {% include 'posts/post.jinja' %}
-                        </div>
+                    {% for post in page_obj %}
+                    <div class="mb-4 w-full">
+                        {% include 'posts/post.jinja' %}
+                    </div>
                     {% endfor %}
                 </div>
                 
                 {% if posts|length == 0 %}
-                    <div class="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Your feed is empty. Follow more users or join communities to see posts here!</span>
-                    </div>
+                <div class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Your feed is empty. Follow more users or join communities to see posts here!</span>
+                </div>
                 {% endif %}
             </div>
 
@@ -76,10 +55,10 @@
                 </div>
                 
                 <div id="my-posts-container" class="space-y-4">
-                    {% for post in my_posts %}
-                        <div class="mb-4 w-full">
-                            {% include 'posts/post.jinja' %}
-                        </div>
+                    {% for post in my_posts[:25] %}
+                    <div class="mb-4 w-full">
+                        {% include 'posts/post.jinja' %}
+                    </div>
                     {% endfor %}
                 </div>
                 
@@ -91,6 +70,9 @@
                 {% endif %}
             </div>
         </div>
+        {% else %}
+            <p class="text-gray-500">No posts yet</p>
+        {% endif %}
     </div>
 </div>
 

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
+from django.core.paginator import Paginator
 
 from posts.models import Post
 
@@ -113,13 +114,18 @@ def dashboard_view(request):
     
     # Combine and sort all posts
     posts = (community_posts | followed_posts | user_posts).order_by("-created_at")
+
+    paginator = Paginator(posts, 15)  # 5 posts per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # Get only the user's posts for the "My Posts" section
     my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
     
     return render(request, "dashboard/index.jinja", {
         "posts": posts,
-        "my_posts": my_posts
+        "my_posts": my_posts,
+        "page_obj": page_obj
     })
 
 @login_required
