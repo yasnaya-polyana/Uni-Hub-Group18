@@ -1,0 +1,6 @@
+{{ community.members_count() }}
+{% if community.members_count() == 1 %}
+    member
+{% else %}
+    members
+{% endif %}

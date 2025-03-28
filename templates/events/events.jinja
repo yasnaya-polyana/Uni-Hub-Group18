@@ -1,0 +1,21 @@
+{% extends 'base/index.jinja' %}
+
+{% block title %}Events{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Events</h1>
+        <button class="btn btn-primary">Create Event</button>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for event in events %}
+            {% include 'events/large-event-card.jinja' %}
+        {% endfor %}
+
+        <!-- Add more event cards here -->
+    </div>
+</div>
+{% endblock %} 

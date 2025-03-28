@@ -1,6 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
 *$py.class
 *.so
 *.pyc
@@ -14,6 +15,7 @@ media/
 
 # Virtual Environment
 venv/
+.venv/
 env/
 ENV/
 
@@ -38,3 +40,6 @@ postgres_data/
 # System files
 .DS_Store
 Thumbs.db
+
+# Node modules
+node_modules/venv/

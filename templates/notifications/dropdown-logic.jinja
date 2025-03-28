@@ -1,0 +1,113 @@
+<script>
+  function getCsrfToken() {
+    return '{{ csrf_token }}';
+  }
+
+  function updateUnreadNotificationsCount() {
+    fetch('/get_unread_notifications_count/', {
+      method: 'GET',
+      headers: {
+        'X-CSRFToken': getCsrfToken()
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const notificationsCountElement = document.getElementById('notifications-count');
+      notificationsCountElement.textContent = data.unread_count;
+
+      if (data.unread_count === 0) {
+        notificationsCountElement.classList.add('hidden');
+      } else {
+        notificationsCountElement.classList.remove('hidden');
+      }
+    })
+    .catch(error => console.error('Error fetching unread notifications count:', error));
+  }
+
+  function loadUnreadNotifications() {
+    fetch('/get_unread_notifications/', {
+      method: 'GET',
+      headers: {
+        'X-CSRFToken': getCsrfToken()
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const notificationsList = document.getElementById('notifications-list');
+      notificationsList.innerHTML = '';
+
+      if (data.length > 0) {
+        data.forEach(notification => {
+          let item;
+          if (notification.type === 'community_request') {
+            let username = '<strong>' + notification.data.requester_username + '</strong>';
+            item = `<li><a href="/notifications">${username} has requested to create ${notification.data.community_name}.</a></li>`;
+          } else if (notification.type === 'role_request') {
+            let username = '<strong>' + notification.data.requester_username + '</strong>';
+            item = `<li><a href="/notifications">${username} has requested to be a ${notification.data.requested_role} in ${notification.data.community_name}.</a></li>`;
+          } else if (notification.type === 'like') {
+            let username = '<strong>' + notification.data.liker_username + '</strong>';
+            item = `<li><a href="${notification.data.post_link}">${username} liked your post.</a></li>`;
+          } else if (notification.type === 'comment') {
+            let username = '<strong>' + notification.data.commenter_username + '</strong>';
+            item = `<li><a href="${notification.data.post_link}">${username} commented on your post.</a></li>`;
+          } else if (notification.type === 'follow') {
+            let username = '<strong>' + notification.data.follower_username + '</strong>';
+            item = `<li><a href="${notification.data.profile_link}">${username} started following you.</a></li>`;
+          } else {
+            item = `<li><a href="#" class="${notification.is_read ? '' : 'font-bold'}">Unknown notification type</a></li>`;
+          }
+          notificationsList.innerHTML += item;
+        });
+      } else {
+        notificationsList.innerHTML = '<li><span>No new notifications</span></li>';
+      }
+    })
+    .catch(error => {
+      const notificationsList = document.getElementById('notifications-list');
+      notificationsList.innerHTML = '<li><span>Error loading notifications</span></li>';
+      console.error('Error loading notifications:', error);
+    });
+  }
+
+  function markAllAsRead() {
+    fetch('/mark_all_as_read/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCsrfToken()
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "success") {
+        loadUnreadNotifications();
+        updateUnreadNotificationsCount();
+        toggleEllipsisMenu();
+      } else {
+        console.error('Error marking all as read');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function toggleEllipsisMenu() {
+    const ellipsisMenu = document.getElementById('ellipsis-menu');
+    ellipsisMenu.classList.toggle('hidden');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    updateUnreadNotificationsCount();
+    setInterval(updateUnreadNotificationsCount, 60000); // Check every 60 seconds
+
+    document.getElementById('notifications-button').addEventListener('click', function() {
+      const dropdown = document.getElementById('notifications-dropdown');
+      dropdown.classList.toggle('hidden');
+
+      if (!dropdown.classList.contains('hidden')) {
+        loadUnreadNotifications();
+      }
+    });
+
+    document.getElementById('mark-all-as-read-button').addEventListener('click', markAllAsRead);
+  });
+</script>

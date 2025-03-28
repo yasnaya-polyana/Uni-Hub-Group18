@@ -1,0 +1,26 @@
+name: "UWEHub"
+email_domain: live.uwe.ac.uk
+
+users:
+  init_with:
+    - username: admin
+      password: password
+      email: uni-hub-admin@live.uwe.ac.uk
+      first_name: Admin
+      last_name: Account
+      is_superuser: yes
+      is_staff: yes
+      student_id: 0000000
+      profile_picture: ""
+
+communities:
+  init_with:
+    - id: uwe
+      name: UWE
+      owner_username: admin
+      auto_populate_with_test_data: yes
+
+    - id: comp-sci
+      name: Computer Science
+      owner_username: admin
+      auto_populate_with_test_data: yes
