@@ -93,12 +93,12 @@
         <li>
         <a href="{{ url('user_settings') }}">Settings</a>
         </li>
-        <li class="hover:bg-primary/10 w-full text-left" onclick="document.getElementById('logout-form').submit();">
-          <form id="logout-form" method="post" action="{{ url('logout') }}">
+        <form id="logout-form" method="post" action="{{ url('logout') }}">
+          <li>
             {% csrf_token %}
             <button type="submit" class="w-full text-left">Logout</button>
-          </form>
-        </li>
+          </li>
+        </form>
       </ul>
     </div>
     {% else %}
