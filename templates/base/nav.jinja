@@ -4,9 +4,9 @@
   </div>
 
   <div class="navbar-center">
-    <a href="{{ url('posts') }}" class="btn btn-warning">Posts</a>
-    <a href="{{ url('community_list') }}" class="btn btn-ghost">Communities</a>
     {% if user.is_authenticated %}
+    <a href="{{ url('community_list') }}" class="btn btn-ghost">Communities</a>
+    <a href="{{ url('user-search') }}" class="btn btn-ghost">Accounts</a>
     <a href="{{ url('dashboard') }}" class="btn btn-ghost">Dashboard</a>
     {% endif %}
   </div>

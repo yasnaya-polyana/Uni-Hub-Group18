@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "posts",
     "communities",
     "events",
+    "search",
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"

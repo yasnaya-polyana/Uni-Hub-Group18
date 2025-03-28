@@ -1,7 +1,16 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+
+from search.service import (
+    compile_query,
+    handle_search,
+    search_communities,
+    search_posts,
+)
 
 from .forms import CreateCommunityForm
 from .models import Communities, CommunityMember
@@ -33,10 +42,18 @@ def community_create(request):
 @login_required
 def community_list(request):
     # filter these later???
-    communities = Communities.objects.all()
+    qs = Communities.objects
+
+    query_str = request.GET.get("q", "")
+    query = compile_query(query_str)
+    communities = search_communities(qs, query)
+
+    print(query_str)
 
     return render(
-        request, "communities/community-list.jinja", {"communities": communities}
+        request,
+        "communities/community-list.jinja",
+        {"communities": communities, "search_str": query_str},
     )
 
 
@@ -51,9 +68,18 @@ def community_detail(request, community_id: str):
         # deleted_at__isnull=True
     ).first()
 
+    events = community.events.filter(end_at__gte=datetime.date.today())
+
+    posts = community.posts
+    query_str = request.GET.get("q", "")
+    query = compile_query(query_str)
+    posts = search_posts(posts, query)
     context = {
         "community": community,
         "membership": membership,
+        "events": events,
+        "posts": posts,
+        "search_str": query_str,
     }
 
     return render(request, "communities/page.jinja", context)

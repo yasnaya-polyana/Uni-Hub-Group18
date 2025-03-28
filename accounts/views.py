@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 
 from posts.models import Post
+from search.service import compile_query, search_accounts
 
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm
@@ -15,6 +16,18 @@ from .models import CustomUser, Follow
 
 class HomeView(TemplateView):
     template_name = "home.jinja"
+
+
+def user_search_view(request):
+    qs = CustomUser.objects
+
+    query_str = request.GET.get("q", "")
+    query = compile_query(query_str)
+    accounts = search_accounts(qs, query)
+
+    return render(
+        request, "accounts/list.jinja", {"accounts": accounts, "search_str": query_str}
+    )
 
 
 def signup_view(request):
