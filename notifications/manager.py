@@ -84,3 +84,30 @@ class NotificationManager:
             }
         )
         return notification
+    
+    @staticmethod
+    def role_decision(requester, community, role, decision):
+        notification = Notification.objects.create(
+            username=requester,
+            type='role_decision',
+            data={
+                'community_id': community.id,
+                'community_name': community.name,
+                'role': role,
+                'decision': decision
+            }
+        )
+        return notification
+    
+    @staticmethod
+    def community_decision(owner, community, decision):
+        notification = Notification.objects.create(
+            username=owner,
+            type='community_decision',
+            data={
+                'community_id': community.id,
+                'community_name': community.name,
+                'decision': decision
+            }
+        )
+        return notification

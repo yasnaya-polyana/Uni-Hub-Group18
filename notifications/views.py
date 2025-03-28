@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Notification
 from communities.models import Communities, CommunityMember
 from django.contrib import messages
+from notifications.manager import NotificationManager
 
 # Create your views here.
 @login_required
@@ -60,10 +61,11 @@ def approve_community(request, community_id: str):
     community.status = 'approved'
     community.save()
     
-    notification = Notification.objects.filter(data__community_id=community_id).first()
-    if notification:
-        notification.is_interact = True
-        notification.save()
+    NotificationManager.community_decision(
+        owner=community.owner,
+        community=community,
+        decision='approved'
+    )
     
     messages.success(request, f"Community '{community.name}' has been approved.")
     return redirect("community_list")
@@ -77,10 +79,11 @@ def reject_community(request, community_id: str):
     community.status = 'rejected'
     community.delete()
     
-    notification = Notification.objects.filter(data__community_id=community_id).first()
-    if notification:
-        notification.is_interact = True
-        notification.save()
+    NotificationManager.community_decision(
+        owner=community.owner,
+        community=community,
+        decision='rejected'
+    )
     
     messages.success(request, f"Community '{community.name}' has been rejected.")
     return redirect("community_list")
@@ -97,6 +100,14 @@ def approve_role(request, community_id: str, role: str):
     if membership:
         membership.role = role
         membership.save()
+        
+        NotificationManager.role_decision(
+            requester=membership.user,
+            community=community,
+            role=role,
+            decision='approved'
+        )
+        
         notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
         if notification:
             notification.is_interact = True
@@ -119,6 +130,14 @@ def reject_role(request, community_id: str, role: str):
     if membership:
         membership.role = "subscriber" if role == "member" else "member"
         membership.save()
+        
+        NotificationManager.role_decision(
+            requester=membership.user,
+            community=community,
+            role=role,
+            decision='rejected'
+        )
+        
         notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
         if notification:
             notification.is_interact = True

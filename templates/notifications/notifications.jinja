@@ -45,6 +45,8 @@
                         </form>
                     </div>
                     {% endif %}
+                    {% elif notification.type == 'community_decision' %}
+                    <span>Your community '{{ notification.data.community_name }}' was {{ notification.data.decision }}.</span>
                     {% elif notification.type == 'role_request' %}
                     <span>{{ notification.data.requester_username }} has requested to become a {{ notification.data.requested_role }} of {{ notification.data.community_name }}</span>
                     {% if not notification.is_interact %}
@@ -59,6 +61,8 @@
                         </form>
                     </div>
                     {% endif %}
+                    {% elif notification.type == 'role_decision' %}
+                    <span>Your request to become a {{ notification.data.role }} in {{ notification.data.community_name }} was {{ notification.data.decision }}.</span>
                     {% else %}
                     <a href="#" class="{{ 'font-bold' if not notification.is_read else '' }}">
                         Unknown notification type

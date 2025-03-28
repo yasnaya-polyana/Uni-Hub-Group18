@@ -42,9 +42,15 @@
           if (notification.type === 'community_request') {
             let username = '<strong>' + notification.data.requester_username + '</strong>';
             item = `<li><a href="/notifications">${username} has requested to create ${notification.data.community_name}.</a></li>`;
+          } else if (notification.type === 'community_decision') {
+            let decision = notification.data.decision === 'approved' ? 'approved' : 'rejected';
+            item = `<li><a href="/notifications">Your community '${notification.data.community_name}' was ${decision}.</a></li>`;
           } else if (notification.type === 'role_request') {
             let username = '<strong>' + notification.data.requester_username + '</strong>';
             item = `<li><a href="/notifications">${username} has requested to be a ${notification.data.requested_role} in ${notification.data.community_name}.</a></li>`;
+          } else if (notification.type === 'role_decision') {
+            let decision = notification.data.decision === 'approved' ? 'approved' : 'rejected';
+            item = `<li><a href="/notifications">Your request to become a ${notification.data.role} in ${notification.data.community_name} was ${decision}.</a></li>`;          
           } else if (notification.type === 'like') {
             let username = '<strong>' + notification.data.liker_username + '</strong>';
             item = `<li><a href="${notification.data.post_link}">${username} liked your post.</a></li>`;
