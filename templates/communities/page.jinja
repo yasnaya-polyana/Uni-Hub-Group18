@@ -1,6 +1,10 @@
 {% extends 'base/index.jinja' %}
 {% include 'posts/post-logic.jinja' %}
-{% block title %}{{ community.name }}{% endblock %}
+
+{% block title %}
+{{ community.name }}
+{% endblock %}
+
 {% block content %}
   <div class="max-w-6xl mx-auto">
     <!-- Community Header -->
@@ -10,6 +14,54 @@
       <!-- Posts Column -->
       <div class="w-3/4">
         <!-- Create Post -->
+        {% if is_member or is_owner or is_moderator or user.is_superuser %}
+        <div class="card bg-base-100 shadow-lg mb-4">
+          <div class="card-body">
+            <h2 class="card-title">Create a Post</h2>
+            <form method="post">
+              {% csrf_token %}
+
+              <div class="space-y-4">
+                <div class="form-control">
+                  <label class="label" for="{{ form.title.id_for_label }}">
+                    <span class="label-text">{{ form.title.label }}</span>
+                  </label>
+                  {{ form.title }}
+                  {% if form.title.errors %}
+                    <label class="label">
+                      <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
+                    </label>
+                  {% endif %}
+                </div>
+
+                <!-- Markdown Editor -->
+
+                <div class="form-control">
+                  <label class="label" for="body">
+                    <span class="label-text">Body</span>
+                  </label>
+          
+                  <!-- Markdown Body -->
+                  {% set editor_id = 'body' %}
+                  {% set editor_name = 'body' %}
+                  {% set editor_class = 'textarea textarea-bordered w-full' %}
+          
+                  {% include 'components/markdown-editor.jinja' %}
+          
+                  {% if form.body.errors %}
+                    <label class="label">
+                      <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
+                    </label>
+                  {% endif %}
+                </div>
+                <div class="card-actions justify-end mt-2">
+                  <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        {% endif %}
         <!-- Pinned Posts -->
         {% include 'communities/pinned-posts.jinja' %}
         <!-- Regular Posts -->
@@ -22,6 +74,6 @@
       </div>
       <!-- Sidebar -->
       {% include 'communities/page-sidebar.jinja' %}
+    </div>
   </div>
 {% endblock %}
-

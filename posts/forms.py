@@ -32,19 +32,8 @@ class PostCreationForm(forms.ModelForm):
         required=True,
         label="Body",
         min_length=3,
-        max_length=60,
-        # validators=[
-        #     RegexValidator(
-        #         r"^[a-zA-Z0-9._]*$",
-        #         "Username can only contain letters, numbers, dots and underscores.",
-        #     )
-        # ],
-        widget=forms.Textarea(
-            attrs={
-                "class": "input input-bordered w-full",
-                "placeholder": "Body",
-            }
-        ),
+        max_length=1000,
+        # Add validators?
     )
 
     class Meta:

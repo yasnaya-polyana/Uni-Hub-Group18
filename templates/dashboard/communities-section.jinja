@@ -1,14 +1,13 @@
 <div class="bg-base-100 p-4 rounded-box shadow-lg">
-<h2 class="text-xl font-bold mb-4">My Communities</h2>
-<div class="space-y-2">
-    {% for community in user.communities.all() %}
-        {% include 'dashboard/community-item.jinja' %}
-    {% endfor %}
+  <h2 class="text-xl font-bold mb-4">My Communities</h2>
+  <div class="space-y-2">
+      {% for community in user.communities.all() %}
+          {% include 'dashboard/community-item.jinja' %}
+      {% endfor %}
+  </div>
+  <a
+    href="{{ url('community_list') }}"
+    class="btn btn-ghost btn-sm w-full mt-2"
+    >View All Communities</a
+  >
 </div>
-<a
-  href="{{ url('community_list') }}"
-  class="btn btn-ghost btn-sm w-full mt-2"
-  >View All Communities</a
->
-</div>
-

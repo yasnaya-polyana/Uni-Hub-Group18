@@ -6,7 +6,7 @@ from django.core.validators import RegexValidator
 
 from config import Config
 
-from .models import Course, CustomUser
+from .models import Course, CustomUser, UserSettings
 
 
 # User Creation Form
@@ -195,3 +195,15 @@ class ProfileEditForm(forms.ModelForm):
             ),
         }
 
+# Edit User Settings
+#
+#
+class UserSettingsForm(forms.ModelForm):
+    class Meta:
+        model = UserSettings
+        fields = ['like_notifications', 'comment_notifications', 'follow_notifications']
+        widgets = {
+            'like_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
+            'comment_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
+            'follow_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
+        }

@@ -5,9 +5,9 @@ users:
   init_with:
     - username: admin
       password: password
-      email: unihub@
-      first_name: UWE
-      last_name: Hub
+      email: uni-hub-admin@live.uwe.ac.uk
+      first_name: Admin
+      last_name: Account
       is_superuser: yes
       is_staff: yes
       student_id: 0000000

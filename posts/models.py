@@ -29,6 +29,8 @@ class Post(models.Model):
 
     is_pinned = models.BooleanField(default=False)
 
+    mentioned_users = models.ManyToManyField(CustomUser, related_name="mentioned_in")
+
     parent_post = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="comments"
     )
@@ -41,6 +43,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+class PostAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "title", "parent_post", "created_at")
 
 
 class Interaction(models.Model):

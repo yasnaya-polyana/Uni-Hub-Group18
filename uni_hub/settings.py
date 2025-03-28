@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "communities",
     "events",
     "search",
+    "notifications"
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
@@ -76,6 +77,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
+            "environment": "uni_hub.jinja2_env.environment",
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -131,7 +133,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-AUTH_USER_MODEL
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 # Password validation
@@ -169,6 +171,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

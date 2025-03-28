@@ -8,6 +8,10 @@
           <p class="text-sm">{{ community.created_at|date("F j, Y") }}</p>
         </div>
         <div>
+          <h4 class="font-semibold">Created by</h4>
+          <p class="text-sm">{{ community.owner.username }}</p>
+        </div>
+        <div>
           <h4 class="font-semibold">Community Rules</h4>
           <ul class="text-sm list-disc list-inside">
             <li>Be respectful to others</li>

@@ -1,9 +1,9 @@
-        <div class="card bg-base-100 shadow-lg mb-4">
-          <div class="card-body">
-            <textarea class="textarea textarea-bordered w-full" placeholder="Create a post"></textarea>
-            <div class="card-actions justify-end mt-2">
-              <button class="btn btn-primary">Post</button>
-            </div>
-          </div>
-        </div>
+<div class="card bg-base-100 shadow-lg mb-4">
+  <div class="card-body">
+    {% include 'components/markdown-editor.jinja' with editor_id='create_post_community' editor_class='textarea textarea-bordered w-full' %}
 
+    <div class="card-actions justify-end mt-2">
+      <button class="btn btn-primary">Post</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,248 @@
+{% set editor_id = editor_id or 'MarkdownEditor' %}
+{% set editor_class = editor_class or 'markdown-editor' %}
+{% set editor_name = editor_name or 'markdown-name' %}
+
+<!-- Textarea -->
+<textarea name="{{ editor_name }}" id="{{ editor_id }}" class="resize-x overflow-auto {{ editor_class }}">{{ content or '' }}</textarea>
+
+<!-- Showdown.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+
+<script>
+    // Tailwind classes to apply to each tag
+    var classes = {
+        "h1": "text-4xl font-bold mt-0 mb-2",
+        "h2": "text-3xl font-bold mt-0 mb-2",
+        "h3": "text-2xl font-bold mt-0 mb-2",
+        "h4": "text-xl font-bold mt-0 mb-2",
+        "h5": "text-lg font-bold mt-0 mb-2",
+        "h6": "text-base font-bold mt-0 mb-2",
+        "p": "mt-0 mb-4 text-normal",
+        "a": "text-blue-700 hover:text-blue-500",
+        "blockquote": "border-grey-300 border-l-4 text-normal italic mt-8 mb-8 pl-6 text-grey-800 text-lg",
+        "code": "bg-grey-300 p-2 rounded-lg text-sm",
+        "ul": "list-disc list-inside mt-4 mb-4",
+        "ol": "list-decimal list-inside mt-4 mb-4",
+    };
+
+    let mde;
+    let dropdownEl = null;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var mde = new SimpleMDE({
+            element: document.getElementById("{{ editor_id }}"),
+            spellChecker: false,
+            toolbar: [
+                "bold", "italic", "|", 
+                "heading", "quote", "|", 
+                "unordered-list", "ordered-list", "|", 
+                "link", "image", "|", 
+                "preview", "fullscreen" 
+                // You can add any other buttons you like here
+            ]
+        });
+
+        // TODO: Handle other tags
+        // TODO: Handle other tags
+        // TODO: Handle other tags
+
+        // Typing detection
+        mde.codemirror.on("inputRead", function (cm, change) {
+            handleTrigger(cm);
+        });
+
+        // Deletion detection
+        mde.codemirror.on("change", function (cm, change) {
+            handleTrigger(cm);
+        });
+
+        // Escape
+        mde.codemirror.on("keydown", function (cm, e) {
+            if (e.key === "Escape") {
+                hideDropdown();
+            }
+        });
+
+        // Preview render
+        mde.options.previewRender = function (plainText) {
+            let html = new showdown.Converter().makeHtml(plainText);
+        
+            // Apply Tailwind classes to markdown tags
+            Object.keys(classes).forEach(function(tag) {
+                const classToAdd = classes[tag];
+                const regex = new RegExp(`<${tag}(.*)>`, 'g');
+                html = html.replace(regex, function(match, p1) {
+                    return `<${tag} class="${classToAdd}"${p1}>`;
+                });
+            });
+        
+            // @
+            html = html.replace(/\[@([a-zA-Z0-9_]+)\]/g, function(_, username) {
+                return `<a target="_blank" href="/u/${username}" class="text-blue-600 bg-blue-100 font-medium px-1 py-0.5 rounded">@${username}</a>`;
+            });
+
+            // #
+            html = html.replace(/\[#([a-zA-Z0-9_-]+)\]/g, function (_, tag) {
+                return `<a target="_blank" href="/c/${tag}" class="text-green-600 bg-blue-100 font-medium px-1 py-0.5 rounded">#${tag}</a>`;
+            });
+
+            // $
+            html = html.replace(/\[$([a-zA-Z0-9_]+)\]/g, function (_, variable) {
+                return `<span class="text-yellow-700 bg-yellow-100 font-medium px-1 py-0.5 rounded">$${variable}</span>`;
+            });
+        
+            return html;
+        };
+
+        function handleTrigger(cm) {
+            const cursor = cm.getCursor();
+            const line = cm.getLine(cursor.line);
+            const beforeCursor = line.slice(0, cursor.ch);
+        
+            const mentionMatch = beforeCursor.match(/\[@([a-zA-Z0-9_]*)$/);
+            const communityMatch = beforeCursor.match(/\[\#([a-zA-Z0-9_]*)$/);
+        
+            if (mentionMatch) {
+                const query = mentionMatch[1];
+                query.length === 0 ? hideDropdown() : fetchUserSuggestions(query, cursor);
+            } else if (communityMatch) {
+                const query = communityMatch[1];
+                query.length === 0 ? hideDropdown() : fetchCommunitySuggestions(query, cursor);
+            } else {
+                hideDropdown();
+            }
+        }
+
+        function fetchUserSuggestions(query, cursor) {
+            fetch(`/api/user-search/?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(users => showMentionDropdown(users, cursor))
+                .catch(err => console.error("Mention fetch error:", err));
+        }
+
+        function fetchCommunitySuggestions(query, cursor) {
+            fetch(`/api/community-search/?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(communities => showCommunityDropdown(communities, cursor))
+                .catch(err => console.error("Community fetch error:", err));
+        }
+
+        function showMentionDropdown(users, cursor) {
+            if (!mde || !mde.codemirror) {
+                console.warn("SimpleMDE not ready yet");
+                return;
+            }
+
+            if (!dropdownEl) {
+                dropdownEl = document.createElement("div");
+                dropdownEl.className = "absolute z-50 bg-white border rounded shadow text-sm";
+                document.body.appendChild(dropdownEl);
+            }
+
+            const coords = mde.codemirror.cursorCoords(cursor, "page");
+            dropdownEl.style.left = `${coords.left}px`;
+            dropdownEl.style.top = `${coords.bottom}px`;
+            dropdownEl.style.display = "block";
+
+            dropdownEl.innerHTML = users.map(user => `
+                <div class="mention-option px-3 py-1 hover:bg-gray-100 cursor-pointer" data-username="${user.username}">
+                    @${user.username}
+                </div>
+            `).join("");
+
+            dropdownEl.querySelectorAll(".mention-option").forEach(el => {
+                el.addEventListener("click", () => {
+                    insertMention(el.dataset.username);
+                    hideDropdown();
+                });
+            });
+        }
+
+        function hideDropdown() {
+            if (dropdownEl) {
+                dropdownEl.style.display = "none";
+            }
+        }
+
+        function showCommunityDropdown(communities, cursor) {
+            if (!mde || !mde.codemirror) {
+                console.warn("SimpleMDE not ready yet");
+                return;
+            }
+        
+            if (!dropdownEl) {
+                dropdownEl = document.createElement("div");
+                dropdownEl.className = "absolute z-50 bg-white border rounded shadow text-sm";
+                document.body.appendChild(dropdownEl);
+            }
+        
+            const coords = mde.codemirror.cursorCoords(cursor, "page");
+            dropdownEl.style.left = `${coords.left}px`;
+            dropdownEl.style.top = `${coords.bottom}px`;
+            dropdownEl.style.display = "block";
+            dropdownEl.dataset.type = "community"; // Optional if you need to distinguish
+        
+            dropdownEl.innerHTML = communities.map(c => `
+                <div class="mention-option px-3 py-1 hover:bg-gray-100 cursor-pointer" 
+                     data-community-id="${c.id}" 
+                     data-display-name="${c.display_name}">
+                    #${c.display_name}
+                </div>
+            `).join("");
+        
+            dropdownEl.querySelectorAll(".mention-option").forEach(el => {
+                el.addEventListener("click", () => {
+                    const communityId = el.dataset.communityId;
+                    insertCommunity(communityId);
+                    hideSuggestionDropdown(); // renamed for clarity
+                });
+            });
+        }        
+
+        function insertCommunity(name) {
+            const cm = mde.codemirror;
+            const cursor = cm.getCursor();
+            const line = cm.getLine(cursor.line);
+            const beforeCursor = line.slice(0, cursor.ch);
+        
+            const match = beforeCursor.match(/\[\#([a-zA-Z0-9_]*)$/);
+            if (!match) return;
+        
+            const startPos = {
+                line: cursor.line,
+                ch: beforeCursor.lastIndexOf("[#")
+            };
+        
+            const endPos = {
+                line: cursor.line,
+                ch: cursor.ch
+            };
+        
+            cm.replaceRange(`[#${name}]`, startPos, endPos);
+            cm.focus();
+        }
+
+        function insertMention(username) {
+            const cm = mde.codemirror;
+            const cursor = cm.getCursor();
+            const line = cm.getLine(cursor.line);
+            const beforeCursor = line.slice(0, cursor.ch);
+
+            const match = beforeCursor.match(/\[@([a-zA-Z0-9_]*)$/);
+            if (!match) return;
+
+            const startPos = {
+                line: cursor.line,
+                ch: beforeCursor.lastIndexOf("[@")
+            };
+
+            const endPos = {
+                line: cursor.line,
+                ch: cursor.ch
+            };
+
+            cm.replaceRange(`[@${username}]`, startPos, endPos);
+            cm.focus();
+        }
+    });
+</script>

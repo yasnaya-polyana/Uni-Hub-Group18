@@ -32,12 +32,31 @@ class CreateCommunityForm(forms.ModelForm):
             instance.owner = self.user
         if commit:
             instance.save()
-            instance.members.add(self.user)
+            CommunityMember.objects.create(user=self.user, community=instance, role="admin")
         return instance
 
+class EditCommunityForm(forms.ModelForm):
+    class Meta:
+        model = Communities
+        fields = ["name", "description", "banner_url", "icon_url"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
+            "description": forms.Textarea(attrs={"class": "textarea textarea-bordered w-full", "rows": 4}),
+            "banner_url": forms.FileInput(attrs={"class": "file-input file-input-bordered w-full"}),
+            "icon_url": forms.FileInput(attrs={"class": "file-input file-input-bordered w-full"}),
+        }
 
 class JoinCommunityForm(forms.ModelForm):
     class Meta:
         model = CommunityMember
         fields = []
 
+class RequestMemberForm(forms.ModelForm):
+    class Meta:
+        model = CommunityMember
+        fields = []
+
+class RequestModForm(forms.ModelForm):
+    class Meta:
+        model = CommunityMember
+        fields = []
