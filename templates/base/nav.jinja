@@ -93,7 +93,7 @@
         <li>
         <a href="{{ url('user_settings') }}">Settings</a>
         </li>
-        <form id="logout-form" method="post" action="{{ url('logout') }}">
+        <form class="mb-0" id="logout-form" method="post" action="{{ url('logout') }}">
           <li>
             {% csrf_token %}
             <button type="submit" class="w-full text-left">Logout</button>
