@@ -132,7 +132,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-AUTH_USER_MODEL
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 # Password validation

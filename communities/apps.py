@@ -31,13 +31,14 @@ class CommunitiesConfig(AppConfig):
 
                 com = Communities(**com_data)
                 com.owner = user
+                com.status = "approved"
                 com.save()
                 print(f"Created #{name} community.")
 
                 if auto_populate_test_data:
                     for i in range(0, 10):
                         post = Post(
-                            title=f"This is test post {i}",
+                            title=f"Test Post {i}",
                             user=user,
                             community=com,
                             body="""
@@ -52,7 +53,7 @@ Mauris laoreet volutpat dui, a aliquet mi porttitor nec. Vivamus in mi orci. Don
 
                         for j in range(0, i):
                             comment = Post(
-                                title=f"This is test comment {i}",
+                                title=f"Comment Test {i}",
                                 user=user,
                                 community=com,
                                 parent_post=post,

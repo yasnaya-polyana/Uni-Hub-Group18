@@ -21,6 +21,19 @@
             {% csrf_token %}
             <button class="btn btn-danger ml-auto" type="submit">Leave Community</button>
           </form>
+        {% if membership.role == 'subscriber' %}
+            <!-- Request Member Button -->
+            <form action="{{ url('request_role', community.id, 'member') }}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-secondary ml-2" type="submit" {% if membership.role == 'pending_member' %}disabled{% endif %}>Request Member</button>
+            </form>
+        {% elif membership.role == 'member' %}
+            <!-- Request Mod Button -->
+            <form action="{{ url('request_role', community.id, 'moderator') }}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-secondary ml-2" type="submit" {% if membership.role == 'pending_moderator' %}disabled{% endif %}>Request Mod</button>
+            </form>
+        {% endif %}
         {% else %}
           <!-- Join Community Button -->
           <form action="{{ url('community_join', community.id) }}"
@@ -30,12 +43,17 @@
           </form>
         {% endif %}
       {% endif %}
-      {% if user == community.owner or user.is_superuser %}
-        <form action="{{ url('community_delete', community.id) }}"
-              method="post">
-          {% csrf_token %}
-          <button class="btn btn-error ml-auto" type="submit">Delete</button>
-        </form>
+      {% if user == community.owner or user.is_superuser or membership.role == 'moderator' %}
+        <div class="flex space-x-2">
+        {% if user == community.owner or user.is_superuser %}
+          <form action="{{ url('community_delete', community.id) }}"
+                method="post">
+            {% csrf_token %}
+            <button class="btn btn-error ml-auto" type="submit">Delete</button>
+          </form>
+        {% endif %}
+          <a href="{{ url('community_edit', community.id) }}" class="btn btn-secondary ml-auto">Edit</a>
+        </div>
       {% endif %}
     {% else %}
       <p>

@@ -3,42 +3,63 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CreateCommunityForm
+from .forms import CreateCommunityForm, EditCommunityForm
 from .models import Communities, CommunityMember
 from posts.forms import PostCreationForm
+from notifications.manager import NotificationManager
+from accounts.models import CustomUser
 
 @login_required
 def community_create(request):
     if request.method == "POST":
         form = CreateCommunityForm(request.POST, user=request.user)
         if form.is_valid():
-
             com = form.save(commit=False)
-            print(com.id)
-
-            check_community = Communities.all_objects.filter(id=com.id).count()
-            if check_community > 0:
-                return render(
-                    request, "communities/restore.jinja", {"community_id": com.id}
-                )
-
+            com.status = 'pending'
             com.save()
+            
+            # Send notification to superuser
+            superuser = CustomUser.objects.filter(is_superuser=True).first()
+            NotificationManager.send_community_request(superuser, com)
+            
+            messages.success(request, "Community created and is pending approval.")
             return redirect("/c")
     else:
         form = CreateCommunityForm(user=request.user)
 
     return render(request, "communities/create.jinja", {"form": form})
 
+@login_required
+def community_edit(request, community_id):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    if not user.is_superuser and user != community.owner and not CommunityMember.objects.filter(user=user, community=community, role="moderator").exists():
+        return HttpResponse(status=403)
+
+    if request.method == "POST":
+        form = EditCommunityForm(request.POST, request.FILES, instance=community)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Community details updated successfully!")
+            return redirect("community_detail", community_id=community_id)
+    else:
+        form = EditCommunityForm(instance=community)
+    
+    return render(request, "communities/community-edit.jinja", {"form": form, "community": community})
 
 @login_required
 def community_list(request):
-    all_communities = Communities.objects.all()
-    user_communities = Communities.objects.filter(owner=request.user)
+    all_communities = Communities.objects.filter(status='approved')
+    user_communities = Communities.objects.filter(owner=request.user, status='approved')
 
     return render(
         request,
         "communities/community-list.jinja",
-        {"all_communities": all_communities, "user_communities": user_communities},
+        {
+            "all_communities": all_communities,
+            "user_communities": user_communities
+        },
     )
 
 
@@ -47,15 +68,17 @@ def community_detail(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     is_owner = request.user == community.owner
 
-    # Check if the user is a moderator
     is_moderator = CommunityMember.objects.filter(
         user=request.user, community=community, role="moderator"
     ).exists()
 
-    # Handle post creation
+    is_member = CommunityMember.objects.filter(
+        user=request.user, community=community, role="member"
+    ).exists()
+
     if request.method == "POST":
         form = PostCreationForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and (is_owner or is_moderator or is_member):
             post = form.save(commit=False)
             post.user = request.user
             post.community = community
@@ -64,11 +87,9 @@ def community_detail(request, community_id: str):
     else:
         form = PostCreationForm()
 
-    # get active memberships
     membership = CommunityMember.objects.filter(
         user=request.user,
         community=community,
-        # deleted_at__isnull=True
     ).first()
 
     context = {
@@ -77,9 +98,9 @@ def community_detail(request, community_id: str):
         "owner_username": community.owner.username,
         "is_owner": is_owner,
         "is_moderator": is_moderator,
+        "is_member": is_member,
         "form": form,
     }
-
     return render(request, "communities/page.jinja", context)
 
 
@@ -131,6 +152,26 @@ def community_delete(request, community_id: str):
 
     return redirect("community_list")
 
+@login_required
+def request_role(request, community_id: str, role: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    membership = CommunityMember.objects.filter(user=user, community=community).first()
+    if membership and membership.role == "subscriber" and role == "member":
+        membership.role = "pending_member"
+        membership.save()
+        NotificationManager.send_role_request(community.owner, community, user, role)
+        messages.success(request, f"You have requested to become a {role} of {community.name}.")
+    elif membership and membership.role == "member" and role == "moderator":
+        membership.role = "pending_moderator"
+        membership.save()
+        NotificationManager.send_role_request(community.owner, community, user, role)
+        messages.success(request, f"You have requested to become a {role} of {community.name}.")
+    else:
+        messages.error(request, "You are not eligible to request this role.")
+
+    return redirect("community_detail", community_id=community_id)
 
 @login_required
 def community_restore(request, community_id: str):

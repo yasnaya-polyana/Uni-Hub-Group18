@@ -29,6 +29,13 @@ class Communities(SoftDeleteModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
     def members_count(self):
         return self.community_members.filter(
             # deleted_at__isnull=True
@@ -48,11 +55,11 @@ class CommunityMember(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
 
     COMMUNITY_ROLES = [
+        ("subscriber", "Subscriber"),
         ("member", "Member"),
-        ("admin", "Admin"),
         ("moderator", "Moderator"),
     ]
-    role = models.CharField(max_length=20, choices=COMMUNITY_ROLES, default="member")
+    role = models.CharField(max_length=20, choices=COMMUNITY_ROLES, default="subscriber")
 
     class Meta:
         unique_together = ("user", "community")

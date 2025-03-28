@@ -42,6 +42,7 @@ urlpatterns = [
     path("u/<str:username>/", views.user_profile_view, name="user"),
     path("profile/", views.my_profile_view, name="my_profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),
+    path('settings/', views.user_settings_view, name='user_settings'),
     path("u/<str:username>/follow/", views.follow_user, name="follow_user"),
     path("u/<str:username>/unfollow/", views.unfollow_user, name="unfollow_user"),
     # Posts
@@ -58,8 +59,14 @@ urlpatterns = [
     ),
     # Notifications
     path('notifications/', notif_views.notifications_view, name='notifications'),
-    path('get_notifications/', notif_views.get_notifications, name='get_notifications'),
+    path('get_unread_notifications/', notif_views.get_unread_notifications, name='get_unread_notifications'),
     path('get_unread_notifications_count/', notif_views.get_unread_notifications_count, name='get_unread_notifications_count'),
+    path('mark_all_as_read/', notif_views.mark_all_as_read, name='mark_all_as_read'),
+    path('c/<str:community_id>/approve', notif_views.approve_community, name='approve_community'),
+    path('c/<str:community_id>/reject', notif_views.reject_community, name='reject_community'),
+    path('c/<str:community_id>/approve_role/<str:role>', notif_views.approve_role, name='approve_role'),
+    path('c/<str:community_id>/reject_role/<str:role>', notif_views.reject_role, name='reject_role'),
+
     # Communities
     path("c/", community_views.community_list, name="community_list"),
     path("c/create", community_views.community_create, name="community_create"),
@@ -88,7 +95,9 @@ urlpatterns = [
         community_views.community_restore,
         name="community_restore",
     ),
-    # Events
+    path("c/<str:community_id>/request_role/<str:role>", community_views.request_role, name="request_role"),
+    path('c/<str:community_id>/edit', community_views.community_edit, name='community_edit'),
+
     path("events/", event_views.events_list, name="events"),
     # Password Reset
     path(
