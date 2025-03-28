@@ -28,7 +28,35 @@
                     {% include 'components/sort-posts.jinja' %}
                 </div>
                 
-                <div id="feed-posts-container" class="space-y-4">
+                <!-- Skeleton Loader (initially visible) -->
+                <div id="posts-skeleton" class="space-y-4">
+                    {% for i in range(5) %}
+                    <div class="bg-base-100 shadow-xl rounded-box p-6 animate-pulse">
+                        <div class="flex justify-between">
+                            <div class="flex space-x-2 items-center">
+                                <div class="w-10 h-10 bg-base-300 rounded-full"></div>
+                                <div class="h-4 bg-base-300 rounded w-32"></div>
+                            </div>
+                            <div class="h-3 bg-base-300 rounded w-24"></div>
+                        </div>
+                        <div class="h-6 bg-base-300 rounded w-48 mt-2"></div>
+                        <div class="divider my-2"></div>
+                        <div class="space-y-3">
+                            <div class="h-4 bg-base-300 rounded w-full"></div>
+                            <div class="h-4 bg-base-300 rounded w-full"></div>
+                            <div class="h-4 bg-base-300 rounded w-3/4"></div>
+                        </div>
+                        <div class="flex space-x-6 mt-4">
+                            <div class="h-6 bg-base-300 rounded w-16"></div>
+                            <div class="h-6 bg-base-300 rounded w-16"></div>
+                            <div class="h-6 bg-base-300 rounded w-16"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Actual Posts Container (initially hidden) -->
+                <div id="feed-posts-container" class="space-y-4 hidden">
                     {% for post in page_obj %}
                     <div class="mb-4 w-full">
                         {% include 'posts/post.jinja' %}
@@ -46,27 +74,42 @@
 
             <!-- My Posts Section (initially hidden) -->
             <div id="my-posts-section" class="hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">My Posts</h2>
-                    {% set container_id = 'my-posts-container' %}
-                    {% set default_sort = 'Newest' %}
-                    {% include 'components/sort-posts.jinja' %}
+                <!-- Similar skeleton and content structure for My Posts -->
+                <!-- Skeleton for My Posts -->
+                <div id="my-posts-skeleton" class="space-y-4">
+                    {% for i in range(3) %}
+                    <div class="bg-base-100 shadow-xl rounded-box p-6 animate-pulse">
+                        <div class="flex justify-between">
+                            <div class="flex space-x-2 items-center">
+                                <div class="w-10 h-10 bg-base-300 rounded-full"></div>
+                                <div class="h-4 bg-base-300 rounded w-32"></div>
+                            </div>
+                            <div class="h-3 bg-base-300 rounded w-24"></div>
+                        </div>
+                        <div class="h-6 bg-base-300 rounded w-48 mt-2"></div>
+                        <div class="divider my-2"></div>
+                        <div class="space-y-3">
+                            <div class="h-4 bg-base-300 rounded w-full"></div>
+                            <div class="h-4 bg-base-300 rounded w-full"></div>
+                            <div class="h-4 bg-base-300 rounded w-3/4"></div>
+                        </div>
+                        <div class="flex space-x-6 mt-4">
+                            <div class="h-6 bg-base-300 rounded w-16"></div>
+                            <div class="h-6 bg-base-300 rounded w-16"></div>
+                            <div class="h-6 bg-base-300 rounded w-16"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 
-                <div id="my-posts-container" class="space-y-4">
-                    {% for post in my_posts[:25] %}
+                <!-- Actual My Posts Container -->
+                <div id="my-posts-container" class="space-y-4 hidden">
+                    {% for post in my_posts %}
                     <div class="mb-4 w-full">
                         {% include 'posts/post.jinja' %}
                     </div>
                     {% endfor %}
                 </div>
-                
-                {% if my_posts|length == 0 %}
-                    <div class="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>You haven't created any posts yet.</span>
-                    </div>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -74,6 +117,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching logic
         const feedTab = document.getElementById('feed-tab');
         const myPostsTab = document.getElementById('my-posts-tab');
         const feedSection = document.getElementById('feed-section');
@@ -92,6 +136,32 @@
             myPostsSection.classList.remove('hidden');
             feedSection.classList.add('hidden');
         });
+        
+        // Simulate loading delay and show actual content
+        setTimeout(function() {
+            // Hide skeletons and show actual content
+            document.getElementById('posts-skeleton').classList.add('hidden');
+            document.getElementById('feed-posts-container').classList.remove('hidden');
+            document.getElementById('my-posts-skeleton').classList.add('hidden');
+            document.getElementById('my-posts-container').classList.remove('hidden');
+        }, 1000); // 1 second delay for demonstration
+        
+        // For real implementation, you would use this with fetch:
+        /*
+        fetch('/api/posts')
+            .then(response => response.json())
+            .then(data => {
+                // Process data and populate posts
+                
+                // Hide skeleton, show actual content
+                document.getElementById('posts-skeleton').classList.add('hidden');
+                document.getElementById('feed-posts-container').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching posts:', error);
+                // Show error message
+            });
+        */
     });
 </script>
 

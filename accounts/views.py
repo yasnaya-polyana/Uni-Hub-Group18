@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator
+from django.db.models import Q, Count
 
 from posts.models import Post
 from search.service import compile_query, search_accounts
@@ -16,20 +17,74 @@ from notifications.manager import NotificationManager
 # Create your views here.
 
 
-class HomeView(TemplateView):
-    template_name = "home.jinja"
+def HomeView(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return render(request, "home.jinja")
 
 
 def user_search_view(request):
-    qs = CustomUser.objects
-
-    query_str = request.GET.get("q", "")
-    query = compile_query(query_str)
-    accounts = search_accounts(qs, query)
-
-    return render(
-        request, "accounts/list.jinja", {"accounts": accounts, "search_str": query_str}
-    )
+    search_query = request.GET.get('q', '')
+    user_type = request.GET.get('user_type', '')
+    department = request.GET.get('department', '')
+    year = request.GET.get('year', '')
+    activity = request.GET.get('activity', '')
+    sort = request.GET.get('sort', 'newest')
+    
+    # Start with all users
+    users = CustomUser.objects.all()
+    
+    # Apply search query
+    if search_query:
+        users = users.filter(
+            Q(username__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(bio__icontains=search_query)
+        )
+    
+    # Apply user type filter
+    if user_type:
+        users = users.filter(user_type=user_type)
+    
+    # Apply department/major filter
+    if department:
+        users = users.filter(department__icontains=department)
+    
+    # Apply year filter
+    if year:
+        users = users.filter(year=year)
+    
+    # Apply activity filter (this would need a way to measure activity)
+    if activity:
+        if activity == 'very_active':
+            users = users.annotate(post_count=Count('posts')).filter(post_count__gte=20)
+        elif activity == 'active':
+            users = users.annotate(post_count=Count('posts')).filter(post_count__gte=10, post_count__lt=20)
+        elif activity == 'somewhat_active':
+            users = users.annotate(post_count=Count('posts')).filter(post_count__gte=5, post_count__lt=10)
+        elif activity == 'inactive':
+            users = users.annotate(post_count=Count('posts')).filter(post_count__lt=5)
+    
+    # Apply sorting
+    if sort == 'name_asc':
+        users = users.order_by('first_name', 'last_name')
+    elif sort == 'name_desc':
+        users = users.order_by('-first_name', '-last_name')
+    elif sort == 'newest':
+        users = users.order_by('-date_joined')
+    elif sort == 'oldest':
+        users = users.order_by('date_joined')
+    elif sort == 'most_posts':
+        users = users.annotate(post_count=Count('posts')).order_by('-post_count')
+    elif sort == 'most_followers':
+        users = users.annotate(follower_count=Count('followers')).order_by('-follower_count')
+    
+    return render(request, 'accounts/user-search.jinja', {
+        'users': users,
+        'search_str': search_query
+    })
 
 
 def signup_view(request):

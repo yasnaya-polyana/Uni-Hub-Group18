@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Count, Q
 
 from search.service import (
     compile_query,
@@ -59,25 +60,127 @@ def community_edit(request, community_id):
 
 @login_required
 def community_list(request):
-    # filter these later???
-    qs = Communities.objects
-
-    query_str = request.GET.get("q", "")
-    query = compile_query(query_str)
+    search_query = request.GET.get('q', '')
+    category = request.GET.get('category', '')
+    size = request.GET.get('size', '')
+    activity = request.GET.get('activity', '')
+    created = request.GET.get('created', '')
+    membership = request.GET.get('membership', '')
+    sort = request.GET.get('sort', 'newest')
     
-    all_communities = Communities.objects.filter(status='approved')
-    all_communities = search_communities(all_communities, query)
-    user_communities = Communities.objects.filter(owner=request.user, status='approved')
-
-    return render(
-        request,
-        "communities/community-list.jinja",
-        {
-            "all_communities": all_communities,
-            "user_communities": user_communities,
-            "search_str": query_str
-        },
-    )
+    # Start with all communities
+    all_communities = Communities.objects.all()
+    
+    # Apply search query
+    if search_query:
+        all_communities = all_communities.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+    
+    # Apply category filter
+    if category:
+        all_communities = all_communities.filter(category=category)
+    
+    # Apply size filter
+    if size:
+        if size == 'small':
+            all_communities = all_communities.annotate(member_count=Count('members')).filter(member_count__lt=50)
+        elif size == 'medium':
+            all_communities = all_communities.annotate(member_count=Count('members')).filter(member_count__gte=50, member_count__lte=200)
+        elif size == 'large':
+            all_communities = all_communities.annotate(member_count=Count('members')).filter(member_count__gt=200)
+    
+    # Apply activity filter
+    if activity:
+        # This would need a way to measure activity, for example by counting recent posts
+        from django.utils import timezone
+        import datetime
+        
+        if activity == 'very_active':
+            one_week_ago = timezone.now() - datetime.timedelta(days=7)
+            all_communities = all_communities.annotate(
+                recent_post_count=Count('posts', filter=Q(posts__created_at__gte=one_week_ago))
+            ).filter(recent_post_count__gte=10)
+        elif activity == 'active':
+            one_week_ago = timezone.now() - datetime.timedelta(days=7)
+            all_communities = all_communities.annotate(
+                recent_post_count=Count('posts', filter=Q(posts__created_at__gte=one_week_ago))
+            ).filter(recent_post_count__gte=5, recent_post_count__lt=10)
+        elif activity == 'somewhat_active':
+            one_week_ago = timezone.now() - datetime.timedelta(days=7)
+            all_communities = all_communities.annotate(
+                recent_post_count=Count('posts', filter=Q(posts__created_at__gte=one_week_ago))
+            ).filter(recent_post_count__gte=1, recent_post_count__lt=5)
+        elif activity == 'inactive':
+            one_week_ago = timezone.now() - datetime.timedelta(days=7)
+            all_communities = all_communities.annotate(
+                recent_post_count=Count('posts', filter=Q(posts__created_at__gte=one_week_ago))
+            ).filter(recent_post_count=0)
+    
+    # Apply creation date filter
+    if created:
+        from django.utils import timezone
+        import datetime
+        
+        if created == 'last_week':
+            one_week_ago = timezone.now() - datetime.timedelta(days=7)
+            all_communities = all_communities.filter(created_at__gte=one_week_ago)
+        elif created == 'last_month':
+            one_month_ago = timezone.now() - datetime.timedelta(days=30)
+            all_communities = all_communities.filter(created_at__gte=one_month_ago)
+        elif created == 'last_3months':
+            three_months_ago = timezone.now() - datetime.timedelta(days=90)
+            all_communities = all_communities.filter(created_at__gte=three_months_ago)
+        elif created == 'last_year':
+            one_year_ago = timezone.now() - datetime.timedelta(days=365)
+            all_communities = all_communities.filter(created_at__gte=one_year_ago)
+    
+    # Apply membership filter (if user is authenticated)
+    if request.user.is_authenticated and membership:
+        if membership == 'member':
+            all_communities = all_communities.filter(members=request.user)
+        elif membership == 'not_member':
+            all_communities = all_communities.exclude(members=request.user)
+        elif membership == 'owner':
+            all_communities = all_communities.filter(owner=request.user)
+        elif membership == 'moderator':
+            all_communities = all_communities.filter(
+                communitymembership__user=request.user,
+                communitymembership__role='moderator'
+            )
+    
+    # Apply sorting
+    if sort == 'name_asc':
+        all_communities = all_communities.order_by('name')
+    elif sort == 'name_desc':
+        all_communities = all_communities.order_by('-name')
+    elif sort == 'newest':
+        all_communities = all_communities.order_by('-created_at')
+    elif sort == 'oldest':
+        all_communities = all_communities.order_by('created_at')
+    elif sort == 'most_members':
+        all_communities = all_communities.annotate(member_count=Count('members')).order_by('-member_count')
+    elif sort == 'most_posts':
+        all_communities = all_communities.annotate(post_count=Count('posts')).order_by('-post_count')
+    elif sort == 'most_active':
+        from django.utils import timezone
+        import datetime
+        one_week_ago = timezone.now() - datetime.timedelta(days=7)
+        all_communities = all_communities.annotate(
+            recent_post_count=Count('posts', filter=Q(posts__created_at__gte=one_week_ago))
+        ).order_by('-recent_post_count')
+    
+    # Get user's communities if authenticated
+    user_communities = []
+    if request.user.is_authenticated:
+        user_communities = Communities.objects.filter(owner=request.user)
+    
+    return render(request, 'communities/community-list.jinja', {
+        'all_communities': all_communities,
+        'user_communities': user_communities,
+        'search_str': search_query
+    })
 
 
 @login_required
