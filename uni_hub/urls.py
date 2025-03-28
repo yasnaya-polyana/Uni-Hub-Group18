@@ -32,7 +32,7 @@ urlpatterns = [
     # Admin
     path("admin/", admin.site.urls),
     # Root
-    path("", views.HomeView.as_view(), name="home"),
+    path("", views.HomeView, name="home"),
     # Dashboard
     path("dashboard/", views.dashboard_view, name="dashboard"),
     # Search

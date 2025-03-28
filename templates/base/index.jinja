@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="cupcake">
+<html lang="en" data-theme="winter">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,7 +24,7 @@
         // Apply theme immediately to prevent flash of wrong theme
         (function() {
           // Get saved theme from localStorage or use default
-          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          const savedTheme = localStorage.getItem('theme') || 'winter';
           
           // Apply theme to html element immediately
           document.documentElement.setAttribute('data-theme', savedTheme);
@@ -58,14 +58,14 @@
         
         if (themeToggle) {
           // Get saved theme from localStorage or use default
-          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          const savedTheme = localStorage.getItem('theme') || 'winter';
           
           // Set the toggle state based on the saved theme
           themeToggle.checked = savedTheme === 'dark';
           
           // Add event listener for toggle changes
           themeToggle.addEventListener('change', function() {
-            const newTheme = this.checked ? 'dark' : 'cupcake';
+            const newTheme = this.checked ? 'dark' : 'winter';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             console.log('Theme changed to:', newTheme);
