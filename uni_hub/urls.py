@@ -26,6 +26,7 @@ from notifications import views as notif_views
 from communities import views as community_views
 from events import views as event_views
 from posts import views as post_views
+from search import views as search_views
 
 urlpatterns = [
     # Admin
@@ -34,12 +35,15 @@ urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
     # Dashboard
     path("dashboard/", views.dashboard_view, name="dashboard"),
+    # Search
+    path("search/", search_views.index_view, name="search"),
     # Auth
     path("login/", views.login_view, name="login"),
     path("signup/", views.signup_view, name="signup"),
     path("logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
     # Users
     path("u/<str:username>/", views.user_profile_view, name="user"),
+    path("u-search", views.user_search_view, name="user-search"),
     path("profile/", views.my_profile_view, name="my_profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),
     path('settings/', views.user_settings_view, name='user_settings'),

@@ -4,10 +4,13 @@
   </div>
 
   <div class="navbar-center">
+    {% if user.is_authenticated %}
+    <a href="{{ url('user-search') }}" class="btn {% if request.path == url('user-search') %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Users</a>
     <a href="{{ url('events') }}" class="btn {% if request.path == url('events') %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Events</a>
     <a href="{{ url('community_list') }}" class="btn {% if '/c/' in request.path %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Communities</a>
     {% if user.is_authenticated %}
     <a href="{{ url('dashboard') }}" class="btn {% if request.path == url('dashboard') %}btn-primary{% else %}btn-ghost hover:bg-primary/10{% endif %}">Dashboard</a>
+    {% endif %}
     {% endif %}
   </div>
 

@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from django.core.paginator import Paginator
 
 from posts.models import Post
+from search.service import compile_query, search_accounts
 
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm, UserSettingsForm
@@ -17,6 +18,18 @@ from notifications.manager import NotificationManager
 
 class HomeView(TemplateView):
     template_name = "home.jinja"
+
+
+def user_search_view(request):
+    qs = CustomUser.objects
+
+    query_str = request.GET.get("q", "")
+    query = compile_query(query_str)
+    accounts = search_accounts(qs, query)
+
+    return render(
+        request, "accounts/list.jinja", {"accounts": accounts, "search_str": query_str}
+    )
 
 
 def signup_view(request):

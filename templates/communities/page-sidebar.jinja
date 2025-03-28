@@ -1,4 +1,4 @@
-<div class="w-1/4">
+  <div class="w-1/4 flex flex-col space-y-2">
     <div class="bg-base-100 p-4 rounded-box shadow-lg">
       <h3 class="font-bold mb-2">About Community</h3>
       <div class="divider my-2"></div>
@@ -20,6 +20,20 @@
           </ul>
         </div>
       </div>
+  </div>
+    <div class="bg-base-100 p-4 rounded-box shadow-lg">
+      <h3 class="font-bold mb-2">Events</h3>
+      <div class="divider my-2"></div>
+      <div class="space-y-2 flex flex-col items-center w-full">
+          <ul class="text-sm list-disc list-inside space-y-2 w-full">
+          {% for event in events.order_by("start_at") %}
+            {% include 'events/event-card.jinja' %}
+          {% endfor %}
+          </ul>
+          <a href="create-event">Create new event</a>
+      </div>
     </div>
   </div>
+    </div>
 </div>
+

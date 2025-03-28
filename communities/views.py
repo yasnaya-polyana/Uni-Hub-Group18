@@ -1,7 +1,16 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+
+from search.service import (
+    compile_query,
+    handle_search,
+    search_communities,
+    search_posts,
+)
 
 from .forms import CreateCommunityForm, EditCommunityForm
 from .models import Communities, CommunityMember
@@ -50,7 +59,14 @@ def community_edit(request, community_id):
 
 @login_required
 def community_list(request):
+    # filter these later???
+    qs = Communities.objects
+
+    query_str = request.GET.get("q", "")
+    query = compile_query(query_str)
+    
     all_communities = Communities.objects.filter(status='approved')
+    all_communities = search_communities(all_communities, query)
     user_communities = Communities.objects.filter(owner=request.user, status='approved')
 
     return render(
@@ -58,7 +74,8 @@ def community_list(request):
         "communities/community-list.jinja",
         {
             "all_communities": all_communities,
-            "user_communities": user_communities
+            "user_communities": user_communities,
+            "search_str": query_str
         },
     )
 
@@ -92,9 +109,18 @@ def community_detail(request, community_id: str):
         community=community,
     ).first()
 
+    events = community.events.filter(end_at__gte=datetime.date.today())
+
+    posts = community.posts
+    query_str = request.GET.get("q", "")
+    query = compile_query(query_str)
+    posts = search_posts(posts, query)
     context = {
         "community": community,
         "membership": membership,
+        "events": events,
+        "posts": posts,
+        "search_str": query_str,
         "owner_username": community.owner.username,
         "is_owner": is_owner,
         "is_moderator": is_moderator,

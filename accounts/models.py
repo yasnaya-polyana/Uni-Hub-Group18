@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
-from django.conf import settings
 
 # Create your models here.
 
@@ -36,11 +36,12 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if not hasattr(self, 'usersettings'):
+        if not hasattr(self, "usersettings"):
             UserSettings.objects.create(user=self)
+
 
 # User Settings Model
 #
@@ -54,6 +55,7 @@ class UserSettings(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Settings"
+
 
 # Follow Model
 #
@@ -72,13 +74,17 @@ class Follow(models.Model):
 
 # Update the UserFollow model with different related_name values
 class UserFollow(models.Model):
-    follower = models.ForeignKey(CustomUser, related_name='user_following', on_delete=models.CASCADE)
-    followed = models.ForeignKey(CustomUser, related_name='user_followers', on_delete=models.CASCADE)
+    follower = models.ForeignKey(
+        CustomUser, related_name="user_following", on_delete=models.CASCADE
+    )
+    followed = models.ForeignKey(
+        CustomUser, related_name="user_followers", on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('follower', 'followed')
-        
+        unique_together = ("follower", "followed")
+
     def __str__(self):
         return f"{self.follower.username} follows {self.followed.username}"
 

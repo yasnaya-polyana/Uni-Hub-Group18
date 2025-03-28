@@ -66,7 +66,8 @@
         {% include 'communities/pinned-posts.jinja' %}
         <!-- Regular Posts -->
         <div class="flex flex-col space-y-4">
-        {% for post in community.posts.filter(is_pinned=False, parent_post__isnull=True) %}
+        {% include 'search/search.jinja' %}
+        {% for post in posts.filter(is_pinned=False, parent_post__isnull=True) %}
           {% include 'posts/post.jinja' %}
         {% endfor %}
         </div>
