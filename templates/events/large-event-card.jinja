@@ -1,7 +1,9 @@
 <div class="card bg-base-100 shadow-lg">
+    <!--
     <figure class="px-4 pt-4">
         <img src="https://placehold.co/600x400" class="rounded-xl" alt="Event Image"/>
     </figure>
+    -->
     <div class="card-body">
         <div class="flex justify-between items-start">
             <div>
@@ -9,9 +11,9 @@
                 <p class="text-sm text-base-content/60">{{ event.community.name }}</p>
             </div>
             {% if event.isOngoing() %}
-                <div class="badge badge-info">Ongoing</div>
+                <div class="badge badge-primary">Ongoing</div>
             {% else %}
-                <div class="badge badge-primary">Upcoming</div>
+                <div class="badge badge-info">Upcoming</div>
             {% endif %}
         </div>
         <div class="space-y-2">
