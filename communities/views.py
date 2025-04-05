@@ -59,23 +59,29 @@ def community_edit(request, community_id):
 
 @login_required
 def community_list(request):
-    # filter these later???
-    qs = Communities.objects
-
     query_str = request.GET.get("q", "")
     query = compile_query(query_str)
-    
+
+    #your created communities
+    created_communities = Communities.objects.filter(owner=request.user, status='approved')
+
+    #your communities you follow
+    followed_communities = Communities.objects.filter(
+        members=request.user, status='approved'
+    ).exclude(owner=request.user)
+
+    #all approved communities
     all_communities = Communities.objects.filter(status='approved')
     all_communities = search_communities(all_communities, query)
-    user_communities = Communities.objects.filter(owner=request.user, status='approved')
 
     return render(
         request,
         "communities/community-list.jinja",
         {
+            "created_communities": created_communities,
+            "followed_communities": followed_communities,
             "all_communities": all_communities,
-            "user_communities": user_communities,
-            "search_str": query_str
+            "search_str": query_str,
         },
     )
 
