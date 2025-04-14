@@ -1,74 +1,68 @@
-<div class="bg-base-100 shadow-xl rounded-box p-6" 
+<div class="w-full bg-base-100 shadow-xl rounded-box p-6" 
      data-timestamp="{{ post.created_at|date('c') }}" 
-     data-likes="0" 
-     data-comments="0"
-     data-reposts="0">
-    {% include 'posts/back-to-parent.jinja' %} 
+     data-likes="0" data-comments="0" data-reposts="0">
+
+    {% include 'posts/back-to-parent.jinja' %}
     {% include 'posts/header.jinja' %}
-  <div class="divider my-0"></div>
-  <div class="space-y-4">
-    <a
-      href="{{ url('post', post_id=(post|translate_repost).id) }}"
-      class="focus:outline-black"
-    >
-      <p>{{ (post|translate_repost).body|parse_md|default("") |safe }}</p>
-    </a>
-    <div class="flex space-x-6">
-      <button onclick="likePost('{{ (post|translate_repost).id }}')">
-        <span class="flex items-center justify-center">
-          {% if (post|translate_repost).interactions.filter(interaction="like",
-          user_id=user.id, post_id=(post|translate_repost).pkid).count() == 0 %}
-          <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400"
-            >favorite_outline</span
-          >
-          {% else %}
-          <span
-            class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-red-400"
-            >favorite</span
-          >
-          {% endif %}
-          <span class="font-light ml-1"
-            >{{
-            (post|translate_repost).interactions.filter(interaction="like").count()|default(0)
-            }}</span
-          >
-        </span>
-      </button>
-      <a href="{{ url('post_comment', post_id=(post|translate_repost).id) }}">
-        <span class="flex items-center justify-center">
-          <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400"
-            >chat</span
-          >
-          <span class="font-light ml-1"
-            >{{ (post|translate_repost).comments.count() }}</span
-          >
-        </span>
-      </a>
-      <button onclick="repostPost('{{ (post|translate_repost).id }}')">
-        <span class="flex items-center justify-center">
-          {% if (post|translate_repost).reposts.filter(user_id=user.id).count()
-          == 0 %}
-          <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400"
-            >repeat</span
-          >
-          {% else %}
-          <span
-            class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-blue-400"
-            >repeat</span
-          >
-          {% endif %}
-          <span class="font-light ml-1"
-            >{{ (post|translate_repost).reposts.count() |default(0) }}</span
-          >
-        </span>
-      </button>
+
+    <div class="divider my-0"></div>
+
+    <div class="space-y-4">
+        <!-- Post Body -->
+        <p class="break-words max-w-full overflow-hidden">
+          <a href="{{ url('post', post_id=(post|translate_repost).id) }}" class="focus:outline-black">
+            {{ (post|translate_repost).body|parse_md|default("") |safe }}
+          </a>
+        </p>
+        
+        <!-- Interaction Buttons -->
+        <div class="flex flex-wrap md:flex-nowrap space-x-6">
+            <!-- Like Button -->
+            <button onclick="likePost('{{ (post|translate_repost).id }}')">
+                <span class="flex items-center justify-center">
+                    {% if (post|translate_repost).interactions.filter(interaction="like", user_id=user.id, post_id=(post|translate_repost).pkid).count() == 0 %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">favorite_outline</span>
+                    {% else %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-red-400">favorite</span>
+                    {% endif %}
+                    <span class="font-light ml-1">
+                        {{ (post|translate_repost).interactions.filter(interaction="like").count()|default(0) }}
+                    </span>
+                </span>
+            </button>
+
+            <!-- Comment Button -->
+            <a href="{{ url('post_comment', post_id=(post|translate_repost).id) }}">
+                <span class="flex items-center justify-center">
+                    <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">chat</span>
+                    <span class="font-light ml-1">{{ (post|translate_repost).comments.count() }}</span>
+                </span>
+            </a>
+
+            <!-- Repost Button -->
+            <button onclick="repostPost('{{ (post|translate_repost).id }}')">
+                <span class="flex items-center justify-center">
+                    {% if (post|translate_repost).reposts.filter(user_id=user.id).count() == 0 %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">repeat</span>
+                    {% else %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-blue-400">repeat</span>
+                    {% endif %}
+                    <span class="font-light ml-1">{{ (post|translate_repost).reposts.count() |default(0) }}</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Nested Comments/Replies -->
+        {% if expanded %}
+        <div class="flex flex-col space-y-4">
+            {% for post in (post|translate_repost).comments.all() %}
+                {% with expanded=False, is_ui_child=True %}
+                    <div class="ml-6 pl-4 border-l-2 border-gray-200">
+                        {% include "posts/post.jinja" %}
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    {% if expanded %}
-    <div class="flex flex-col space-y-4">
-      {% for post in (post|translate_repost).comments.all() %} {% with
-      expanded=False, is_ui_child=True %} {% include "posts/post.jinja" %} {%
-      endwith %} {% endfor %}
-    </div>
-    {% endif %}
-  </div>
 </div>

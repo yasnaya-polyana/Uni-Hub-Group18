@@ -54,7 +54,7 @@
                 </div>
                 
                 <div id="my-posts-container" class="space-y-4">
-                    {% for post in my_posts[:25] %}
+                    {% for post in my_posts[:10] %}
                     <div class="mb-4 w-full">
                         {% include 'posts/post.jinja' %}
                     </div>
@@ -62,11 +62,12 @@
                 </div>
                 
                 {% if my_posts|length == 0 %}
-                    <div class="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>You haven't created any posts yet.</span>
-                    </div>
+                <div class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>You haven't created any posts yet.</span>
+                </div>
                 {% endif %}
+
             </div>
         </div>
     </div>
