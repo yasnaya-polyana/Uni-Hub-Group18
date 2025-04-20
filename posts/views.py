@@ -13,6 +13,7 @@ from posts.models import Interaction, Post
 
 from accounts.models import CustomUser
 from communities.models import Communities
+from notifications.manager import NotificationManager
 
 log = logging.getLogger("app")
 
@@ -186,6 +187,15 @@ def post_comment(request, post_id: str):
             post.user = request.user
             post.parent_post = parent_post
             post.save()
+
+            # Create notification for the post author (if commenter is not the author)
+            if request.user != parent_post.user:
+                NotificationManager.send_comment(
+                    username=parent_post.user.username,
+                    commenter_username=request.user.username, 
+                    post_id=parent_post.id
+                )
+
             return redirect("post", post_id=post_id)
     else:
         form = PostCreationForm()
@@ -213,6 +223,15 @@ def post_interact(request, post_id: int, interaction: str):
     except:
         interaction = Interaction(user=request.user, post=post, interaction=interaction)
         interaction.save()
+
+        # Send notification for likes (if not your own post)
+        if interaction.interaction == 'like' and request.user != post.user:
+            NotificationManager.send_like(
+                username=post.user.username,
+                liker_username=request.user.username,
+                post_id=post.id
+            )
+
         return HttpResponse(status=204)
 
     interaction.delete()

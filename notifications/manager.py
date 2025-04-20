@@ -29,7 +29,7 @@ class NotificationManager:
         if user_settings.like_notifications:
             liker = CustomUser.objects.get(username=liker_username)
             post = Post.objects.get(id=post_id)
-            post_link = reverse('post', kwargs={'id':post})
+            post_link = reverse('post', kwargs={'post_id':post.id})
             notification = Notification.objects.create(
                 username=user,
                 type='like',
@@ -47,7 +47,7 @@ class NotificationManager:
         if user_settings.comment_notifications: 
             commenter = CustomUser.objects.get(username=commenter_username)
             post = Post.objects.get(id=post_id)
-            post_link = reverse('post', kwargs={'id':post})
+            post_link = reverse('post', kwargs={'post_id':post.id})
             notification = Notification.objects.create(
                 username=user,
                 type='comment',
