@@ -15,7 +15,7 @@ class NotificationManager:
             notification = Notification.objects.create(
                 username=user,
                 type='follow',
-                data={'follower_username': follower.username,
+                data={'sender': follower.username,
                     'profile_link':profile_link,
                     }
                 )
@@ -33,7 +33,7 @@ class NotificationManager:
             notification = Notification.objects.create(
                 username=user,
                 type='like',
-                data={'liker_username':liker.username
+                data={'sender':liker.username
                     ,'post_link': post_link
                     }
             )
@@ -51,7 +51,7 @@ class NotificationManager:
             notification = Notification.objects.create(
                 username=user,
                 type='comment',
-                data={'commenter_username':commenter.username
+                data={'sender':commenter.username
                     ,'post_link': post_link
                     }
             )
@@ -66,7 +66,7 @@ class NotificationManager:
             data={
                 'community_id': community.id,
                 'community_name': community.name,
-                'requester_username': community.owner.username
+                'sender': community.owner.username
             }
         )
         return notification
@@ -80,7 +80,7 @@ class NotificationManager:
                 'community_id': community.id,
                 'community_name': community.name,
                 'requested_role': role,
-                'requester_username': requester.username
+                'sender': requester.username
             }
         )
         return notification

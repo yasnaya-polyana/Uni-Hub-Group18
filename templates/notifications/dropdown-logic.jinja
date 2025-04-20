@@ -40,25 +40,25 @@
         data.forEach(notification => {
           let item;
           if (notification.type === 'community_request') {
-            let username = '<strong>' + notification.data.requester_username + '</strong>';
+            let username = '<strong>' + notification.data.sender + '</strong>';
             item = `<li><a href="/notifications">${username} has requested to create ${notification.data.community_name}.</a></li>`;
           } else if (notification.type === 'community_decision') {
             let decision = notification.data.decision === 'approved' ? 'approved' : 'rejected';
             item = `<li><a href="/notifications">Your community '${notification.data.community_name}' was ${decision}.</a></li>`;
           } else if (notification.type === 'role_request') {
-            let username = '<strong>' + notification.data.requester_username + '</strong>';
+            let username = '<strong>' + notification.data.sender + '</strong>';
             item = `<li><a href="/notifications">${username} has requested to be a ${notification.data.requested_role} in ${notification.data.community_name}.</a></li>`;
           } else if (notification.type === 'role_decision') {
             let decision = notification.data.decision === 'approved' ? 'approved' : 'rejected';
             item = `<li><a href="/notifications">Your request to become a ${notification.data.role} in ${notification.data.community_name} was ${decision}.</a></li>`;          
           } else if (notification.type === 'like') {
-            let username = '<strong>' + notification.data.liker_username + '</strong>';
+            let username = '<strong>' + notification.data.sender + '</strong>';
             item = `<li><a href="${notification.data.post_link}">${username} liked your post.</a></li>`;
           } else if (notification.type === 'comment') {
-            let username = '<strong>' + notification.data.commenter_username + '</strong>';
+            let username = '<strong>' + notification.data.sender + '</strong>';
             item = `<li><a href="${notification.data.post_link}">${username} commented on your post.</a></li>`;
           } else if (notification.type === 'follow') {
-            let username = '<strong>' + notification.data.follower_username + '</strong>';
+            let username = '<strong>' + notification.data.sender + '</strong>';
             item = `<li><a href="${notification.data.profile_link}">${username} started following you.</a></li>`;
           } else {
             item = `<li><a href="#" class="${notification.is_read ? '' : 'font-bold'}">Unknown notification type</a></li>`;
