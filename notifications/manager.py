@@ -111,3 +111,16 @@ class NotificationManager:
             }
         )
         return notification
+    
+    @staticmethod
+    def send_community_invite(invited_user, community, inviter):
+        notification = Notification.objects.create(
+            username=invited_user,
+            type='community_invite',
+            data={
+                'community_id': community.id,
+                'community_name': community.name,
+                'inviter_username': inviter.username,
+            }
+        )
+        return notification    

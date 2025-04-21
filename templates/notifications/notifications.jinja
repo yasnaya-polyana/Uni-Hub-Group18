@@ -63,6 +63,20 @@
                     {% endif %}
                     {% elif notification.type == 'role_decision' %}
                     <span>Your request to become a {{ notification.data.role }} in {{ notification.data.community_name }} was {{ notification.data.decision }}.</span>
+                    {% elif notification.type == 'community_invite' %}
+                    <span><strong>{{ notification.data.inviter_username }}</strong> has invited you to join {{ notification.data.community_name }}</span>
+                    {% if not notification.is_interact %}
+                    <div class="flex justify-end space-x-2 ml-4">
+                        <form action="{{ url('community_accept_invite', notification.data.community_id) }}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                        </form>
+                        <form action="{{ url('community_decline_invite', notification.data.community_id) }}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
+                        </form>
+                    </div>
+                    {% endif %}
                     {% else %}
                     <a href="#" class="{{ 'font-bold' if not notification.is_read else '' }}">
                         Unknown notification type

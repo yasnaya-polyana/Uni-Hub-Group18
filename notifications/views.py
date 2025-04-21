@@ -147,3 +147,54 @@ def reject_role(request, community_id: str, role: str):
         messages.error(request, "No pending role request found.")
 
     return redirect("community_detail", community_id=community_id)
+
+@login_required
+def community_accept_invite(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    # Check if already a member
+    is_already_member = (
+        CommunityMember.objects.filter(user=user, community=community).count() > 0
+    )
+
+    if is_already_member:
+        messages.warning(request, "You are already a member of this community.")
+    else:
+        # Create membership with role="member" since it's from an invite
+        CommunityMember.objects.create(user=user, community=community, role="member")
+        messages.success(request, f"You have joined {community.name}!")
+    
+    # Mark notification as interacted with
+    notification = Notification.objects.filter(
+        username=user,
+        type='community_invite',
+        data__community_id=community_id,
+        is_interact=False
+    ).first()
+    
+    if notification:
+        notification.is_interact = True
+        notification.save()
+    
+    return redirect("notifications")
+
+@login_required
+def community_decline_invite(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    # Mark notification as interacted with
+    notification = Notification.objects.filter(
+        username=user,
+        type='community_invite',
+        data__community_id=community_id,
+        is_interact=False
+    ).first()
+    
+    if notification:
+        notification.is_interact = True
+        notification.save()
+    
+    messages.info(request, f"You declined the invitation to join {community.name}.")
+    return redirect("notifications")

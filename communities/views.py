@@ -1,5 +1,6 @@
 import datetime
-
+import json
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -245,3 +246,59 @@ def community_leave(request, community_id: str):
     #     messages.warning(request, "You are not a member of this community.")
 
     return redirect("community_detail", community_id=community_id)
+
+@login_required
+def community_invite(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    # Ensure user has permission to invite (owner or moderator)
+    is_owner = user == community.owner
+    is_moderator = CommunityMember.objects.filter(user=user, community=community, role="moderator").exists()
+
+    if not (is_owner or is_moderator):
+        messages.error(request, "You don't have permission to invite users to this community.")
+        return redirect("community_detail", community_id=community_id)
+
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        return redirect("community_detail", community_id=community_id)
+
+    try:
+        # Get username from form data instead of JSON
+        username = request.POST.get('username')
+        
+        if not username:
+            messages.error(request, "Please enter a username.")
+            return redirect("community_detail", community_id=community_id)
+        
+        # Check if user exists
+        try:
+            invited_user = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            messages.error(request, f"User '{username}' not found.")
+            return redirect("community_detail", community_id=community_id)
+        
+        # Don't invite self
+        if invited_user == user:
+            messages.error(request, "You cannot invite yourself.")
+            return redirect("community_detail", community_id=community_id)
+        
+        # Check if user is already a member
+        if CommunityMember.objects.filter(user=invited_user, community=community).exists():
+            messages.warning(request, f"{invited_user.username} is already a member of this community.")
+            return redirect("community_detail", community_id=community_id)
+        
+        # Send notification
+        NotificationManager.send_community_invite(
+            invited_user=invited_user,
+            community=community,
+            inviter=user
+        )
+        
+        messages.success(request, f"Invitation sent to {invited_user.username}.")
+        return redirect("community_detail", community_id=community_id)
+    
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect("community_detail", community_id=community_id)

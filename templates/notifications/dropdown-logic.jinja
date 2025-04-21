@@ -60,6 +60,9 @@
           } else if (notification.type === 'follow') {
             let username = '<strong>' + notification.data.follower_username + '</strong>';
             item = `<li><a href="${notification.data.profile_link}">${username} started following you.</a></li>`;
+          } else if (notification.type === 'community_invite') {
+            let username = '<strong>' + notification.data.inviter_username + '</strong>';
+            item = `<li><a href="/notifications">${username} has invited you to join ${notification.data.community_name}.</a></li>`;
           } else {
             item = `<li><a href="#" class="${notification.is_read ? '' : 'font-bold'}">Unknown notification type</a></li>`;
           }
