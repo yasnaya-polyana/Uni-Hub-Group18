@@ -87,8 +87,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👤 Authors
 
-Oscar Linehan 21015730
-Cosmo Elford 21018021
-X X
-X X
-X X
+- Oscar Linehan 21015730
+- Cosmo Elford 21018021
+- X X
+- X X
+- X X

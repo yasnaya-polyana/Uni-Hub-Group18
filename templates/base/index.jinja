@@ -38,19 +38,22 @@
       />
       <script src="{{ static('simplemde/simplemde.min.js') }}"></script>
     </head>
-    <body class="h-[100vh]">
+    <body class="min-h-screen flex flex-col">
         {% include 'base/nav.jinja' %}
-        <main class="container mx-auto px-4 py-8 h-[95%]">
-          {% if messages %}
-            {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
-          {% endif %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} top-0 w-full z-70 mb-4 z-auto" style="border-radius: 0px;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <main class="container mx-auto px-4 py-8 flex-grow">
           {% block content %}{% endblock %}
         </main>
-        <div role="alert"
-             id="alert-box"
-             class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
+
+        <footer class="footer sm:footer-horizontal footer-center bg-base-300 text-base-content p-4">© 2025 UniHub. All rights reserved.</footer>
     </body>
-    
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         // Get the toggle element
