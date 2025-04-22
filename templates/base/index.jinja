@@ -42,7 +42,7 @@
         {% include 'base/nav.jinja' %}
         {% if messages %}
           {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} sticky top-0 w-full z-50 mb-4" style="border-radius: 0px;">
+            <div class="alert alert-{{ message.tags }} sticky top-0 w-full z-50 mb-4 z-auto" style="border-radius: 0px;">
               {{ message }}
             </div>
           {% endfor %}

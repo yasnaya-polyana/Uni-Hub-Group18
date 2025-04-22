@@ -14,7 +14,7 @@ class Post(models.Model):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.CharField(default=generate_nanoid, editable=False, unique=True)
 
-    title = models.CharField(max_length=60)
+    title = models.CharField(max_length=100, null=True, blank=True)
     body = models.TextField(max_length=1000)
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

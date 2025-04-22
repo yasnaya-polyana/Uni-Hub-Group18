@@ -26,19 +26,20 @@
     
     <form method="post" class="space-y-4">
       {% csrf_token %} {# Username and Email #}
-
-      <div class="form-control">
-        <label class="label" for="{{ form.title.id_for_label }}">
-          <span class="label-text">{{ form.title.label }}</span>
-        </label>
-        {{ form.title }}
+      {% if is_comment %}
+      {% else %}
+        <div class="form-control">
+          <label class="label" for="{{ form.title.id_for_label }}">
+            <span class="label-text">{{ form.title.label }}</span>
+          </label>
+          {{ form.title }}
+        </div>
         {% if form.title.errors %}
           <label class="label">
             <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
           </label>
         {% endif %}
-      </div>
-
+      {% endif %}
       <div class="form-control">
         <label class="label" for="body">
           <span class="label-text">Body</span>
@@ -57,7 +58,6 @@
           </label>
         {% endif %}
       </div>
-
       <button type="submit" class="btn btn-primary w-full mt-6">
         {% if is_comment %}
           Create Comment

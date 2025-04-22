@@ -41,7 +41,7 @@ def posts_view(request):
 
 def post_create(request):
     if request.method == "POST":
-        form = PostCreationForm(request.POST)
+        form = PostCreationForm(request.POST, is_comment=False)
         
         if form.is_valid():
             post = form.save(commit=False)
@@ -88,24 +88,27 @@ def post_repost(request, post_id: str):
     repost.delete()
     return HttpResponse(status=204)
 
-
 def post_comment(request, post_id: str):
     parent_post = Post.objects.get(id=post_id)
 
     if request.method == "POST":
-        form = PostCreationForm(request.POST)
+        form = PostCreationForm(request.POST, is_comment=True)
+
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
             post.parent_post = parent_post
+            if not post.title:
+                post.title = ""
             post.save()
+
             return redirect("post", post_id=post_id)
     else:
-        form = PostCreationForm()
+        form = PostCreationForm(is_comment=True)
+
     return render(
         request, "posts/create-post.jinja", {"form": form, "is_comment": True}
     )
-
 
 def post_pin(request, post_id: int):
     post = Post.objects.get(id=post_id)

@@ -5,7 +5,9 @@
     {% include 'posts/back-to-parent.jinja' %}
     {% include 'posts/header.jinja' %}
 
+    {% if (post|translate_repost).title and not is_comment %}
     <div class="divider my-0"></div>
+    {% endif %}
 
     <div class="space-y-4">
         <!-- Post Body -->

@@ -130,11 +130,17 @@
         <h3 class="text-xl font-semibold mb-4">Posts</h3>
         {% if posts %}
             <div class="space-y-4">
-                {% for post in posts %}
+                <!-- Limit max posts to 25 -->
+                {% for post in posts[:25] %}
                     <div class="card bg-base-200">
                         <div class="card-body">
                             {% if post.ref_post %}
-                            <p class="text-md text-gray-500 mb-2">Reposted from @{{ post.ref_post.user.username }}</p>
+                                <p class="text-md text-gray-500 mb-2">
+                                    Reposted from 
+                                    <a href="/u/{{ post.ref_post.user.username }}" class="text-blue-500 hover:underline">
+                                    @{{ post.ref_post.user.username }}
+                                    </a>
+                                </p>
                                 <div class="bg-base-100 p-4 rounded">
                                     <div class="prose max-w-none">
                                         {{ post.ref_post.body|parse_md|default("")|safe }}

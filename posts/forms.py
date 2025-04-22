@@ -4,6 +4,13 @@ from posts.models import Post
 
 
 class PostCreationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        is_comment = kwargs.pop('is_comment', False)
+        super().__init__(*args, **kwargs)
+
+        if is_comment:
+            self.fields['title'].required = False
+
     title = forms.CharField(
         required=True,
         label="Title",

@@ -53,7 +53,7 @@ Mauris laoreet volutpat dui, a aliquet mi porttitor nec. Vivamus in mi orci. Don
 
                         for j in range(0, i):
                             comment = Post(
-                                title=f"Comment Test {i}",
+                                title=f"",
                                 user=user,
                                 community=com,
                                 parent_post=post,

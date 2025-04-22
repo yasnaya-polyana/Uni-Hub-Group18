@@ -3,16 +3,14 @@
 {% block title %}Accounts{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl">
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Accounts</h1>
-    </div>
-    {% include 'search/search.jinja' %}
+<div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Accounts</h1>
+</div>
+{% include 'search/search.jinja' %}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for profile_user in accounts %}
-            {% include 'accounts/user-card.jinja' %}
-        {% endfor %}
-    </div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for profile_user in accounts %}
+        {% include 'accounts/user-card.jinja' %}
+    {% endfor %}
 </div>
 {% endblock %} 
