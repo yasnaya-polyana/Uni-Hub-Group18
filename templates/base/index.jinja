@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="cupcake">
+<html lang="en" data-theme="winter">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,7 +24,7 @@
         // Apply theme immediately to prevent flash of wrong theme
         (function() {
           // Get saved theme from localStorage or use default
-          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          const savedTheme = localStorage.getItem('theme') || 'winter';
           
           // Apply theme to html element immediately
           document.documentElement.setAttribute('data-theme', savedTheme);
@@ -38,23 +38,17 @@
       />
       <script src="{{ static('simplemde/simplemde.min.js') }}"></script>
     </head>
-    <body class="min-h-screen flex flex-col">
+    <body class="h-[100vh]">
         {% include 'base/nav.jinja' %}
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} sticky top-0 w-full z-50 mb-4 z-auto" style="border-radius: 0px;">
-              {{ message }}
-            </div>
-          {% endfor %}
-        {% endif %}
-
-        <main class="container mx-auto px-4 py-8 flex-grow">
+        <main class="container mx-auto px-4 py-8 h-[95%]">
+          {% if messages %}
+            {% for message in messages %}<div class="alert alert-{{ message.tags }} mb-4">{{ message }}</div>{% endfor %}
+          {% endif %}
           {% block content %}{% endblock %}
         </main>
-
-        <footer class="footer sm:footer-horizontal footer-center bg-base-300 text-base-content p-4">
-          Copyright © UniHub
-        </footer>
+        <div role="alert"
+             id="alert-box"
+             class="absolute bottom-2 w-[90%] left-[5%] z-100"></div>
     </body>
     
     <script>
@@ -64,14 +58,14 @@
         
         if (themeToggle) {
           // Get saved theme from localStorage or use default
-          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          const savedTheme = localStorage.getItem('theme') || 'winter';
           
           // Set the toggle state based on the saved theme
           themeToggle.checked = savedTheme === 'dark';
           
           // Add event listener for toggle changes
           themeToggle.addEventListener('change', function() {
-            const newTheme = this.checked ? 'dark' : 'cupcake';
+            const newTheme = this.checked ? 'dark' : 'winter';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             console.log('Theme changed to:', newTheme);
