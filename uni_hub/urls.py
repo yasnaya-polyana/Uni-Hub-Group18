@@ -56,11 +56,7 @@ urlpatterns = [
     path("p/<str:post_id>/comment", post_views.post_comment, name="post_comment"),
     path("p/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
     path("p/<str:post_id>/pin", post_views.post_pin, name="post_pin"),
-    path(
-        "p/<str:post_id>/interact/<str:interaction>",
-        post_views.post_interact,
-        name="post_interact",
-    ),
+    path("p/<str:post_id>/interact/<str:interaction>", post_views.post_interact, name="post_interact"),
     # Notifications
     path('notifications/', notif_views.notifications_view, name='notifications'),
     path('get_unread_notifications/', notif_views.get_unread_notifications, name='get_unread_notifications'),
@@ -70,6 +66,8 @@ urlpatterns = [
     path('c/<str:community_id>/reject', notif_views.reject_community, name='reject_community'),
     path('c/<str:community_id>/approve_role/<str:role>', notif_views.approve_role, name='approve_role'),
     path('c/<str:community_id>/reject_role/<str:role>', notif_views.reject_role, name='reject_role'),
+    path("c/<str:community_id>/accept_invite", notif_views.community_accept_invite, name="community_accept_invite"),
+    path("c/<str:community_id>/decline_invite", notif_views.community_decline_invite, name="community_decline_invite"),
 
     # Communities
     path("c/", community_views.community_list, name="community_list"),
@@ -101,6 +99,7 @@ urlpatterns = [
     ),
     path("c/<str:community_id>/request_role/<str:role>", community_views.request_role, name="request_role"),
     path('c/<str:community_id>/edit', community_views.community_edit, name='community_edit'),
+    path("c/<str:community_id>/invite", community_views.community_invite, name="community_invite"),
 
     path("events/", event_views.events_list, name="events"),
     # Password Reset
