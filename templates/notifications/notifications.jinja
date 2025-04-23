@@ -11,16 +11,17 @@
     <ul class="list-none">
         {% for notification in notifications %}
         <li class="flex items-center mb-4">
-            <!-- 
-                TODO: Fix profile picture to display respective user object sender of the notification
-            -->
-            {% if user.username.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" class="w-8 h-8 rounded-full ml-2" alt="Profile" />
+
+            <div class="notification flex items-center gap-2">
+            {% if notification.follower_user %}
+                <a href="#" class="flex items-center gap-2">
+                    <img src="{{ notification.follower_user.profile_picture.url }}" alt="profile" class="w-10 h-10 rounded-full" />
+                    <span>{{ notification.follower_user.username }}</span>
+                </a>
             {% else %}
-                <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                    {{ user.username|make_list|first|upper }}
-                </div>
+            
             {% endif %}
+            </div>
             <div class="flex-1 flex justify-between items-center">
                 <div class="flex-1 flex items-center">
                     {% if notification.type == 'like' %}
@@ -92,7 +93,6 @@
         <li><span>No new notifications</span></li>
         {% endfor %}
     </ul>
-
 </div>
 
 {% endblock %}

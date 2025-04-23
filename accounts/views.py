@@ -67,7 +67,8 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect("profile")
+
+            return redirect("my_profile")
     else:
         form = ProfileEditForm(instance=request.user)
     return render(request, "accounts/edit-profile.jinja", {"form": form})

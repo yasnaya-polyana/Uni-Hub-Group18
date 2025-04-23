@@ -3,25 +3,63 @@
 {% block title %}Edit Community{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto">
-    <h2 class="text-2xl font-bold mb-6">Edit Community</h2>
-    <form method="post" enctype="multipart/form-data" class="space-y-4">
-        {% csrf_token %}
-        {% for field in form %}
+<div class="max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Edit Community <span class="font-light">{{ community.name }}</span></h2>
+    <form method="post" class="space-y-4">
+    {% csrf_token %}
+    <div class="space-y-4">
+        {% if form.errors %}
+            <label class="label">
+            <span class="label-text-alt text-error">{{ form.errors|join(", ") }}</span>
+            </label>
+        {% endif %}
+
         <div class="form-control">
-            <label class="label">
-                <span class="label-text">{{ field.label }}</span>
+            <label class="label" for="{{ form.name.id_for_label }}">
+                <span class="label-text">{{ form.name.label}}</span>
             </label>
-            {{ field }}
-            {% if field.errors %}
-            <label class="label">
-                <span class="label-text-alt text-error">{{ field.errors|join("<br/> ") }}</span>
-            </label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <label class="label">
+                <span class="label-text-alt text-error">{{ form.name.errors|join(", ") }}</span>
+                </label>
             {% endif %}
         </div>
-        {% endfor %}
-
-        <button type="submit" class="btn btn-primary w-full">Save Changes</button>
+        <div class="form-control">
+            <label class="label" for="{{ form.description.id_for_label }}">
+                <span class="label-text">{{ form.description.label }}</span>
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <label class="label">
+                <span class="label-text-alt text-error">{{ form.description.errors|join(", ")}}</span>
+                </label>
+            {% endif %}
+        </div>
+        <div class="form-control">
+            <label class="label" for="{{ form.banner_url.id_for_label }}">
+                <span class="label-text">Banner</span>
+            </label>
+            {{ form.banner_url }}
+            {% if form.banner_url.errors %}
+                <label class="label">
+                <span class="label-text-alt text-error">{{ form.banner_url.errors|join(", ")}}</span>
+                </label>
+            {% endif %}
+        </div>
+        <div class="form-control">
+            <label class="label" for="{{ form.icon_url.id_for_label }}">
+                <span class="label-text">Icon</span>
+            </label>
+            {{ form.icon_url }}
+            {% if form.icon_url.errors %}
+                <label class="label">
+                <span class="label-text-alt text-error">{{ form.icon_url.errors|join(", ") }}</span>
+                </label>
+            {% endif %}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary w-full mt-6">Save Changes</button>
     </form>
 </div>
 {% endblock %}

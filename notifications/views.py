@@ -5,6 +5,7 @@ from .models import Notification
 from communities.models import Communities, CommunityMember
 from django.contrib import messages
 from notifications.manager import NotificationManager
+from accounts.models import CustomUser
 
 # Create your views here.
 @login_required
@@ -42,8 +43,23 @@ def get_unread_notifications_count(request):
 
 @login_required
 def notifications_view(request):
+    # Get notifications for the logged-in user (using username FK)
     notifications = Notification.objects.filter(username=request.user).order_by('-created_at')
-    return render(request, 'notifications/notifications.jinja', {'notifications': notifications})
+
+    # Attach follower_user object based on follower_username in JSON data
+    for notification in notifications:
+        follower_username = notification.data.get("follower_username")
+        if follower_username:
+            try:
+                notification.follower_user = CustomUser.objects.get(username=follower_username)
+            except CustomUser.DoesNotExist:
+                notification.follower_user = None
+        else:
+            notification.follower_user = None
+
+    return render(request, 'notifications/notifications.jinja', {
+        'notifications': notifications
+    })
 
 @login_required
 def mark_all_as_read(request):

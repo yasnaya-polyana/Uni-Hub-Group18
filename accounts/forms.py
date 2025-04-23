@@ -180,6 +180,7 @@ class ProfileEditForm(forms.ModelForm):
         widget=forms.FileInput(
             attrs={"class": "file-input file-input-bordered w-full"}
         ),
+        required=False
     )
 
     class Meta:
