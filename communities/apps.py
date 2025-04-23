@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.db.utils import IntegrityError, ProgrammingError
+import logging
 
 from config import Config
 
@@ -9,65 +10,65 @@ class CommunitiesConfig(AppConfig):
     name = "communities"
 
     def ready(self):
-        try:
-            from accounts.models import CustomUser
-            from posts.models import Post
+        # It's generally discouraged to perform data creation in ready()
+        # as it can interfere with migrations, testing, and management commands.
+        # Use a dedicated management command (like generate_fake_data) instead.
+        logging.info("Skipping automatic community creation in CommunitiesConfig.ready()")
 
-            from .models import Communities
+        # try:
+        #     from accounts.models import CustomUser
+        #     from posts.models import Post
+        #     from .models import Communities
 
-            config = Config.config.get("communities") or {}
+        #     config = Config.config.get("communities") or {}
+        #     init_with = config.get("init_with") or []
 
-            init_with = config.get("init_with") or []
+        #     for com_data in init_with:
+        #         name = com_data["name"]
+        #         auto_populate_test_data = com_data.get("auto_populate_with_test_data", False) # Use .get()
+        #         # del com_data["auto_populate_with_test_data"] # Careful modifying dict while iterating
 
-            for com_data in init_with:
-                name = com_data["name"]
-                auto_populate_test_data = com_data["auto_populate_with_test_data"]
-                del com_data["auto_populate_with_test_data"]
+        #         owner_username = com_data.get("owner_username") # Use .get()
+        #         # del com_data["owner_username"]
 
-                owner_username = com_data["owner_username"]
-                del com_data["owner_username"]
+        #         if not owner_username:
+        #             logging.warning(f"Skipping community '{name}' due to missing owner_username in config.")
+        #             continue
 
-                user = CustomUser.objects.get(username=owner_username)
+        #         try:
+        #             user = CustomUser.objects.get(username=owner_username)
+        #         except CustomUser.DoesNotExist:
+        #             logging.warning(f"Skipping community '{name}' because owner '{owner_username}' does not exist.")
+        #             continue
 
-                com = Communities(**com_data)
-                com.owner = user
-                com.status = "approved"
-                com.save()
-                print(f"Created #{name} community.")
+        #         # Use get_or_create to be safer, though ideally this shouldn't run if generate_fake_data is used
+        #         community_defaults = {
+        #             k: v for k, v in com_data.items()
+        #             if k not in ['name', 'owner_username', 'auto_populate_with_test_data']
+        #         }
+        #         community_defaults['owner'] = user
+        #         community_defaults['status'] = 'approved' # Ensure status is set
 
-                if auto_populate_test_data:
-                    for i in range(0, 10):
-                        post = Post(
-                            title=f"Test Post {i}",
-                            user=user,
-                            community=com,
-                            body="""
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque lacus, pulvinar ut fringilla quis, lacinia ac massa. Pellentesque eget nunc nec nibh pellentesque aliquet. Aliquam luctus ligula vel purus commodo, sit amet pharetra massa venenatis. Sed porta nibh nunc, eu ultrices tortor pretium ut. Sed sit amet quam eget lectus ultricies gravida. Etiam hendrerit, tellus quis iaculis sollicitudin, dui sapien viverra nulla, accumsan convallis dui nisi sit amet felis. Morbi arcu est, molestie vitae porttitor at, sodales et eros.
+        #         com, created = Communities.objects.get_or_create(
+        #             name=name,
+        #             defaults=community_defaults
+        #         )
 
-Suspendisse potenti. Vestibulum lectus dolor, aliquam in diam cursus, rutrum luctus nisl. Vestibulum malesuada facilisis faucibus. Aliquam sed facilisis risus. Nunc porttitor elementum diam, auctor iaculis purus dignissim non. Morbi quis elementum tortor. Aenean mauris orci, rhoncus et ornare ac, semper id sapien. Sed in efficitur mi, quis pretium turpis. Etiam aliquam bibendum vulputate.
+        #         if created:
+        #             print(f"Created #{name} community via apps.py.") # Distinguish source
+        #             if auto_populate_test_data:
+        #                 # ... (rest of post/comment creation logic) ...
+        #                 print(f"Created demo data for #{name} community via apps.py.")
+        #         else:
+        #              print(f"Community #{name} already existed (found via apps.py).")
 
-Mauris laoreet volutpat dui, a aliquet mi porttitor nec. Vivamus in mi orci. Donec justo tortor, sagittis quis nibh non, mollis gravida diam. Sed vitae tincidunt leo, vel porta libero. Sed ornare quis enim vel luctus. Duis at faucibus nunc, ac tristique orci. Nulla luctus in justo non scelerisque. Aenean libero quam, feugiat egestas eros nec, tincidunt condimentum lectus. Maecenas sed neque vitae mi ullamcorper egestas nec volutpat ex. Fusce sodales volutpat risus, sed molestie magna semper a. Quisque vel placerat sapien. Donec varius arcu a ultricies fermentum. Sed mauris turpis, feugiat eu purus sit amet, placerat scelerisque turpis. Nullam quis risus dictum, dapibus mi ut, ullamcorper risus.
-                                    """,
-                        )
-                        post.save()
 
-                        for j in range(0, i):
-                            comment = Post(
-                                title=f"",
-                                user=user,
-                                community=com,
-                                parent_post=post,
-                                body="""
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque lacus, pulvinar ut fringilla quis, lacinia ac massa. Pellentesque eget nunc nec nibh pellentesque aliquet. Aliquam luctus ligula vel purus commodo, sit amet pharetra massa venenatis. Sed porta nibh nunc, eu ultrices tortor pretium ut. Sed sit amet quam eget lectus ultricies gravida. Etiam hendrerit, tellus quis iaculis sollicitudin, dui sapien viverra nulla, accumsan convallis dui nisi sit amet felis. Morbi arcu est, molestie vitae porttitor at, sodales et eros.
-
-Suspendisse potenti. Vestibulum lectus dolor, aliquam in diam cursus, rutrum luctus nisl. Vestibulum malesuada facilisis faucibus. Aliquam sed facilisis risus. Nunc porttitor elementum diam, auctor iaculis purus dignissim non. Morbi quis elementum tortor. Aenean mauris orci, rhoncus et ornare ac, semper id sapien. Sed in efficitur mi, quis pretium turpis. Etiam aliquam bibendum vulputate.
-                                    """,
-                            )
-                            comment.save()
-
-                        print(f"Created demo data for #{name} community.")
-
-        except IntegrityError:
-            pass
-        except ProgrammingError:
-            pass
+        # except IntegrityError as e:
+        #      logging.error(f"IntegrityError during app ready community creation: {e}")
+        #      # pass # Don't just pass, log the error
+        # except ProgrammingError as e:
+        #      logging.warning(f"ProgrammingError during app ready (likely migrations needed): {e}")
+        #      # pass
+        # except Exception as e: # Catch other potential errors
+        #      logging.error(f"Unexpected error in CommunitiesConfig.ready(): {e}")
+        pass # Keep the pass here if you comment out the whole block

@@ -1,12 +1,12 @@
 <a href="{{ url('events') }}" class="block">
-    {% if event.isOngoing() %}
+    {% if event.is_ongoing %}
         <div class="card bg-blue-200 hover:bg-blue-300 transition-colors">
     {% else %}
         <div class="card bg-base-200 hover:bg-base-300 transition-colors">
     {% endif %}
   <div class="card-body p-4">
-    <h3 class="card-title text-sm">{{ event.post.title }}</h3>
-    {% if event.isOngoing() %}
+    <h3 class="card-title text-sm">{{ event.title }}</h3>
+    {% if event.is_ongoing %}
         <p class="text-xs text-base-content/60">Ending at {{ event.end_at|date("DATETIME_FORMAT")}}</p>
     {% else %}
         <p class="text-xs text-base-content/60">Starting at {{ event.start_at|date("DATETIME_FORMAT")}}</p>

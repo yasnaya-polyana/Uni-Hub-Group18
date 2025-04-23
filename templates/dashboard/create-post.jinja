@@ -1,0 +1,29 @@
+<div class="card bg-base-100 shadow-lg">
+  <div class="card-body">
+    <h2 class="card-title">Create a Post</h2>
+    <form action="{{ url('post_create') }}" method="post" class="space-y-4">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      
+      <div class="form-control">
+        <input type="text" name="title" placeholder="Post title" class="input input-bordered w-full" required>
+      </div>
+      
+      <div class="form-control">
+        <textarea name="body" placeholder="What's on your mind?" class="textarea textarea-bordered w-full h-24" required></textarea>
+      </div>
+      
+      <div class="form-control">
+        <select name="community" class="select select-bordered w-full">
+          <option value="">Personal Post (No Community)</option>
+          {% for community in user.communities.all() %}
+            <option value="{{ community.id }}">{{ community.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="card-actions justify-end">
+        <button type="submit" class="btn btn-primary">Post</button>
+      </div>
+    </form>
+  </div>
+</div> 

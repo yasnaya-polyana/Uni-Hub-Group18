@@ -1,14 +1,19 @@
 from django import forms
 
-from .models import Communities, CommunityMember
+from .models import Communities, CommunityMember, Topic
 
 
 class CreateCommunityForm(forms.ModelForm):
+    topics = forms.ModelMultipleChoiceField(
+        queryset=Topic.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = Communities
-        fields = ("id", "name", "description", "banner_url", "icon_url")
+        exclude = ['pkid', 'id', 'owner', 'members', 'created_at', 'updated_at']
         widgets = {
-            "id": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "description": forms.Textarea(
                 attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
@@ -36,9 +41,15 @@ class CreateCommunityForm(forms.ModelForm):
         return instance
 
 class EditCommunityForm(forms.ModelForm):
+    topics = forms.ModelMultipleChoiceField(
+        queryset=Topic.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = Communities
-        fields = ["name", "description", "banner_url", "icon_url"]
+        exclude = ['pkid', 'id', 'owner', 'members', 'created_at', 'updated_at']
         widgets = {
             "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "description": forms.Textarea(attrs={"class": "textarea textarea-bordered w-full", "rows": 4}),

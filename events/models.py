@@ -1,4 +1,5 @@
 import datetime
+from django.utils import timezone
 
 import nanoid
 from django.contrib import admin
@@ -22,7 +23,7 @@ class Event(models.Model):
         Post, on_delete=models.CASCADE, null=True, blank=True, related_name="event"
     )  # TODO: Should probably be OneToOneField
 
-    location = models.CharField()
+    location = models.CharField(max_length=200)
 
     community = models.ForeignKey(
         Communities,
@@ -33,12 +34,32 @@ class Event(models.Model):
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()
 
+    title = models.CharField(max_length=100)
+    details = models.TextField()
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def isOngoing(self):
-        cur_time = datetime.datetime.now(datetime.UTC)
+    @property
+    def is_finished(self):
+        """Checks if the event's end time has passed."""
+        return timezone.now() > self.end_at
+
+    @property
+    def is_ongoing(self):
+        """Checks if the event is currently happening."""
+        now = timezone.now()
+        return self.start_at <= now <= self.end_at
+
+    def is_past_due(self):
+        cur_time = timezone.now()
         return self.start_at < cur_time
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["start_at"]
 
 
 class EventAdmin(admin.ModelAdmin):

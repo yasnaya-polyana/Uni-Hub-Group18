@@ -38,20 +38,6 @@
             </select>
           </div>
           
-          <!-- Activity level filter -->
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Activity Level</span>
-            </label>
-            <select name="activity" class="select select-bordered select-sm w-full">
-              <option value="">Any Activity Level</option>
-              <option value="very_active" {% if request.GET.activity == 'very_active' %}selected{% endif %}>Very Active</option>
-              <option value="active" {% if request.GET.activity == 'active' %}selected{% endif %}>Active</option>
-              <option value="somewhat_active" {% if request.GET.activity == 'somewhat_active' %}selected{% endif %}>Somewhat Active</option>
-              <option value="inactive" {% if request.GET.activity == 'inactive' %}selected{% endif %}>Inactive</option>
-            </select>
-          </div>
-          
           <!-- Creation date filter -->
           <div class="form-control mb-2">
             <label class="label">
@@ -92,7 +78,6 @@
               <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
               <option value="most_members" {% if request.GET.sort == 'most_members' %}selected{% endif %}>Most Members</option>
               <option value="most_posts" {% if request.GET.sort == 'most_posts' %}selected{% endif %}>Most Posts</option>
-              <option value="most_active" {% if request.GET.sort == 'most_active' %}selected{% endif %}>Most Active</option>
             </select>
           </div>
           
