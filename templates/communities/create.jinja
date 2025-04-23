@@ -14,17 +14,6 @@
       {% csrf_token %}
       <div class="space-y-4">
         <div class="form-control">
-          <label class="label" for="{{ form.id.id_for_label }}">
-            <span class="label-text">ID</span>
-          </label>
-          {{ form.id }}
-          {% if form.id.errors %}
-            <label class="label">
-              <span class="label-text-alt text-error">{{ form.id.errors|join(", ") }}</span>
-            </label>
-          {% endif %}
-        </div>
-        <div class="form-control">
           <label class="label" for="{{ form.name.id_for_label }}">
             <span class="label-text">{{ form.name.label}}</span>
           </label>
@@ -65,6 +54,17 @@
           {% if form.icon_url.errors %}
             <label class="label">
               <span class="label-text-alt text-error">{{ form.icon_url.errors|join(", ") }}</span>
+            </label>
+          {% endif %}
+        </div>
+        <div class="form-control">
+          <label class="label" for="{{ form.category.id_for_label }}">
+            <span class="label-text">{{ form.category.label }}</span>
+          </label>
+          {{ form.category }}
+          {% if form.category.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.category.errors|join(", ") }}</span>
             </label>
           {% endif %}
         </div>

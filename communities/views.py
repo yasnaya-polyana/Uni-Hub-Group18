@@ -21,23 +21,43 @@ from accounts.models import CustomUser
 
 @login_required
 def community_create(request):
-    if request.method == "POST":
-        form = CreateCommunityForm(request.POST, user=request.user)
-        if form.is_valid():
-            com = form.save(commit=False)
-            com.status = 'pending'
-            com.save()
-            
-            # Send notification to superuser
-            superuser = CustomUser.objects.filter(is_superuser=True).first()
-            NotificationManager.send_community_request(superuser, com)
-            
-            messages.success(request, "Community created and is pending approval.")
-            return redirect("/c")
-    else:
-        form = CreateCommunityForm(user=request.user)
+    if request.method == 'POST':
+        form = CreateCommunityForm(request.POST)
+        print("--- POST Request Received ---")
+        print(f"Form is bound: {form.is_bound}")
+        print(f"Is form valid? {form.is_valid()}")
 
-    return render(request, "communities/create.jinja", {"form": form})
+        if form.is_valid():
+            print("Form is valid. Attempting to save...")
+            try:
+                community = form.save(commit=False)
+                community.owner = request.user
+                # --- Set default values for missing fields ---
+                community.category = 'society' # Or 'academic', or get from form if added
+                community.status = 'approved'  # Or 'pending' if you have an approval process
+                # ---------------------------------------------
+                community.save()
+                # form.save_m2m() # Uncomment if you add ManyToMany fields like topics to the form
+                print(f"Community saved with ID: {community.id}")
+                messages.success(request, f"Community '{community.name}' created successfully!")
+                return redirect('community_detail', community_id=community.id)
+            except Exception as e:
+                print(f"ERROR during save/redirect: {e}")
+                messages.error(request, f"An error occurred while saving the community: {e}")
+                context = {'form': form, 'save_error': str(e)}
+                return render(request, 'communities/create.jinja', context)
+
+        else:
+            print("Form is NOT valid.")
+            print(f"Form errors: {form.errors.as_json()}")
+            messages.error(request, "Please correct the errors below.")
+
+    else: # GET request
+        form = CreateCommunityForm()
+        print("--- GET Request Received ---")
+
+    context = {'form': form}
+    return render(request, 'communities/create.jinja', context)
 
 @login_required
 def community_edit(request, community_id):

@@ -12,7 +12,7 @@ class CreateCommunityForm(forms.ModelForm):
 
     class Meta:
         model = Communities
-        exclude = ['pkid', 'id', 'owner', 'members', 'created_at', 'updated_at']
+        fields = ['name', 'description', 'banner_url', 'icon_url', 'category']
         widgets = {
             "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "description": forms.Textarea(
