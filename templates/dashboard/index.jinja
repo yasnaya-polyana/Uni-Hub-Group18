@@ -2,6 +2,8 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% include "posts/post-logic.jinja" %}
+
 {% block content %}
 <div class="flex flex-col md:flex-row gap-4">
     <!-- Left Sidebar - Events and Communities -->
@@ -29,7 +31,7 @@
                 </div>
                 
                 <div id="feed-posts-container" class="space-y-4">
-                    {% for post in posts %}
+                    {% for post in posts[:25] %}
                     <div class="mb-4 w-full">
                         {% include 'posts/post.jinja' %}
                     </div>
@@ -54,7 +56,7 @@
                 </div>
                 
                 <div id="my-posts-container" class="space-y-4">
-                    {% for post in my_posts[:10] %}
+                    {% for post in my_posts[:25] %}
                     <div class="mb-4 w-full">
                         {% include 'posts/post.jinja' %}
                     </div>

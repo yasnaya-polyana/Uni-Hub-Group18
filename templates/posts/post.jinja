@@ -1,3 +1,6 @@
+{% set display_post = post|translate_repost %}
+{% set display_user = display_post.user %}
+
 <div class="w-full bg-base-100 shadow-xl rounded-box p-6" 
      data-timestamp="{{ post.created_at|date('c') }}" 
      data-likes="0" data-comments="0" data-reposts="0">
@@ -6,7 +9,7 @@
     {% include 'posts/header.jinja' %}
 
     {% if (post|translate_repost).title and not is_comment %}
-    <div class="divider my-0"></div>
+        <div class="divider my-0"></div>
     {% endif %}
 
     <div class="space-y-4">

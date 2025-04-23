@@ -1,9 +1,15 @@
 <div class="w-10 rounded-[100%] overflow-hidden">
-  {% if post.user.profile_picture %}
-    <img src="{{ post.user.profile_picture.url }}" alt="" class="overflow-hidden aspect-square">
+  {% if display_user.profile_picture %}
+    <img 
+      src="{{ display_user.profile_picture.url }}" 
+      alt="{{ display_user.get_full_name }}" 
+      class="overflow-hidden aspect-square"
+    >
   {% else %}
-    <div class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center">
-      {{ post.user.username|make_list|first|upper }}
+    <div 
+      class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center"
+    >
+      {{ display_user.username|make_list|first|upper }}
     </div>
   {% endif %}
 </div>

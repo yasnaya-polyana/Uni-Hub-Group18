@@ -142,7 +142,12 @@ def dashboard_view(request):
     posts = (community_posts | followed_posts | user_posts).order_by("-created_at")
     
     # Get only the user's posts for the "My Posts" section
-    my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
+    my_posts = (
+        Post.objects
+            .filter(user=request.user)
+            .select_related("ref_post__user")
+            .order_by("-created_at")
+    )
     
     return render(request, "dashboard/index.jinja", {
         "posts": posts,
