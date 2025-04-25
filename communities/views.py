@@ -14,7 +14,7 @@ from search.service import (
 )
 
 from .forms import CreateCommunityForm, EditCommunityForm
-from .models import Communities, CommunityMember
+from .models import Communities, CommunityMember, Topic
 from posts.forms import PostCreationForm
 from notifications.manager import NotificationManager
 from accounts.models import CustomUser
@@ -81,19 +81,49 @@ def community_edit(request, community_id):
 @login_required
 def community_list(request):
     query_str = request.GET.get("q", "")
+    selected_category = request.GET.get("category", "") # Get selected category
+    selected_topics = request.GET.getlist("topic") # Get list of selected topic IDs
+
+    # --- Add Debug Prints ---
+    print(f"--- Request GET: {request.GET}")
+    print(f"Selected Category: '{selected_category}' (Type: {type(selected_category)})")
+    print(f"Selected Topics: {selected_topics} (Type: {type(selected_topics)})")
+    # -----------------------
+
     query = compile_query(query_str)
 
-    #your created communities
+    # Your created communities (usually not filtered by category/topic)
     created_communities = Communities.objects.filter(owner=request.user, status='approved')
 
-    #your communities you follow
+    # Your followed communities (usually not filtered by category/topic)
     followed_communities = Communities.objects.filter(
         members=request.user, status='approved'
     ).exclude(owner=request.user)
 
-    #all approved communities
+    # --- Filter all_communities ---
     all_communities = Communities.objects.filter(status='approved')
+
+    # Apply category filter if selected
+    if selected_category:
+        all_communities = all_communities.filter(category=selected_category)
+
+    # Apply topic filter if selected
+    # Ensure selected_topics contains valid IDs if necessary
+    if selected_topics:
+        # Filter communities that have AT LEAST ONE of the selected topics
+        all_communities = all_communities.filter(topics__id__in=selected_topics).distinct()
+        # If you want communities that have ALL selected topics, you'd need a loop or different approach.
+
+    # Apply text search to the already filtered list
     all_communities = search_communities(all_communities, query)
+    # -----------------------------
+
+    # Get all available topics for the filter dropdown/checkboxes
+    available_topics = Topic.objects.all() # Assuming you have a Topic model imported
+
+    # --- Add Debug Print Before Render ---
+    print(f"Final 'all_communities' count: {all_communities.count()}")
+    # ------------------------------------
 
     return render(
         request,
@@ -103,6 +133,11 @@ def community_list(request):
             "followed_communities": followed_communities,
             "all_communities": all_communities,
             "search_str": query_str,
+            # Pass filter values back to template to keep them selected
+            "selected_category": selected_category,
+            "selected_topics": selected_topics, # Pass list of IDs
+            "available_topics": available_topics, # For rendering filter options
+            "category_choices": Communities.CATEGORY_CHOICES, # Pass choices for category dropdown
         },
     )
 

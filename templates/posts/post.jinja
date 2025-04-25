@@ -1,6 +1,8 @@
 <div class="w-full bg-base-100 shadow-xl rounded-box p-6" 
      data-timestamp="{{ post.created_at|date('c') }}" 
-     data-likes="0" data-comments="0" data-reposts="0">
+     data-likes="{{ (post|translate_repost).interactions.filter(interaction='like').count()|default(0) }}"
+     data-comments="{{ (post|translate_repost).comments.count()|default(0) }}"
+     data-reposts="{{ (post|translate_repost).reposts.count()|default(0) }}">
 
     {% include 'posts/back-to-parent.jinja' %}
     {% include 'posts/header.jinja' %}
@@ -58,11 +60,9 @@
         {% if expanded %}
         <div class="flex flex-col space-y-4">
             {% for post in (post|translate_repost).comments.all() %}
-                {% with expanded=False, is_ui_child=True %}
-                    <div class="ml-6 pl-4 border-l-2 border-gray-200">
-                        {% include "posts/post.jinja" %}
-                    </div>
-                {% endwith %}
+                <div class="ml-6 pl-4 border-l-2 border-gray-200">
+                    {% include "posts/post.jinja" %}
+                </div>
             {% endfor %}
         </div>
         {% endif %}

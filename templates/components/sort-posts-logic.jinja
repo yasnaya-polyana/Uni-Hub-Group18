@@ -1,83 +1,83 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const sortOptions = document.querySelectorAll('.sort-option');
+    console.log('Sort script loaded.');
+
+    const sorter = document.getElementById('post-sorter');
+    const postsContainer = document.getElementById('community-posts-list');
     
-    sortOptions.forEach(option => {
-      option.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const sortType = this.dataset.sort;
-        const containerId = this.dataset.container;
-        const container = document.getElementById(containerId);
-        
-        if (!container) {
-          console.error(`Container with ID ${containerId} not found`);
+    console.log('Sorter element:', sorter);
+    console.log('Posts container element:', postsContainer);
+
+    if (sorter && postsContainer) {
+      console.log('Sorter and container found. Adding event listener.');
+
+      sorter.addEventListener('change', function() {
+        const sortType = this.value;
+        console.log('Sort type changed to:', sortType);
+
+        const postElements = Array.from(postsContainer.querySelectorAll('[data-timestamp]'));
+
+        console.log(`Found ${postElements.length} post elements to sort.`);
+        if (postElements.length === 0) {
+          console.warn('No post elements with data-timestamp found inside the container.');
           return;
         }
-        
-        const sortLabel = this.closest('.sort-posts-container').querySelector('.sort-label');
-        if (sortLabel) {
-          sortLabel.textContent = this.textContent;
+
+        if (postElements.length > 0) {
+          console.log('Data attributes of first post:', JSON.stringify(postElements[0].dataset));
         }
-        
-        // Get all post elements in the container
-        const posts = Array.from(container.children);
-        
-        posts.sort((a, b) => {
-          switch (sortType) {
-            case 'newest':
-              return compareTimestamps(b, a); // Newest first (descending)
-            case 'oldest':
-              return compareTimestamps(a, b); // Oldest first (ascending)
-            case 'most-liked':
-              return compareLikes(b, a); // Most likes first (descending)
-            case 'most-commented':
-              return compareComments(b, a); // Most comments first (descending)
-            case 'most-reposted':
-              return compareReposts(b, a); // Most reposts first (descending)
-            default:
-              return 0;
+
+        postElements.sort((a, b) => {
+          let valA, valB;
+          try {
+            switch (sortType) {
+              case 'oldest':
+                valA = new Date(a.dataset.timestamp || 0);
+                valB = new Date(b.dataset.timestamp || 0);
+                if (isNaN(valA.getTime())) valA = new Date(0);
+                if (isNaN(valB.getTime())) valB = new Date(0);
+                return valA - valB;
+              case 'most_likes':
+                valA = parseInt(a.dataset.likes || '0', 10);
+                valB = parseInt(b.dataset.likes || '0', 10);
+                return valB - valA;
+              case 'most_comments':
+                valA = parseInt(a.dataset.comments || '0', 10);
+                valB = parseInt(b.dataset.comments || '0', 10);
+                return valB - valA;
+              case 'most_reposts':
+                valA = parseInt(a.dataset.reposts || '0', 10);
+                valB = parseInt(b.dataset.reposts || '0', 10);
+                return valB - valA;
+              case 'newest':
+              default:
+                valA = new Date(a.dataset.timestamp || 0);
+                valB = new Date(b.dataset.timestamp || 0);
+                if (isNaN(valA.getTime())) valA = new Date(0);
+                if (isNaN(valB.getTime())) valB = new Date(0);
+                return valB - valA;
+            }
+          } catch (e) {
+            console.error("Error during sort comparison:", e);
+            return 0;
           }
         });
-        
-        posts.forEach(post => {
-          container.appendChild(post);
-        });
+
+        console.log('Timestamps after sorting:', postElements.map(p => p.dataset.timestamp));
+
+        console.log('Clearing container and appending sorted posts...');
+        postsContainer.innerHTML = '';
+        postElements.forEach(post => postsContainer.appendChild(post));
+        console.log('Sorting complete.');
       });
-    });
-    
-    // compare timestamps
-    function compareTimestamps(postA, postB) {
-      const timestampA = postA.dataset.timestamp || postA.querySelector('[data-timestamp]')?.dataset.timestamp;
-      const timestampB = postB.dataset.timestamp || postB.querySelector('[data-timestamp]')?.dataset.timestamp;
-      
-      if (!timestampA || !timestampB) return 0;
-      
-      return new Date(timestampA) - new Date(timestampB);
-    }
-    
-    // compare likes
-    function compareLikes(postA, postB) {
-      const likesA = parseInt(postA.dataset.likes || postA.querySelector('[data-likes]')?.dataset.likes || 0);
-      const likesB = parseInt(postB.dataset.likes || postB.querySelector('[data-likes]')?.dataset.likes || 0);
-      
-      return likesA - likesB;
-    }
-    
-    // compare comments
-    function compareComments(postA, postB) {
-      const commentsA = parseInt(postA.dataset.comments || postA.querySelector('[data-comments]')?.dataset.comments || 0);
-      const commentsB = parseInt(postB.dataset.comments || postB.querySelector('[data-comments]')?.dataset.comments || 0);
-      
-      return commentsA - commentsB;
-    }
-    
-    // compare reposts
-    function compareReposts(postA, postB) {
-      const repostsA = parseInt(postA.dataset.reposts || postA.querySelector('[data-reposts]')?.dataset.reposts || 0);
-      const repostsB = parseInt(postB.dataset.reposts || postB.querySelector('[data-reposts]')?.dataset.reposts || 0);
-      
-      return repostsA - repostsB;
+
+    } else {
+      if (!sorter) {
+        console.error('Sort logic: Sorter element with ID "post-sorter" not found.');
+      }
+      if (!postsContainer) {
+        console.error('Sort logic: Target container not found with ID "community-posts-list".');
+      }
     }
   });
 </script> 

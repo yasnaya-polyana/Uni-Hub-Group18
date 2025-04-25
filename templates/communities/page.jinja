@@ -15,82 +15,49 @@
       <div class="w-3/4">
         <!-- Create Post -->
         {% if is_member or is_owner or is_moderator or user.is_superuser %}
-        <div class="card bg-base-100 shadow-lg mb-4">
-          <div class="card-body">
-            <!-- Collapsible toggle button - shown by default -->
-            <div id="create-post-toggle" class="flex items-center cursor-pointer">
-              <div class="avatar placeholder mr-2">
-                <div class="w-8 rounded-full bg-neutral-focus text-neutral-content">
-                  <span>{{ user.username|make_list|first|upper }}</span>
-                </div>
-              </div>
-              <div class="p-3 bg-base-200 rounded-box w-full text-base-content/60 hover:bg-base-300">
-                Create a post in {{ community.name }}...
-              </div>
-            </div>
-            
-            <!-- Expandable form - hidden by default -->
-            <div id="create-post-form" class="hidden mt-4">
-              <h2 class="card-title">Create a Post</h2>
-              <form method="post">
-                {% csrf_token %}
-
-                <div class="space-y-4">
-                  <div class="form-control">
-                    <label class="label" for="{{ form.title.id_for_label }}">
-                      <span class="label-text">{{ form.title.label }}</span>
-                    </label>
-                    {{ form.title }}
-                    {% if form.title.errors %}
-                      <label class="label">
-                        <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
-                      </label>
-                    {% endif %}
-                  </div>
-
-                  <!-- Markdown Editor -->
-                  <div class="form-control">
-                    <label class="label" for="body">
-                      <span class="label-text">Body</span>
-                    </label>
-            
-                    <!-- Markdown Body -->
-                    {% set editor_id = 'body' %}
-                    {% set editor_name = 'body' %}
-                    {% set editor_class = 'textarea textarea-bordered w-full' %}
-            
-                    {% include 'components/markdown-editor.jinja' %}
-            
-                    {% if form.body.errors %}
-                      <label class="label">
-                        <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
-                      </label>
-                    {% endif %}
-                  </div>
-                  <div class="card-actions justify-end mt-2">
-                    <button type="button" id="cancel-post-btn" class="btn btn-ghost">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Post</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+          {% include 'communities/create-post.jinja' %}
         {% endif %}
-        <!-- Pinned Posts -->
-        {% include 'communities/pinned-posts.jinja' %}
-        <!-- Regular Posts -->
-        <div class="flex flex-col space-y-4">
-        {% include 'search/search.jinja' %}
-        {% for post in posts.filter(is_pinned=False, parent_post__isnull=True) %}
-          {% include 'posts/post.jinja' %}
-        {% endfor %}
+
+        {# --- START: Add Client-Side Sort Component --- #}
+        <div class="my-4 flex justify-between items-center">
+          <h3 class="text-lg font-semibold">Posts</h3>
+          {% include 'components/sort-posts.jinja' %}
         </div>
-      </div>
-      <!-- Sidebar -->
-      {% include 'communities/page-sidebar.jinja' %}
-    </div>
-  </div>
+        {# --- END: Add Client-Side Sort Component --- #}
+
+        <!-- Display Posts -->
+        {# --- START: Add ID to Posts Container --- #}
+        <div id="community-posts-list" class="space-y-4"> {# <-- Added ID here #}
+          {% if posts %}
+            {% for post in posts %}
+              {# Ensure post-card.jinja includes data attributes #}
+              {% include 'posts/post.jinja' %}
+            {% endfor %}
+          {% else %}
+            <div class="card bg-base-100 shadow">
+              <div class="card-body items-center text-center">
+                <p>No posts found in this community yet{% if search_str %} matching your search{% endif %}.</p>
+                {% if not search_str and (is_member or is_owner or is_moderator or user.is_superuser) %}
+                  <p>Why not be the first to create one?</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div> {# End Posts Container #}
+        {# --- END: Add ID to Posts Container --- #}
+
+      </div> {# End Posts Column #}
+
+      <!-- Sidebar Column -->
+      <div class="w-1/4">
+        {# Include the actual community sidebar template #}
+        {% include 'communities/page-sidebar.jinja' %}
+      </div> {# End Sidebar Column #}
+
+    </div> {# End Main Content Area Flex #}
+  </div> {# End Container #}
+
+  {% include 'components/sort-posts-logic.jinja' %}
 
   <!-- Invite Modal -->
   {% if is_owner or is_moderator %}
@@ -115,10 +82,47 @@
     </div>
   </div>
   {% endif %}
-  
+
+  {# --- START: Invite Modal JavaScript --- #}
+  {% if is_owner or is_moderator %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Post creation toggle functionality
+      const inviteButton = document.getElementById('invite-users-btn');
+      const inviteModal = document.getElementById('invite-modal');
+      const closeButton = document.getElementById('close-invite-modal');
+
+      if (inviteButton && inviteModal && closeButton) {
+        // Show modal on button click
+        inviteButton.addEventListener('click', function() {
+          inviteModal.classList.remove('hidden');
+          inviteModal.classList.add('flex'); // Use flex to center it as per modal styles
+        });
+
+        // Hide modal on close button clic
+        closeButton.addEventListener('click', function() {
+          inviteModal.classList.add('hidden');
+          inviteModal.classList.remove('flex');
+        });
+
+        // Hide modal on clicking outside the modal content
+        inviteModal.addEventListener('click', function(event) {
+          // Check if the click is directly on the background overlay
+          if (event.target === inviteModal) {
+            inviteModal.classList.add('hidden');
+            inviteModal.classList.remove('flex');
+          }
+        });
+      } else {
+        console.error('Invite modal elements not found. Button:', inviteButton, 'Modal:', inviteModal, 'Close Button:', closeButton);
+      }
+    });
+  </script>
+  {% endif %}
+  {# --- END: Invite Modal JavaScript --- #}
+
+  {# --- START: Create Post Toggle JavaScript --- #}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
       const createPostToggle = document.getElementById('create-post-toggle');
       const createPostForm = document.getElementById('create-post-form');
       const cancelPostBtn = document.getElementById('cancel-post-btn');
@@ -129,7 +133,7 @@
           createPostToggle.classList.add('hidden');
           createPostForm.classList.remove('hidden');
           // Focus on title input after expanding
-          const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+          const titleInput = document.querySelector('#create-post-form input[name="title"]');
           if (titleInput) {
             titleInput.focus();
           }
@@ -141,28 +145,30 @@
             createPostForm.classList.add('hidden');
             createPostToggle.classList.remove('hidden');
             // Reset form fields if needed
-            document.querySelector('form').reset();
+            const form = document.querySelector('#create-post-form form');
+            if (form) form.reset();
           });
         }
+      } else {
+        console.error('Create post elements not found. Toggle:', createPostToggle, 'Form:', createPostForm);
       }
       
-      // Invite functionality
-      const inviteBtn = document.getElementById('invite-users-btn');
-      const inviteModal = document.getElementById('invite-modal');
-      const closeInviteModal = document.getElementById('close-invite-modal');
-      
-      if (inviteBtn && inviteModal) {
-        inviteBtn.addEventListener('click', function() {
-          inviteModal.classList.remove('hidden');
-          inviteModal.classList.add('flex');
-        });
-        
-        closeInviteModal.addEventListener('click', function() {
-          inviteModal.classList.add('hidden');
-          inviteModal.classList.remove('flex');
-          document.getElementById('invite-username').value = '';
+      // Add form submission handling
+      const postForm = document.querySelector('#create-post-form form');
+      if (postForm) {
+        postForm.addEventListener('submit', function(event) {
+          // Log to verify the form is being submitted
+          console.log('Form is being submitted');
+          
+          // If you're using the standard form submission, make sure the action is set correctly
+          if (!postForm.getAttribute('action')) {
+            // Set the action URL if it's not already set
+            postForm.setAttribute('action', '{{ url("community_detail", community.id) }}');
+          }
         });
       }
     });
   </script>
-  {% endblock %}
+  {# --- END: Create Post Toggle JavaScript --- #}
+
+{% endblock %}
