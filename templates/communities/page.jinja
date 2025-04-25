@@ -18,19 +18,15 @@
           {% include 'communities/create-post.jinja' %}
         {% endif %}
 
-        {# --- START: Add Client-Side Sort Component --- #}
         <div class="my-4 flex justify-between items-center">
           <h3 class="text-lg font-semibold">Posts</h3>
           {% include 'components/sort-posts.jinja' %}
         </div>
-        {# --- END: Add Client-Side Sort Component --- #}
 
         <!-- Display Posts -->
-        {# --- START: Add ID to Posts Container --- #}
-        <div id="community-posts-list" class="space-y-4"> {# <-- Added ID here #}
+        <div id="community-posts-list" class="space-y-4">
           {% if posts %}
             {% for post in posts %}
-              {# Ensure post-card.jinja includes data attributes #}
               {% include 'posts/post.jinja' %}
             {% endfor %}
           {% else %}
@@ -43,19 +39,124 @@
               </div>
             </div>
           {% endif %}
-        </div> {# End Posts Container #}
-        {# --- END: Add ID to Posts Container --- #}
-
-      </div> {# End Posts Column #}
+        </div>
+      </div>
 
       <!-- Sidebar Column -->
       <div class="w-1/4">
-        {# Include the actual community sidebar template #}
         {% include 'communities/page-sidebar.jinja' %}
-      </div> {# End Sidebar Column #}
+      </div>
+    </div>
+  </div>
 
-    </div> {# End Main Content Area Flex #}
-  </div> {# End Container #}
+  <!-- Make sure this is included and properly connected to the sort UI -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get references to the sort buttons and posts container
+      const sortNewestBtn = document.getElementById('sort-newest');
+      const sortOldestBtn = document.getElementById('sort-oldest');
+      const sortTopBtn = document.getElementById('sort-top');
+      const postsContainer = document.getElementById('community-posts-list');
+      
+      if (!sortNewestBtn || !sortOldestBtn || !sortTopBtn || !postsContainer) {
+        console.error('Sort elements not found:', {
+          sortNewestBtn, sortOldestBtn, sortTopBtn, postsContainer
+        });
+        return;
+      }
+      
+      console.log('Sort buttons found:', {
+        newest: sortNewestBtn,
+        oldest: sortOldestBtn,
+        top: sortTopBtn
+      });
+      
+      // Function to sort posts
+      function sortPosts(criteria) {
+        console.log('Sorting by:', criteria);
+        
+        // Get all post elements (direct children that are posts)
+        const posts = Array.from(postsContainer.children).filter(child => 
+          child.classList.contains('card') || 
+          child.querySelector('.card')
+        );
+        
+        console.log('Found posts to sort:', posts.length);
+        
+        // Skip if no posts or only one post
+        if (posts.length <= 1) {
+          console.log('Not enough posts to sort');
+          return;
+        }
+        
+        // Debug data attributes
+        posts.forEach((post, index) => {
+          const postElement = post.classList.contains('card') ? post : post.querySelector('.card');
+          const created = postElement.getAttribute('data-created');
+          const votes = postElement.getAttribute('data-votes');
+          console.log(`Post ${index}:`, { created, votes });
+        });
+        
+        // Sort based on criteria
+        posts.sort((a, b) => {
+          const postA = a.classList.contains('card') ? a : a.querySelector('.card');
+          const postB = b.classList.contains('card') ? b : b.querySelector('.card');
+          
+          if (!postA || !postB) return 0;
+          
+          if (criteria === 'newest') {
+            const dateA = new Date(postA.getAttribute('data-created') || 0);
+            const dateB = new Date(postB.getAttribute('data-created') || 0);
+            return dateB - dateA;
+          } else if (criteria === 'oldest') {
+            const dateA = new Date(postA.getAttribute('data-created') || 0);
+            const dateB = new Date(postB.getAttribute('data-created') || 0);
+            return dateA - dateB;
+          } else if (criteria === 'top') {
+            const votesA = parseInt(postA.getAttribute('data-votes') || 0);
+            const votesB = parseInt(postB.getAttribute('data-votes') || 0);
+            return votesB - votesA;
+          }
+          return 0;
+        });
+        
+        // Remove active class from all buttons
+        sortNewestBtn.classList.remove('btn-active');
+        sortOldestBtn.classList.remove('btn-active');
+        sortTopBtn.classList.remove('btn-active');
+        
+        // Add active class to selected button
+        if (criteria === 'newest') sortNewestBtn.classList.add('btn-active');
+        else if (criteria === 'oldest') sortOldestBtn.classList.add('btn-active');
+        else if (criteria === 'top') sortTopBtn.classList.add('btn-active');
+        
+        // Reappend sorted posts
+        posts.forEach(post => postsContainer.appendChild(post));
+      }
+      
+      // Add event listeners to sort buttons
+      sortNewestBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Newest button clicked');
+        sortPosts('newest');
+      });
+      
+      sortOldestBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Oldest button clicked');
+        sortPosts('oldest');
+      });
+      
+      sortTopBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Top button clicked');
+        sortPosts('top');
+      });
+      
+      // Default sort: newest first
+      sortPosts('newest');
+    });
+  </script>
 
   {% include 'components/sort-posts-logic.jinja' %}
 

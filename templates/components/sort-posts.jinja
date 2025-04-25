@@ -8,11 +8,11 @@
       </svg>
     </label>
     <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-      <li><a class="sort-option" data-sort="newest" data-container="{{ container_id }}">Newest</a></li>
-      <li><a class="sort-option" data-sort="oldest" data-container="{{ container_id }}">Oldest</a></li>
-      <li><a class="sort-option" data-sort="most-liked" data-container="{{ container_id }}">Most Liked</a></li>
-      <li><a class="sort-option" data-sort="most-commented" data-container="{{ container_id }}">Most Commented</a></li>
-      <li><a class="sort-option" data-sort="most-reposted" data-container="{{ container_id }}">Most Reposted</a></li>
+      <li><a class="sort-option" data-sort="newest" data-container="{{ container_id|default('community-posts-list') }}">Newest</a></li>
+      <li><a class="sort-option" data-sort="oldest" data-container="{{ container_id|default('community-posts-list') }}">Oldest</a></li>
+      <li><a class="sort-option" data-sort="most-liked" data-container="{{ container_id|default('community-posts-list') }}">Most Liked</a></li>
+      <li><a class="sort-option" data-sort="most-commented" data-container="{{ container_id|default('community-posts-list') }}">Most Commented</a></li>
+      <li><a class="sort-option" data-sort="most-reposted" data-container="{{ container_id|default('community-posts-list') }}">Most Reposted</a></li>
     </ul>
   </div>
 </div> 
