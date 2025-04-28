@@ -4,16 +4,37 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator
+from django.db.models import Q
+from django.apps import apps
+from django.dispatch import receiver
+from django.db.models.signals import post_migrate
 
 from posts.models import Post
 from search.service import compile_query, search_accounts
 
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm, UserSettingsForm
-from .models import CustomUser, Follow, UserFollow, UserSettings
+from .models import CustomUser, Follow, UserFollow, UserSettings, UserType
 from notifications.manager import NotificationManager
 
 # Create your views here.
+
+# Signal to create default UserType entries when app is migrated
+@receiver(post_migrate)
+def create_user_types(sender, **kwargs):
+    if sender.name == 'accounts':
+        UserType = apps.get_model('accounts', 'UserType')
+        
+        # Create default user types if they don't exist
+        user_types = [
+            ('STUDENT', 'Student'),
+            ('MODERATOR', 'Moderator'),
+            ('ACADEMIC', 'Academic Staff'),
+            ('ADMIN', 'Admin'),
+        ]
+        
+        for type_name, display_name in user_types:
+            UserType.objects.get_or_create(name=type_name)
 
 
 class HomeView(TemplateView):
@@ -32,7 +53,19 @@ def user_search_view(request):
     )
 
 
+@anonymous_required
 def signup_view(request):
+    # Ensure user types exist
+    user_types = [
+        ('STUDENT', 'Student'),
+        ('MODERATOR', 'Moderator'),
+        ('ACADEMIC', 'Academic Staff'),
+        ('ADMIN', 'Admin'),
+    ]
+    
+    for type_name, _ in user_types:
+        UserType.objects.get_or_create(name=type_name)
+        
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -41,7 +74,11 @@ def signup_view(request):
             return redirect("home")
     else:
         form = CustomUserCreationForm()
-    return render(request, "accounts/signup.jinja", {"form": form})
+            
+    return render(request, "accounts/signup.jinja", {
+        "form": form,
+        "is_signup": True  # Flag to identify this is the signup form
+    })
 
 
 @anonymous_required

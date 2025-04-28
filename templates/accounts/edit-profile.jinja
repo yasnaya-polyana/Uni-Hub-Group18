@@ -2,26 +2,195 @@
 
 {% block title %}Edit Profile{% endblock %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ static('css/interests.css') }}">
+    <script src="{{ static('js/interests.js') }}" defer></script>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto">
+<div class="max-w-xl mx-auto">
     <h2 class="text-2xl font-bold mb-6">Edit Profile</h2>
+    
+    <!-- Display Account Type (Not Editable) -->
+    <div class="card bg-base-200 mb-6">
+        <div class="card-body">
+            <h3 class="card-title text-lg">Account Type</h3>
+            <div class="flex items-center">
+                <span class="badge badge-lg 
+                {% if request.user.user_type.name == 'ADMIN' %}
+                    badge-error
+                {% elif request.user.user_type.name == 'MODERATOR' %}
+                    badge-warning
+                {% elif request.user.user_type.name == 'ACADEMIC' %}
+                    badge-info
+                {% else %}
+                    badge-primary
+                {% endif %}">
+                    {{ request.user.user_type }}
+                </span>
+                <p class="ml-4 text-sm opacity-60">
+                    Account type can only be changed by administrators
+                </p>
+            </div>
+        </div>
+    </div>
+    
     <form method="post" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
-        {% for field in form %}
+        
+        <!-- Basic Profile Information -->
         <div class="form-control">
             <label class="label">
-                <span class="label-text">{{ field.label }}</span>
+                <span class="label-text">{{ form.email.label }}</span>
             </label>
-            {{ field }}
-            {% if field.errors %}
+            {{ form.email }}
+            {% if form.email.errors %}
             <label class="label">
-                <span class="label-text-alt text-error">{{ field.errors|join("<br/> ") }}</span>
+                <span class="label-text-alt text-error">{{ form.email.errors|join("<br/> ") }}</span>
             </label>
             {% endif %}
         </div>
-        {% endfor %}
-
-        <button type="submit" class="btn btn-primary w-full">Save Changes</button>
+        
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text">{{ form.bio.label }}</span>
+            </label>
+            {{ form.bio }}
+            {% if form.bio.errors %}
+            <label class="label">
+                <span class="label-text-alt text-error">{{ form.bio.errors|join("<br/> ") }}</span>
+            </label>
+            {% endif %}
+        </div>
+        
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text">{{ form.profile_picture.label }}</span>
+            </label>
+            {{ form.profile_picture }}
+            {% if form.profile_picture.errors %}
+            <label class="label">
+                <span class="label-text-alt text-error">{{ form.profile_picture.errors|join("<br/> ") }}</span>
+            </label>
+            {% endif %}
+        </div>
+        
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text">{{ form.course.label }}</span>
+            </label>
+            {{ form.course }}
+            {% if form.course.errors %}
+            <label class="label">
+                <span class="label-text-alt text-error">{{ form.course.errors|join("<br/> ") }}</span>
+            </label>
+            {% endif %}
+        </div>
+        
+        <!-- Interests Section -->
+        <div class="card bg-base-200">
+            <div class="card-body">
+                <h3 class="card-title text-lg">Interests</h3>
+                <p class="text-sm opacity-75 mb-4">Select your interests</p>
+                
+                <!-- Debugging information removed for clarity -->
+                
+                <!-- Render the interests directly -->
+                <div class="interests-wrapper">
+                    <p class="font-medium mb-2">Select your interests:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                        <!-- Use field.subwidgets to render each checkbox properly -->
+                        {% for checkbox in form.interests.subwidgets %}
+                            <label class="cursor-pointer label justify-start">
+                                <input type="checkbox" 
+                                       name="interests" 
+                                       value="{{ checkbox.data.value }}" 
+                                       {% if checkbox.data.selected %}checked{% endif %} 
+                                       class="checkbox checkbox-primary">
+                                <span class="label-text ml-2">{{ checkbox.choice_label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                {% if form.interests.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.interests.errors|join("<br/> ") }}</span>
+                    </label>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Address Fields -->
+        <div class="card bg-base-200 mt-6">
+            <div class="card-body">
+                <h3 class="card-title text-lg">Address Information</h3>
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">{{ form.address_line1.label }}</span>
+                    </label>
+                    {{ form.address_line1 }}
+                    {% if form.address_line1.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.address_line1.errors|join("<br/> ") }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">{{ form.address_line2.label }}</span>
+                    </label>
+                    {{ form.address_line2 }}
+                    {% if form.address_line2.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.address_line2.errors|join("<br/> ") }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">{{ form.city.label }}</span>
+                        </label>
+                        {{ form.city }}
+                        {% if form.city.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.city.errors|join("<br/> ") }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">{{ form.county.label }}</span>
+                        </label>
+                        {{ form.county }}
+                        {% if form.county.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.county.errors|join("<br/> ") }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">{{ form.postcode.label }}</span>
+                        </label>
+                        {{ form.postcode }}
+                        {% if form.postcode.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.postcode.errors|join("<br/> ") }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-full mt-6">Save Changes</button>
     </form>
 </div>
 {% endblock %} 

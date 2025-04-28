@@ -23,7 +23,31 @@
                 <div>
                     <h2 class="text-2xl font-bold">{{ profile_user.username }}</h2>
                     <p class="text-base-content/60">{{ profile_user.email }}</p>
-                    <p class="text-base-content/60">{{ profile_user.course }}</p>
+                    
+                    <!-- Course Information -->
+                    {% if profile_user.course %}
+                        <p class="text-base-content font-medium">
+                            <span class="badge badge-outline">{{ profile_user.course }}</span>
+                        </p>
+                    {% endif %}
+                    
+                    <!-- User Account Type -->
+                    {% if profile_user.user_type %}
+                        <div class="mt-1">
+                            <span class="badge badge-lg 
+                            {% if profile_user.user_type.name == 'ADMIN' %}
+                                badge-error
+                            {% elif profile_user.user_type.name == 'MODERATOR' %}
+                                badge-warning
+                            {% elif profile_user.user_type.name == 'ACADEMIC' %}
+                                badge-info
+                            {% else %}
+                                badge-primary
+                            {% endif %}">
+                                {{ profile_user.user_type }}
+                            </span>
+                        </div>
+                    {% endif %}
                     
                     <!-- Add follower and following counts -->
                     <div class="mt-2 flex space-x-4">
@@ -60,6 +84,40 @@
         <div class="space-y-4">
             <h3 class="text-xl font-semibold">Bio</h3>
             <p>{{ profile_user.bio|default("No bio yet.") }}</p>
+        </div>
+        
+        <!-- User Interests -->
+        <div class="divider"></div>
+        
+        <div class="space-y-4">
+            <h3 class="text-xl font-semibold">Interests</h3>
+            {% if profile_user.interests.all() %}
+                <div class="flex flex-wrap gap-2">
+                    {% for interest in profile_user.interests.all() %}
+                        <span class="badge badge-accent">{{ interest.name }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No interests specified.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Add address information -->
+        <div class="divider"></div>
+        
+        <div class="space-y-4">
+            <h3 class="text-xl font-semibold">Address</h3>
+            {% if profile_user.address_line1 %}
+                <address class="not-italic">
+                    {{ profile_user.address_line1 }}<br>
+                    {% if profile_user.address_line2 %}
+                        {{ profile_user.address_line2 }}<br>
+                    {% endif %}
+                    {{ profile_user.city }}, {% if profile_user.county %}{{ profile_user.county }},{% endif %} {{ profile_user.postcode }}
+                </address>
+            {% else %}
+                <p>No address provided.</p>
+            {% endif %}
         </div>
         
         <!-- Add followers and following lists -->

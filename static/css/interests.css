@@ -1,0 +1,122 @@
+.interest-tags-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+}
+
+.interest-search {
+  margin-bottom: 1rem;
+}
+
+.interest-categories {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.interest-category {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.interest-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(127, 127, 127, 0.2);
+  border-radius: 0.5rem;
+}
+
+.interest-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.interest-tag.selected {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.interest-tag:hover {
+  opacity: 0.8;
+}
+
+.interest-tag-academic {
+  background-color: #3498db;
+  color: white;
+}
+
+.interest-tag-sports {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.interest-tag-creative {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.interest-tag-social {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.interest-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  margin: 0.25rem;
+  background-color: #f0f0f0;
+  transition: all 0.2s;
+}
+
+.interest-chip:hover {
+  background-color: #e0e0e0;
+}
+
+.interest-chip-remove {
+  margin-left: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.interests-selected {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px dashed rgba(127, 127, 127, 0.2);
+  border-radius: 0.5rem;
+  min-height: 3rem;
+}
+
+.interests-selected-heading {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.interests-selected-empty {
+  color: rgba(127, 127, 127, 0.6);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.hidden {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+} 

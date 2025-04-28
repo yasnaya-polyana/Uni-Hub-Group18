@@ -1,0 +1,148 @@
+{% extends 'base/index.jinja' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Register</h2>
+      <form method="post">
+        {% csrf_token %}
+        
+        <!-- Basic Info -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Username</span>
+          </label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.username.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <!-- Email -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.email.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <!-- Name Fields -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">First Name</span>
+            </label>
+            {{ form.first_name }}
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Last Name</span>
+            </label>
+            {{ form.last_name }}
+          </div>
+        </div>
+        
+        <!-- User Type -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">User Type</span>
+          </label>
+          {{ form.user_type }}
+          {% if form.user_type.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.user_type.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <!-- Address Fields -->
+        <div class="divider">Address</div>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Address Line 1</span>
+          </label>
+          {{ form.address_line1 }}
+          {% if form.address_line1.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.address_line1.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Address Line 2 (Optional)</span>
+          </label>
+          {{ form.address_line2 }}
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">City</span>
+            </label>
+            {{ form.city }}
+            {% if form.city.errors %}
+              <label class="label"><span class="label-text-alt text-error">{{ form.city.errors }}</span></label>
+            {% endif %}
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Postal Code</span>
+            </label>
+            {{ form.postal_code }}
+            {% if form.postal_code.errors %}
+              <label class="label"><span class="label-text-alt text-error">{{ form.postal_code.errors }}</span></label>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Country</span>
+          </label>
+          {{ form.country }}
+          {% if form.country.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.country.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <!-- Password Fields -->
+        <div class="divider">Password</div>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Password</span>
+          </label>
+          {{ form.password1 }}
+          {% if form.password1.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.password1.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Confirm Password</span>
+          </label>
+          {{ form.password2 }}
+          {% if form.password2.errors %}
+            <label class="label"><span class="label-text-alt text-error">{{ form.password2.errors }}</span></label>
+          {% endif %}
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="form-control mt-6">
+          <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+      </form>
+      
+      <div class="text-center mt-4">
+        <p>Already have an account? <a href="{{ url('login') }}" class="link link-primary">Login</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -12,9 +12,39 @@ from django.db import models
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
     course_name = models.TextField(max_length=100)
+    department = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.course_name
+
+
+# Interest Categories
+#
+#
+class Interest(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+
+
+# User Type Model
+#
+#
+class UserType(models.Model):
+    USER_TYPE_CHOICES = [
+        ('STUDENT', 'Student'),
+        ('MODERATOR', 'Moderator'),
+        ('ACADEMIC', 'Academic Staff'),
+        ('ADMIN', 'Admin'),
+    ]
+    
+    name = models.CharField(max_length=20, choices=USER_TYPE_CHOICES, unique=True)
+    
+    def __str__(self):
+        return self.get_name_display()
 
 
 # Student Account Creation
@@ -33,6 +63,20 @@ class CustomUser(AbstractUser):
         upload_to="profile_pics/", null=True, blank=True
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    
+    # User Interests (Many-to-Many relationship)
+    interests = models.ManyToManyField(Interest, blank=True, related_name="users")
+    
+    # Address fields
+    address_line1 = models.CharField(max_length=255, blank=True, null=True)
+    address_line2 = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    postcode = models.CharField(max_length=10, blank=True, null=True)
+    
+    # User type field (Student, Moderator, Academic Staff, Admin)
+    user_type = models.ForeignKey(UserType, on_delete=models.SET_NULL, null=True)
+    is_staff_member = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
@@ -92,3 +136,6 @@ class UserFollow(models.Model):
 from django.contrib import admin
 
 admin.site.register(CustomUser)
+admin.site.register(UserType)
+admin.site.register(Course)
+admin.site.register(Interest)
