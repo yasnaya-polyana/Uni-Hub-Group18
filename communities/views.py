@@ -12,12 +12,8 @@ from events.models import Event
 from notifications.manager import NotificationManager
 from posts.forms import PostCreationForm
 from posts.models import Post
-from search.service import (
-    compile_query,
-    handle_search,
-    search_communities,
-    search_posts,
-)
+from search.service import (compile_query, handle_search, search_communities,
+                            search_posts)
 
 from .forms import CreateCommunityForm, EditCommunityForm
 from .models import Communities, CommunityMember
@@ -71,10 +67,14 @@ def create_event(request, community_id: str):
             event.user = request.user
             event.save()
 
+        return redirect(f"/c/{community_id}")
+
+
+
     else:
         form = EventCreationForm()
+        return render(request, "events/create.jinja", {"form": form})
 
-    return render(request, "events/create.jinja", {"form": form})
 
 
 @login_required

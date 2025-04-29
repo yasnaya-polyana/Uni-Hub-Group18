@@ -213,8 +213,11 @@ def dashboard_view(request):
     # Get only the user's posts for the "My Posts" section
     my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
 
-    events = Event.objects.order_by("start_at")
+    events = Event.objects.filter(
+        post__interactions__interaction="rsvp", post__interactions__user=request.user
+    ).order_by("start_at")
 
+    # event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid)
     return render(
         request,
         "dashboard/index.jinja",

@@ -7,7 +7,9 @@
     <div class="card-body">
         <div class="flex justify-between items-start">
             <div>
+                <a href="{{ url('post', post_id=event.post.id) }}" >
                 <h2 class="card-title">{{ event.post.title }}</h2>
+                </a>
                 <p class="text-sm text-base-content/60">{{ event.community.name }}</p>
             </div>
             {% if event.isOngoing() %}
@@ -29,8 +31,8 @@
         </div>
         <p>{{ event.post.body }}</p>
         <div class="card-actions justify-end mt-2">
-            <button class="btn btn-primary btn-sm">RSVP</button>
-            <button class="btn btn-ghost btn-sm">Share</button>
+            <button class="btn btn-primary btn-sm" onclick="rsvpPost('{{ event.post.id }}')">{% if event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid).count() == 0 %} I'm going {% else %} I'm not going {% endif %} </button>
+            <button class="btn btn-ghost btn-sm" onclick="navigator.share({ url: `/events/{{ event.id }}`, title: '{{ event.post.title }}', text: 'Join community'})">Share</button>
         </div>
     </div>
 </div>
