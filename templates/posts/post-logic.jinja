@@ -11,6 +11,17 @@
         window.location.reload();
       });
   }
+  function rsvpPost(postID) {
+    fetch(`/p/${postID}/interact/rsvp`, {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{csrf_token}}" },
+    })
+      .then((res) => res.text()) // or res.json()
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
 
   function rsvpPost(postID) {
     fetch(`/p/${postID}/interact/rsvp`, {

@@ -1,0 +1,113 @@
+{% extends 'base/index.jinja' %}
+
+{% block title %}Find Users{% endblock %}
+
+{% block content %}
+<div class="container mx-auto">
+  <h1 class="text-2xl font-bold mb-6">Find Users</h1>
+  
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <!-- Search bar -->
+    <div class="flex-grow">
+      <form method="GET" action="{{ url('user-search') }}" class="flex gap-2">
+        <input 
+          type="text" 
+          name="q" 
+          placeholder="Search users..." 
+          class="input input-bordered w-full" 
+          value="{{ search_str|default('') }}"
+        >
+        <button type="submit" class="btn btn-primary">
+          <span class="material-icons-outlined">search</span>
+        </button>
+      </form>
+    </div>
+    
+    <!-- Advanced search dropdown -->
+    <div class="flex gap-2">
+      {% include 'components/user-advanced-search.jinja' %}
+    </div>
+  </div>
+  
+  <!-- Active filters display -->
+  {% if request.GET|length > 0 %}
+  <div class="bg-base-200 p-3 rounded-box mb-6">
+    <div class="flex justify-between items-center">
+      <h3 class="font-semibold">Active Filters:</h3>
+      <a href="{{ url('user-search') }}" class="btn btn-ghost btn-xs">Clear All</a>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-2">
+      {% if search_str %}
+      <div class="badge badge-primary gap-1">
+        Search: {{ search_str }}
+        <a href="{{ url('user-search') }}?{{ request.GET|urlencode|replace('q='+search_str, '') }}" class="cursor-pointer">×</a>
+      </div>
+      {% endif %}
+      
+      {% if request.GET.user_type %}
+      <div class="badge badge-primary gap-1">
+        Type: {{ request.GET.user_type|title }}
+        <a href="{{ url('user-search') }}?{{ request.GET|urlencode|replace('user_type='+request.GET.user_type, '') }}" class="cursor-pointer">×</a>
+      </div>
+      {% endif %}
+      
+      {% if request.GET.department %}
+      <div class="badge badge-primary gap-1">
+        Department: {{ request.GET.department }}
+        <a href="{{ url('user-search') }}?{{ request.GET|urlencode|replace('department='+request.GET.department, '') }}" class="cursor-pointer">×</a>
+      </div>
+      {% endif %}
+      
+      <!-- Add more active filter badges as needed -->
+    </div>
+  </div>
+  {% endif %}
+  
+  <!-- Results count -->
+  <div class="mb-4 text-sm">
+    Found {{ users|length }} users
+  </div>
+  
+  <!-- Users list -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% if users|length > 0 %}
+      {% for user in users %}
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <div class="flex items-center gap-4">
+              <div class="avatar placeholder">
+                {% if user.profile_picture %}
+                <div class="w-16 rounded-full">
+                  <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" />
+                </div>
+                {% else %}
+                <div class="w-16 rounded-full bg-primary text-primary-content flex items-center justify-center">
+                  {{ user.username|make_list|first|upper }}
+                </div>
+                {% endif %}
+              </div>
+              <div>
+                <h2 class="card-title">{{ user.get_full_name()|default(user.username) }}</h2>
+                <p class="text-sm opacity-70">@{{ user.username }}</p>
+              </div>
+            </div>
+            
+            {% if user.bio %}
+            <p class="mt-2">{{ user.bio|truncate(100) }}</p>
+            {% endif %}
+            
+            <div class="card-actions justify-end mt-4">
+              <a href="{{ url('user', user.username) }}" class="btn btn-primary btn-sm">View Profile</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-span-3 alert">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>No users found matching your criteria.</span>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 
