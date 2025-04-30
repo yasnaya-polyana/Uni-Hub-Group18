@@ -47,7 +47,9 @@
               {% include 'events/event-card.jinja' %}
             {% endfor %}
             </ul>
-            <a href="{{ url('create_event', community_id=community.id) }}">Create new event</a>
+            {% if is_moderator or is_owner %}
+            <a href="{{ url('create_event', community_id=community.id) }}" class="btn btn-sm btn-primary mt-2">Create new event</a>
+            {% endif %}
         </div>
       </div>
     </div>

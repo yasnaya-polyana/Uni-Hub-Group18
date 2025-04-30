@@ -401,13 +401,15 @@ def community_invite(request, community_id: str):
 def create_event(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     
-    # Check if user has permission to create events (must be a member)
-    is_member = CommunityMember.objects.filter(
-        user=request.user, community=community, role__in=["member", "moderator"]
-    ).exists() or request.user == community.owner
+    # Check if user has permission to create events (must be a moderator or owner)
+    is_moderator = CommunityMember.objects.filter(
+        user=request.user, community=community, role="moderator"
+    ).exists()
+    is_owner = (request.user == community.owner)
     
-    if not is_member:
-        messages.error(request, "You must be a member of this community to create events.")
+    # Only allow moderators and the community owner to create events
+    if not (is_moderator or is_owner):
+        messages.error(request, "Only moderators and community owners can create events.")
         return redirect(f"/c/{community_id}")
     
     if request.method == "POST":
