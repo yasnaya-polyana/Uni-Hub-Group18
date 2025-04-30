@@ -1,0 +1,109 @@
+{% extends 'base/index.jinja' %}
+{% include 'posts/post-logic.jinja' %}
+
+{% block title %}{{ event.title }} - Event Details{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="card-title text-2xl mb-4">{{ event.title }}</h1>
+          <p class="text-sm text-base-content/60 mb-4">
+            Hosted by 
+            <a href="{{ url('community_detail', community_id=event.community.id) }}" class="link link-primary">
+              {{ event.community.name }}
+            </a>
+          </p>
+        </div>
+        
+        {% if event.is_ongoing %}
+        <div class="badge badge-success gap-2">
+          <span class="bg-success rounded-full w-2 h-2 animate-pulse"></span>
+          Happening now
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <div class="flex items-center gap-2 my-4">
+            <span class="material-icons-outlined text-base-content/70">event</span>
+            <div>
+              <p class="font-bold">Date and Time</p>
+              <p>{{ event.start_at|date("D, M j, Y") }} at {{ event.start_at|time("g:i A") }} to</p>
+              <p>{{ event.end_at|date("D, M j, Y") }} at {{ event.end_at|time("g:i A") }}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2 my-4">
+            <span class="material-icons-outlined text-base-content/70">location_on</span>
+            <div>
+              <p class="font-bold">Location</p>
+              <p>{{ event.location }}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2 my-4">
+            <span class="material-icons-outlined text-base-content/70">person</span>
+            <div>
+              <p class="font-bold">Organizer</p>
+              <p>{{ event.user.username }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h2 class="text-xl font-bold mb-4">Event Details</h2>
+          <div class="prose max-w-none">
+            {{ event.details }}
+          </div>
+          
+          {% if event.materials %}
+          <div class="mt-6">
+            <h3 class="text-lg font-bold mb-2">Event Materials</h3>
+            <a href="{{ event.materials.url }}" download class="btn btn-outline btn-sm gap-2">
+              <span class="material-icons-outlined">download</span>
+              Download Materials
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="card-actions justify-between">
+        <div>
+          <button class="btn btn-outline btn-sm" onclick="history.back()">
+            <span class="material-icons-outlined">arrow_back</span>
+            Back
+          </button>
+        </div>
+        <div>
+          {% if user.is_authenticated %}
+            <button class="btn btn-primary btn-sm" onclick="rsvpPost('{{ event.post.id }}')">
+              {% if event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid).count() == 0 %}
+                I'm going
+              {% else %}
+                I'm not going 
+              {% endif %}
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="navigator.share({ url: window.location.href, title: '{{ event.title }}', text: 'Join this event!' })">
+              <span class="material-icons-outlined">share</span>
+              Share
+            </button>
+          {% else %}
+            <a href="{{ url('login') }}?next={{ url('event_detail', event_id=event.id) }}" class="btn btn-primary btn-sm">
+              Login to RSVP
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

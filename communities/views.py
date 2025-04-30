@@ -18,6 +18,9 @@ from .models import Communities, CommunityMember, Topic
 from posts.forms import PostCreationForm
 from notifications.manager import NotificationManager
 from accounts.models import CustomUser
+from events.forms import EventCreationForm
+from events.models import Event
+from posts.models import Post
 
 @login_required
 def community_create(request):
@@ -33,14 +36,26 @@ def community_create(request):
                 community = form.save(commit=False)
                 community.owner = request.user
                 # --- Set default values for missing fields ---
-                community.category = 'society' # Or 'academic', or get from form if added
-                community.status = 'approved'  # Or 'pending' if you have an approval process
+                community.category = form.cleaned_data.get('category', 'society')
+                community.status = 'pending'  # Set status to pending for approval
                 # ---------------------------------------------
                 community.save()
-                # form.save_m2m() # Uncomment if you add ManyToMany fields like topics to the form
+                
+                # Save ManyToMany fields if they exist
+                if 'topics' in form.cleaned_data:
+                    community.topics.set(form.cleaned_data['topics'])
+                
+                # Send notifications to all admin users
+                admin_users = CustomUser.objects.filter(is_superuser=True)
+                for admin in admin_users:
+                    NotificationManager.send_community_request(
+                        superuser=admin,
+                        community=community
+                    )
+                
                 print(f"Community saved with ID: {community.id}")
-                messages.success(request, f"Community '{community.name}' created successfully!")
-                return redirect('community_detail', community_id=community.id)
+                messages.success(request, f"Community '{community.name}' has been submitted for approval. You will be notified once it's approved.")
+                return redirect('community_list')
             except Exception as e:
                 print(f"ERROR during save/redirect: {e}")
                 messages.error(request, f"An error occurred while saving the community: {e}")
@@ -92,15 +107,20 @@ def community_list(request):
 
     query = compile_query(query_str)
 
-    # Your created communities (usually not filtered by category/topic)
-    created_communities = Communities.objects.filter(owner=request.user, status='approved')
+    # Your created communities (include pending communities for the owner)
+    created_communities = Communities.objects.filter(owner=request.user)
 
-    # Your followed communities (usually not filtered by category/topic)
+    # Your followed communities (only approved ones)
     followed_communities = Communities.objects.filter(
         members=request.user, status='approved'
     ).exclude(owner=request.user)
 
-    # --- Filter all_communities ---
+    # Pending communities that need approval (only for admins)
+    pending_communities = []
+    if request.user.is_superuser:
+        pending_communities = Communities.objects.filter(status='pending')
+
+    # --- Filter all_communities (only approved ones) ---
     all_communities = Communities.objects.filter(status='approved')
 
     # Apply category filter if selected
@@ -132,12 +152,14 @@ def community_list(request):
             "created_communities": created_communities,
             "followed_communities": followed_communities,
             "all_communities": all_communities,
+            "pending_communities": pending_communities,
             "search_str": query_str,
             # Pass filter values back to template to keep them selected
             "selected_category": selected_category,
             "selected_topics": selected_topics, # Pass list of IDs
             "available_topics": available_topics, # For rendering filter options
             "category_choices": Communities.CATEGORY_CHOICES, # Pass choices for category dropdown
+            "is_admin": request.user.is_superuser, # For admin UI elements
         },
     )
 
@@ -146,6 +168,12 @@ def community_list(request):
 def community_detail(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     is_owner = request.user == community.owner
+    is_admin = request.user.is_superuser
+
+    # Check if the community is pending and restrict access to owner and admins
+    if community.status == 'pending' and not (is_owner or is_admin):
+        messages.error(request, "This community is awaiting approval and is not publicly accessible yet.")
+        return redirect("community_list")
 
     is_moderator = CommunityMember.objects.filter(
         user=request.user, community=community, role="moderator"
@@ -187,6 +215,8 @@ def community_detail(request, community_id: str):
         "is_owner": is_owner,
         "is_moderator": is_moderator,
         "is_member": is_member,
+        "is_admin": is_admin,
+        "is_pending": community.status == 'pending',
         "form": form,
     }
     return render(request, "communities/page.jinja", context)
@@ -235,8 +265,17 @@ def community_delete(request, community_id: str):
     if not user.is_superuser and user != community.owner:
         return HttpResponse(status=403)
 
+    # Get the community name before deletion for the success message
+    community_name = community.name
+    
+    # Delete all events associated with this community
+    # This should happen automatically due to CASCADE, but we'll do it explicitly to be sure
+    from events.models import Event
+    Event.objects.filter(community=community).delete()
+    
+    # Now delete the community
     community.delete()
-    messages.success(request, f"Community '{community.name}' has been deleted.")
+    messages.success(request, f"Community '{community_name}' has been deleted.")
 
     return redirect("community_list")
 
@@ -357,3 +396,48 @@ def community_invite(request, community_id: str):
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect("community_detail", community_id=community_id)
+
+@login_required
+def create_event(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    
+    # Check if user has permission to create events (must be a member)
+    is_member = CommunityMember.objects.filter(
+        user=request.user, community=community, role__in=["member", "moderator"]
+    ).exists() or request.user == community.owner
+    
+    if not is_member:
+        messages.error(request, "You must be a member of this community to create events.")
+        return redirect(f"/c/{community_id}")
+    
+    if request.method == "POST":
+        form = EventCreationForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.community = community
+            
+            # Create a post for the event
+            post = Post(
+                title=form.cleaned_data['title'],
+                body=form.cleaned_data['details'],
+                user=request.user,
+                community=community,
+            )
+            post.save()
+            
+            event.post = post
+            event.user = request.user
+            
+            # Handle the members_only field if it exists
+            members_only = request.POST.get('members_only', False)
+            if hasattr(event, 'members_only'):
+                event.members_only = members_only
+            
+            event.save()
+            
+            messages.success(request, "Event created successfully!")
+            return redirect(f"/c/{community_id}")
+    else:
+        form = EventCreationForm()
+    
+    return render(request, "events/create.jinja", {"form": form, "community": community})

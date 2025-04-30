@@ -12,6 +12,18 @@
       });
   }
 
+  function rsvpPost(postID) {
+    fetch(`/p/${postID}/interact/rsvp`, {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{csrf_token}}" },
+    })
+      .then((res) => res.text()) // or res.json()
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
+
   function likePost(postID) {
     fetch(`/p/${postID}/interact/like`, {
       method: "POST",
@@ -37,7 +49,7 @@
   }
 
   function repostPost(postID) {
-    fetch(`/p/${postID}/repost`, {
+    fetch(`/p/${postID}/interact/repost`, {
       method: "POST",
       headers: { "X-CSRFToken": "{{csrf_token}}" },
     })

@@ -100,8 +100,10 @@ urlpatterns = [
     path("c/<str:community_id>/request_role/<str:role>", community_views.request_role, name="request_role"),
     path('c/<str:community_id>/edit', community_views.community_edit, name='community_edit'),
     path("c/<str:community_id>/invite", community_views.community_invite, name="community_invite"),
+    path("c/<str:community_id>/create-event", community_views.create_event, name="create_event"),
 
     path("events/", event_views.events_list, name="events"),
+    path("events/<str:event_id>/", event_views.event_detail, name="event_detail"),
     # Password Reset
     path(
         "password_reset/",

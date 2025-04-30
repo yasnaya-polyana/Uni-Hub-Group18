@@ -11,6 +11,7 @@ from django.db.models.signals import post_migrate
 
 from posts.models import Post
 from search.service import compile_query, search_accounts
+from events.models import Event
 
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm, UserSettingsForm
@@ -180,11 +181,21 @@ def dashboard_view(request):
     
     # Get only the user's posts for the "My Posts" section
     my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
-    
-    return render(request, "dashboard/index.jinja", {
-        "posts": posts,
-        "my_posts": my_posts
-    })
+
+    events = Event.objects.filter(
+        post__interactions__interaction="rsvp", post__interactions__user=request.user
+    ).order_by("start_at")
+
+    # event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid)
+    return render(
+        request,
+        "dashboard/index.jinja",
+        {
+            "posts": posts,
+            "my_posts": my_posts,
+            "events": events
+        },
+    )
 
 @login_required
 def follow_user(request, username):

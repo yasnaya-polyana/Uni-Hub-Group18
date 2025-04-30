@@ -47,8 +47,24 @@
               {% include 'events/event-card.jinja' %}
             {% endfor %}
             </ul>
-            <a href="create-event">Create new event</a>
+            <a href="{{ url('create_event', community_id=community.id) }}">Create new event</a>
         </div>
       </div>
+    </div>
+    <div class="px-4 mt-4 space-y-2">
+      <h3 class="font-bold">Community Guidelines</h3>
+      <div class="text-sm">
+        <ul class="list-disc pl-5">
+          <li>Be respectful to others</li>
+          <li>Stay on topic</li>
+          <li>No spamming or self-promotion</li>
+          <li>Follow university guidelines</li>
+        </ul>
+      </div>
+      <button onclick="navigator.share({ url: window.location.href, title: 'Join UniHub Community', text: 'Join community'})" class="ml-[-8px] text-sm">
+        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400"
+          >share</span
+        >
+      </button>
     </div>
   </div>

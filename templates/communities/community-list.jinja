@@ -9,6 +9,21 @@
         <a href="{{ url('community_create') }}" class="btn btn-primary">Create Community</a>
     </div>
 
+    {% if is_admin and pending_communities %}
+    <div class="mb-8 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-box">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <span class="material-icons-outlined mr-2 text-amber-500">pending</span>
+            Pending Communities
+        </h2>
+        <p class="mb-4 text-sm text-amber-700 dark:text-amber-400">These communities are awaiting your approval before they become publicly visible.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for community in pending_communities %}
+                {% include 'communities/pending-community-card.jinja' %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-2">
         <!-- Search bar -->
         <div class="flex-grow">
