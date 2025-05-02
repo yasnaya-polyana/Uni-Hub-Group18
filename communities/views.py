@@ -108,7 +108,7 @@ def community_list(request):
     query = compile_query(query_str)
 
     # Your created communities (include pending communities for the owner)
-    created_communities = Communities.objects.filter(owner=request.user)
+    created_communities = Communities.objects.filter(owner=request.user, status='approved')
 
     # Your followed communities (only approved ones)
     followed_communities = Communities.objects.filter(
@@ -432,8 +432,7 @@ def create_event(request, community_id: str):
             
             # Handle the members_only field if it exists
             members_only = request.POST.get('members_only', False)
-            if hasattr(event, 'members_only'):
-                event.members_only = members_only
+            event.members_only = members_only
             
             event.save()
             

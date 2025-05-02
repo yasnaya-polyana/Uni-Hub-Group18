@@ -38,7 +38,7 @@ class Event(models.Model):
     details = models.TextField()
     
     # These fields are commented out but will be used in the code via hasattr
-    # members_only = models.BooleanField(default=False)
+    members_only = models.BooleanField(default=False)
     # materials = models.FileField(upload_to='event_materials/', null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -54,18 +54,6 @@ class Event(models.Model):
         """Checks if the event is currently happening."""
         now = timezone.now()
         return self.start_at <= now <= self.end_at
-    
-    @property
-    def members_only(self):
-        """Provides a fallback for the members_only field."""
-        if hasattr(self, '_members_only'):
-            return self._members_only
-        return False
-    
-    @members_only.setter
-    def members_only(self, value):
-        """Setter for members_only that works even if the field doesn't exist."""
-        self._members_only = value
 
     def is_past_due(self):
         cur_time = timezone.now()

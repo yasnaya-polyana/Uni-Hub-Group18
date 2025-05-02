@@ -1,0 +1,33 @@
+<div class="card bg-base-100">
+    <div class="card-body">
+        <div class="flex items-center gap-3 mb-4">
+            {% if community.icon_url %}
+                <div class="avatar">
+                    <div class="w-12 rounded-full">
+                        <img src="{{ community.icon_url }}" alt="{{ community.name }} Icon" />
+                    </div>
+                </div>
+            {% else %}
+                <div class="avatar placeholder">
+                    <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                        <span>{{ community.name[:2]|upper }}</span>
+                    </div>
+                </div>
+            {% endif %}
+            <div>
+                <h3 class="font-bold">{{ community.name }}</h3>
+            </div>
+        </div>
+        <p>{{ community.description }}</p>
+        <div class="card-actions justify-end mt-4">
+            <form action="{{ url('approve_community', community.id) }}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm">Accept</button>
+            </form>
+            <form action="{{ url('reject_community', community.id) }}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
+            </form>
+        </div>
+    </div>
+</div>

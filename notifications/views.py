@@ -83,6 +83,11 @@ def approve_community(request, community_id: str):
         decision='approved'
     )
     
+    notification = Notification.objects.filter(data__community_id=community.id).first()
+    if notification:
+        notification.is_interact = True
+        notification.save()
+    
     messages.success(request, f"Community '{community.name}' has been approved.")
     return redirect("community_list")
 
@@ -100,6 +105,11 @@ def reject_community(request, community_id: str):
         community=community,
         decision='rejected'
     )
+    
+    notification = Notification.objects.filter(data__community_id=community.id).first()
+    if notification:
+        notification.is_interact = True
+        notification.save()
     
     messages.success(request, f"Community '{community.name}' has been rejected.")
     return redirect("community_list")
@@ -123,6 +133,9 @@ def approve_role(request, community_id: str, role: str):
             role=role,
             decision='approved'
         )
+        # TODO: bugfix required here
+        # TODO: bugfix required here
+        # TODO: bugfix required here
         
         notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
         if notification:
