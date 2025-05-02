@@ -71,23 +71,36 @@ def mark_all_as_read(request):
 @login_required
 def approve_community(request, community_id: str):
     if not request.user.is_superuser:
-        return JsonResponse(status=403)
+        return JsonResponse({"error": "You do not have permission to approve communities."}, status=403)
     
-    community = get_object_or_404(Communities, id=community_id)
+    try:
+        # Attempt to retrieve the community
+        community = Communities.objects.get(id=community_id)
+    except Communities.DoesNotExist:
+        # Handle the case where the community does not exist so remove it
+        Notification.objects.filter(data__community_id=community_id).delete() 
+        
+        messages.error(request, "The community you are trying to approve does not exist.")
+        return redirect("community_list")  # Redirect to a safe page, e.g., the community list
+    
+    # Approve the community
     community.status = 'approved'
     community.save()
     
+    # Notify the owner about the approval decision
     NotificationManager.community_decision(
         owner=community.owner,
         community=community,
         decision='approved'
     )
     
+    # Update the notification related to this community
     notification = Notification.objects.filter(data__community_id=community.id).first()
     if notification:
         notification.is_interact = True
         notification.save()
     
+    # Add a success message and redirect
     messages.success(request, f"Community '{community.name}' has been approved.")
     return redirect("community_list")
 

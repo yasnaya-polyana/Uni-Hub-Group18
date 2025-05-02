@@ -23,11 +23,14 @@ class Communities(SoftDeleteModel):
         through="CommunityMember",
         related_name="communities",
     )
-    banner_url = models.URLField(blank=True, null=True)
-    icon_url = models.URLField(blank=True, null=True)
+    
+    banner_url = models.ImageField(upload_to="banners/", null=True, blank=True)
+    icon_url = models.ImageField(upload_to="icons/", null=True, blank=True)
+    
     topics = models.ManyToManyField("Topic", blank=True, related_name="communities")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
     CATEGORY_CHOICES = [
         ('sports', 'Sports'),
         ('academic', 'Academic'),

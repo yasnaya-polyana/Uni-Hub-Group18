@@ -76,7 +76,7 @@ class EditCommunityForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "description": forms.Textarea(
-                attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
+                attrs={"class": "textarea input-bordered", "rows": 4}
             ),
             "banner_url": forms.FileInput(
                 attrs={"class": "file-input file-input-bordered w-full"}

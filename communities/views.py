@@ -79,6 +79,7 @@ def community_edit(request, community_id):
     community = get_object_or_404(Communities, id=community_id)
     user = request.user
 
+    # Check permissions
     if not user.is_superuser and user != community.owner and not CommunityMember.objects.filter(user=user, community=community, role="moderator").exists():
         return HttpResponse(status=403)
 
@@ -88,6 +89,10 @@ def community_edit(request, community_id):
             form.save()
             messages.success(request, "Community details updated successfully!")
             return redirect("community_detail", community_id=community_id)
+        else:
+            print("Invalid form.")
+            print(form.errors)  # Debugging: Print field-specific errors
+            print(form.non_field_errors())  # Debugging: Print non-field errors
     else:
         form = EditCommunityForm(instance=community)
     

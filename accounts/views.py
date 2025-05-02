@@ -66,9 +66,10 @@ def signup_view(request):
     
     for type_name, _ in user_types:
         UserType.objects.get_or_create(name=type_name)
-        
+    
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
+        
         if form.is_valid():
             user = form.save()
             login(request, user)

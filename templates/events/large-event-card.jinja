@@ -43,7 +43,10 @@
                 View Details
             </a>
             <button class="btn btn-primary btn-sm" onclick="rsvpPost('{{ event.post.id }}')">{% if event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid).count() == 0 %} I'm going {% else %} I'm not going {% endif %} </button>
-            <button class="btn btn-ghost btn-sm" onclick="navigator.share({ url: `/events/{{ event.id }}`, title: '{{ event.post.title }}', text: 'Join community'})">Share</button>
+            <button class="btn btn-ghost btn-sm" onclick="navigator.share({ url: `/events/{{ event.id }}`, title: '{{ event.post.title }}', text: 'Join community'})">
+                <span class="material-icons-outlined">share</span>
+				Share
+            </button>
         </div>
     </div>
 </div>

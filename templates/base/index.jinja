@@ -24,7 +24,7 @@
         // Apply theme immediately to prevent flash of wrong theme
         (function() {
           // Get saved theme from localStorage or use default
-          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          const savedTheme = localStorage.getItem('theme') || 'light';
           
           // Apply theme to html element immediately
           document.documentElement.setAttribute('data-theme', savedTheme);
@@ -61,14 +61,14 @@
         
         if (themeToggle) {
           // Get saved theme from localStorage or use default
-          const savedTheme = localStorage.getItem('theme') || 'cupcake';
+          const savedTheme = localStorage.getItem('theme') || 'dark';
           
           // Set the toggle state based on the saved theme
-          themeToggle.checked = savedTheme === 'forest';
+          themeToggle.checked = savedTheme === 'dark';
           
           // Add event listener for toggle changes
           themeToggle.addEventListener('change', function() {
-            const newTheme = this.checked ? 'forest' : 'cupcake';
+            const newTheme = this.checked ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             console.log('Theme changed to:', newTheme);
