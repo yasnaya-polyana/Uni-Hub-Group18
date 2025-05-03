@@ -81,7 +81,7 @@ def approve_community(request, community_id: str):
         Notification.objects.filter(data__community_id=community_id).delete() 
         
         messages.error(request, "The community you are trying to approve does not exist.")
-        return redirect("community_list")  # Redirect to a safe page, e.g., the community list
+        return redirect("notifications")
     
     # Approve the community
     community.status = 'approved'
@@ -102,7 +102,7 @@ def approve_community(request, community_id: str):
     
     # Add a success message and redirect
     messages.success(request, f"Community '{community.name}' has been approved.")
-    return redirect("community_list")
+    return redirect("notifications")
 
 @login_required
 def reject_community(request, community_id: str):
@@ -125,7 +125,7 @@ def reject_community(request, community_id: str):
         notification.save()
     
     messages.success(request, f"Community '{community.name}' has been rejected.")
-    return redirect("community_list")
+    return redirect("notifications")
 
 @login_required
 def approve_role(request, community_id: str, role: str):
@@ -140,17 +140,12 @@ def approve_role(request, community_id: str, role: str):
         membership.role = role
         membership.save()
         
-        NotificationManager.role_decision(
-            requester=membership.user,
-            community=community,
-            role=role,
-            decision='approved'
-        )
-        # TODO: bugfix required here
-        # TODO: bugfix required here
-        # TODO: bugfix required here
+        notification = Notification.objects.filter(
+            data__community_id=community_id, 
+            data__requested_role=role,
+            data__requester_username=membership.user.username
+        ).first()
         
-        notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
         if notification:
             notification.is_interact = True
             notification.save()
@@ -158,7 +153,7 @@ def approve_role(request, community_id: str, role: str):
     else:
         messages.error(request, "No pending role request found.")
 
-    return redirect("community_detail", community_id=community_id)
+    return redirect("notifications")
 
 @login_required
 def reject_role(request, community_id: str, role: str):
@@ -173,14 +168,12 @@ def reject_role(request, community_id: str, role: str):
         membership.role = "subscriber" if role == "member" else "member"
         membership.save()
         
-        NotificationManager.role_decision(
-            requester=membership.user,
-            community=community,
-            role=role,
-            decision='rejected'
-        )
+        notification = Notification.objects.filter(
+            data__community_id=community_id, 
+            data__requested_role=role,
+            data__requester_username=membership.user.username
+        ).first()
         
-        notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
         if notification:
             notification.is_interact = True
             notification.save()
@@ -188,7 +181,7 @@ def reject_role(request, community_id: str, role: str):
     else:
         messages.error(request, "No pending role request found.")
 
-    return redirect("community_detail", community_id=community_id)
+    return redirect("notifications")
 
 @login_required
 def community_accept_invite(request, community_id: str):
@@ -203,7 +196,7 @@ def community_accept_invite(request, community_id: str):
     if is_already_member:
         messages.warning(request, "You are already a member of this community.")
     else:
-        # Create membership with role="member" since it's from an invite
+        #create membership with role="member" since it's from an invite
         CommunityMember.objects.create(user=user, community=community, role="member")
         messages.success(request, f"You have joined {community.name}!")
     
