@@ -44,6 +44,7 @@ class CreateCommunityForm(forms.ModelForm):
             "icon_url": forms.FileInput(
                 attrs={"class": "file-input file-input-bordered w-full"}
             ),
+            "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -72,11 +73,11 @@ class EditCommunityForm(forms.ModelForm):
 
     class Meta:
         model = Communities
-        exclude = ['pkid', 'id', 'owner', 'members', 'created_at', 'updated_at']
+        exclude = ['pkid', 'id', 'owner', 'members', 'created_at', 'updated_at', 'status']
         widgets = {
             "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "description": forms.Textarea(
-                attrs={"class": "textarea input-bordered", "rows": 4}
+                attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
             ),
             "banner_url": forms.FileInput(
                 attrs={"class": "file-input file-input-bordered w-full"}
@@ -84,8 +85,18 @@ class EditCommunityForm(forms.ModelForm):
             "icon_url": forms.FileInput(
                 attrs={"class": "file-input file-input-bordered w-full"}
             ),
+            "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
         }
-
+        
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        if commit:
+            instance.save()
+            if 'topics' in self.cleaned_data:
+                instance.topics.set(self.cleaned_data['topics'])
+                
+        return instance
 
 class JoinCommunityForm(forms.ModelForm):
     class Meta:
