@@ -6,4 +6,13 @@
 		<a href="{{ url("user", post.user.username) }}">@{{ post.user.username }}</a>
 		</span>
 	</p>
+	{% if post.visibility != 'public' %}
+		<div class="ml-2">
+		{% if post.visibility == 'members' %}
+			<span class="badge badge-primary">Members View Only</span>
+		{% elif post.visibility == 'moderators' %}
+			<span class="badge badge-secondary">Moderators View Only</span>
+		{% endif %}
+		</div>
+	{% endif %}
 </div>

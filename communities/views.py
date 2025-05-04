@@ -200,6 +200,14 @@ def community_detail(request, community_id: str):
             post = form.save(commit=False)
             post.user = request.user
             post.community = community
+            
+            # Handle visibility setting
+            visibility = request.POST.get('visibility', 'public')
+            # Only allow moderators and owners to set moderator-only visibility
+            if visibility == 'moderators' and not (is_moderator or is_owner or is_admin):
+                visibility = 'public'
+            post.visibility = visibility
+            
             post.save()
             return redirect("community_detail", community_id=community_id)
     else:
@@ -219,9 +227,12 @@ def community_detail(request, community_id: str):
         messages.error(request, "This community is awaiting approval and is not publicly accessible yet.")
         return redirect("community_list")
     
+    # Start with all posts in this community
     posts = community.posts
-    if not (is_owner or is_admin or is_moderator):
-        # Get list of suspended users in this community
+    
+    # Filter posts based on user role and post visibility
+    if not (is_owner or is_admin):
+        # Get list of suspended users
         suspended_users = CommunityMember.objects.filter(
             community=community,
             is_suspended=True
@@ -229,13 +240,25 @@ def community_detail(request, community_id: str):
         
         # Exclude posts from suspended users
         posts = posts.exclude(user__in=suspended_users)
+        
+        # Filter posts by visibility
+        if is_moderator:
+            # Moderators can see public, members-only and moderators-only posts
+            pass  # No additional filtering needed
+        elif is_member:
+            # Members can see public and members-only posts
+            posts = posts.exclude(visibility='moderators')
+        else:
+            # Non-members can only see public posts
+            posts = posts.filter(visibility='public')
 
+    # Rest of your code
     events = community.events.filter(end_at__gte=datetime.date.today())
 
-    posts = community.posts
     query_str = request.GET.get("q", "")
     query = compile_query(query_str)
     posts = search_posts(posts, query)
+    
     context = {
         "community": community,
         "membership": membership,
