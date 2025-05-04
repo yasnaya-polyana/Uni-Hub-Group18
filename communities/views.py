@@ -35,26 +35,34 @@ def community_create(request):
             try:
                 community = form.save(commit=False)
                 community.owner = request.user
-                # --- Set default values for missing fields ---
                 community.category = form.cleaned_data.get('category', 'society')
-                community.status = 'pending'  # Set status to pending for approval
-                # ---------------------------------------------
+                
+                # Auto-approve if admin is creating the community
+                if request.user.is_superuser:
+                    community.status = 'approved'
+                    success_message = f"Community '{community.name}' has been created successfully."
+                else:
+                    community.status = 'pending'  # Set status to pending for approval
+                    success_message = f"Community '{community.name}' has been submitted for approval. You will be notified once it's approved."
+                
                 community.save()
                 
                 # Save ManyToMany fields if they exist
                 if 'topics' in form.cleaned_data:
                     community.topics.set(form.cleaned_data['topics'])
                 
-                # Send notifications to all admin users
-                admin_users = CustomUser.objects.filter(is_superuser=True)
-                for admin in admin_users:
-                    NotificationManager.send_community_request(
-                        superuser=admin,
-                        community=community
-                    )
+                # Only send notifications if the community is pending
+                if community.status == 'pending':
+                    # Send notifications to all admin users
+                    admin_users = CustomUser.objects.filter(is_superuser=True)
+                    for admin in admin_users:
+                        NotificationManager.send_community_request(
+                            superuser=admin,
+                            community=community
+                        )
                 
                 print(f"Community saved with ID: {community.id}")
-                messages.success(request, f"Community '{community.name}' has been submitted for approval. You will be notified once it's approved.")
+                messages.success(request, success_message)
                 return redirect('community_list')
             except Exception as e:
                 print(f"ERROR during save/redirect: {e}")
