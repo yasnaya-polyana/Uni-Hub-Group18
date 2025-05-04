@@ -436,7 +436,7 @@ def create_event(request, community_id: str):
             event.user = request.user
             
             # Handle the members_only field if it exists
-            members_only = request.POST.get('members_only', False)
+            members_only = request.POST.get('members_only') == 'on'
             event.members_only = members_only
             
             event.save()

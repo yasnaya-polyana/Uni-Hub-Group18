@@ -12,17 +12,17 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 				</div>
-                <span>
-                    {% if form.errors %}
-                    <ul>
-                        {% for field, errors in form.errors.items() %}
-                            {% for error in errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </span>
+				<span>
+					{% if form.errors %}
+					<ul>
+						{% for field, errors in form.errors.items() %}
+						{% for error in errors %}
+						<li>{{ error }}</li>
+						{% endfor %}
+						{% endfor %}
+					</ul>
+					{% endif %}
+				</span>
 			</div>
 			{% endif %}
 			<form method="post" class="space-y-6">

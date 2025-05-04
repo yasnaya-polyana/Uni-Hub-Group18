@@ -1,275 +1,262 @@
 {% extends 'base/index.jinja' %}
 {% include 'posts/post-logic.jinja' %}
-
 {% block title %}
 {{ community.name }}
 {% endblock %}
-
 {% block content %}
-  <div class="max-w-6xl mx-auto">
-    <!-- Community Header -->
-    {% include 'communities/page-header.jinja' %}
-    <!-- Main Content Area -->
-    <div class="flex gap-4">
-      <!-- Posts Column -->
-      <div class="w-3/4">
-        <!-- Create Post -->
-        {% if is_member or is_owner or is_moderator or user.is_superuser %}
-          {% include 'communities/create-post.jinja' %}
-        {% endif %}
-
-        <div class="my-4 flex justify-between items-center">
-          <h3 class="text-lg font-semibold">Posts</h3>
-          {% include 'components/sort-posts.jinja' %}
-        </div>
-
-        <!-- Display Posts -->
-        <div id="community-posts-list" class="space-y-4">
-          {% if posts %}
-            {% for post in posts %}
-              {% include 'posts/post.jinja' %}
-            {% endfor %}
-          {% else %}
-            <div class="card bg-base-100 shadow">
-              <div class="card-body items-center text-center">
-                <p>No posts found in this community yet{% if search_str %} matching your search{% endif %}.</p>
-                {% if not search_str and (is_member or is_owner or is_moderator or user.is_superuser) %}
-                  <p>Why not be the first to create one?</p>
-                {% endif %}
-              </div>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Sidebar Column -->
-      <div class="w-1/4">
-        {% include 'communities/page-sidebar.jinja' %}
-      </div>
-    </div>
-  </div>
-
-  <!-- Make sure this is included and properly connected to the sort UI -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get references to the sort buttons and posts container
-      const sortNewestBtn = document.getElementById('sort-newest');
-      const sortOldestBtn = document.getElementById('sort-oldest');
-      const sortTopBtn = document.getElementById('sort-top');
-      const postsContainer = document.getElementById('community-posts-list');
-      
-      if (!sortNewestBtn || !sortOldestBtn || !sortTopBtn || !postsContainer) {
-        console.error('Sort elements not found:', {
-          sortNewestBtn, sortOldestBtn, sortTopBtn, postsContainer
-        });
-        return;
-      }
-      
-      console.log('Sort buttons found:', {
-        newest: sortNewestBtn,
-        oldest: sortOldestBtn,
-        top: sortTopBtn
-      });
-      
-      // Function to sort posts
-      function sortPosts(criteria) {
-        console.log('Sorting by:', criteria);
-        
-        // Get all post elements (direct children that are posts)
-        const posts = Array.from(postsContainer.children).filter(child => 
-          child.classList.contains('card') || 
-          child.querySelector('.card')
-        );
-        
-        console.log('Found posts to sort:', posts.length);
-        
-        // Skip if no posts or only one post
-        if (posts.length <= 1) {
-          console.log('Not enough posts to sort');
-          return;
-        }
-        
-        // Debug data attributes
-        posts.forEach((post, index) => {
-          const postElement = post.classList.contains('card') ? post : post.querySelector('.card');
-          const created = postElement.getAttribute('data-created');
-          const votes = postElement.getAttribute('data-votes');
-          console.log(`Post ${index}:`, { created, votes });
-        });
-        
-        // Sort based on criteria
-        posts.sort((a, b) => {
-          const postA = a.classList.contains('card') ? a : a.querySelector('.card');
-          const postB = b.classList.contains('card') ? b : b.querySelector('.card');
-          
-          if (!postA || !postB) return 0;
-          
-          if (criteria === 'newest') {
-            const dateA = new Date(postA.getAttribute('data-created') || 0);
-            const dateB = new Date(postB.getAttribute('data-created') || 0);
-            return dateB - dateA;
-          } else if (criteria === 'oldest') {
-            const dateA = new Date(postA.getAttribute('data-created') || 0);
-            const dateB = new Date(postB.getAttribute('data-created') || 0);
-            return dateA - dateB;
-          } else if (criteria === 'top') {
-            const votesA = parseInt(postA.getAttribute('data-votes') || 0);
-            const votesB = parseInt(postB.getAttribute('data-votes') || 0);
-            return votesB - votesA;
-          }
-          return 0;
-        });
-        
-        // Remove active class from all buttons
-        sortNewestBtn.classList.remove('btn-active');
-        sortOldestBtn.classList.remove('btn-active');
-        sortTopBtn.classList.remove('btn-active');
-        
-        // Add active class to selected button
-        if (criteria === 'newest') sortNewestBtn.classList.add('btn-active');
-        else if (criteria === 'oldest') sortOldestBtn.classList.add('btn-active');
-        else if (criteria === 'top') sortTopBtn.classList.add('btn-active');
-        
-        // Reappend sorted posts
-        posts.forEach(post => postsContainer.appendChild(post));
-      }
-      
-      // Add event listeners to sort buttons
-      sortNewestBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Newest button clicked');
-        sortPosts('newest');
-      });
-      
-      sortOldestBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Oldest button clicked');
-        sortPosts('oldest');
-      });
-      
-      sortTopBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Top button clicked');
-        sortPosts('top');
-      });
-      
-      // Default sort: newest first
-      sortPosts('newest');
-    });
-  </script>
-
-  {% include 'components/sort-posts-logic.jinja' %}
-
-  <!-- Invite Modal -->
-  {% if is_owner or is_moderator %}
-  <div id="invite-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-base-100 p-6 rounded-box shadow-lg max-w-md w-full">
-      <h3 class="font-bold text-lg mb-4">Invite Users to {{ community.name }}</h3>
-      
-      <form action="{{ url('community_invite', community.id) }}" method="post">
-        {% csrf_token %}
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Username</span>
-          </label>
-          <input type="text" name="username" id="invite-username" placeholder="Enter username" class="input input-bordered w-full" required>
-        </div>
-        
-        <div class="modal-action flex justify-between">
-          <button type="button" id="close-invite-modal" class="btn">Cancel</button>
-          <button type="submit" class="btn btn-primary">Send Invite</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  {% endif %}
-
-  {# --- START: Invite Modal JavaScript --- #}
-  {% if is_owner or is_moderator %}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const inviteButton = document.getElementById('invite-users-btn');
-      const inviteModal = document.getElementById('invite-modal');
-      const closeButton = document.getElementById('close-invite-modal');
-
-      if (inviteButton && inviteModal && closeButton) {
-        // Show modal on button click
-        inviteButton.addEventListener('click', function() {
-          inviteModal.classList.remove('hidden');
-          inviteModal.classList.add('flex'); // Use flex to center it as per modal styles
-        });
-
-        // Hide modal on close button clic
-        closeButton.addEventListener('click', function() {
-          inviteModal.classList.add('hidden');
-          inviteModal.classList.remove('flex');
-        });
-
-        // Hide modal on clicking outside the modal content
-        inviteModal.addEventListener('click', function(event) {
-          // Check if the click is directly on the background overlay
-          if (event.target === inviteModal) {
-            inviteModal.classList.add('hidden');
-            inviteModal.classList.remove('flex');
-          }
-        });
-      } else {
-        console.error('Invite modal elements not found. Button:', inviteButton, 'Modal:', inviteModal, 'Close Button:', closeButton);
-      }
-    });
-  </script>
-  {% endif %}
-  {# --- END: Invite Modal JavaScript --- #}
-
-  {# --- START: Create Post Toggle JavaScript --- #}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const createPostToggle = document.getElementById('create-post-toggle');
-      const createPostForm = document.getElementById('create-post-form');
-      const cancelPostBtn = document.getElementById('cancel-post-btn');
-      
-      if (createPostToggle && createPostForm) {
-        // Show form when clicking the toggle button
-        createPostToggle.addEventListener('click', function() {
-          createPostToggle.classList.add('hidden');
-          createPostForm.classList.remove('hidden');
-          // Focus on title input after expanding
-          const titleInput = document.querySelector('#create-post-form input[name="title"]');
-          if (titleInput) {
-            titleInput.focus();
-          }
-        });
-        
-        // Hide form when clicking cancel
-        if (cancelPostBtn) {
-          cancelPostBtn.addEventListener('click', function() {
-            createPostForm.classList.add('hidden');
-            createPostToggle.classList.remove('hidden');
-            // Reset form fields if needed
-            const form = document.querySelector('#create-post-form form');
-            if (form) form.reset();
-          });
-        }
-      } else {
-        console.error('Create post elements not found. Toggle:', createPostToggle, 'Form:', createPostForm);
-      }
-      
-      // Add form submission handling
-      const postForm = document.querySelector('#create-post-form form');
-      if (postForm) {
-        postForm.addEventListener('submit', function(event) {
-          // Log to verify the form is being submitted
-          console.log('Form is being submitted');
-          
-          // If you're using the standard form submission, make sure the action is set correctly
-          if (!postForm.getAttribute('action')) {
-            // Set the action URL if it's not already set
-            postForm.setAttribute('action', '{{ url("community_detail", community.id) }}');
-          }
-        });
-      }
-    });
-  </script>
-  {# --- END: Create Post Toggle JavaScript --- #}
-
+<div class="max-w-6xl mx-auto">
+	<!-- Community Header -->
+	{% include 'communities/page-header.jinja' %}
+	<!-- Main Content Area -->
+	<div class="flex gap-4">
+		<!-- Posts Column -->
+		<div class="w-3/4">
+			<!-- Create Post -->
+			{% if is_member or is_owner or is_moderator or user.is_superuser %}
+			{% include 'communities/create-post.jinja' %}
+			{% endif %}
+			<div class="my-4 flex justify-between items-center">
+				<h3 class="text-lg font-semibold">Posts</h3>
+				{% include 'components/sort-posts.jinja' %}
+			</div>
+			<!-- Display Posts -->
+			<div id="community-posts-list" class="space-y-4">
+				{% if posts %}
+				{% for post in posts %}
+				{% include 'posts/post.jinja' %}
+				{% endfor %}
+				{% else %}
+				<div class="card bg-base-100 shadow">
+					<div class="card-body items-center text-center">
+						<p>No posts found in this community yet{% if search_str %} matching your search{% endif %}.</p>
+						{% if not search_str and (is_member or is_owner or is_moderator or user.is_superuser) %}
+						<p>Why not be the first to create one?</p>
+						{% endif %}
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		<!-- Sidebar Column -->
+		<div class="w-1/4">
+			{% include 'communities/page-sidebar.jinja' %}
+		</div>
+	</div>
+</div>
+<!-- Make sure this is included and properly connected to the sort UI -->
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	  // Get references to the sort buttons and posts container
+	  const sortNewestBtn = document.getElementById('sort-newest');
+	  const sortOldestBtn = document.getElementById('sort-oldest');
+	  const sortTopBtn = document.getElementById('sort-top');
+	  const postsContainer = document.getElementById('community-posts-list');
+	  
+	  if (!sortNewestBtn || !sortOldestBtn || !sortTopBtn || !postsContainer) {
+	    console.error('Sort elements not found:', {
+	      sortNewestBtn, sortOldestBtn, sortTopBtn, postsContainer
+	    });
+	    return;
+	  }
+	  
+	  console.log('Sort buttons found:', {
+	    newest: sortNewestBtn,
+	    oldest: sortOldestBtn,
+	    top: sortTopBtn
+	  });
+	  
+	  // Function to sort posts
+	  function sortPosts(criteria) {
+	    console.log('Sorting by:', criteria);
+	    
+	    // Get all post elements (direct children that are posts)
+	    const posts = Array.from(postsContainer.children).filter(child => 
+	      child.classList.contains('card') || 
+	      child.querySelector('.card')
+	    );
+	    
+	    console.log('Found posts to sort:', posts.length);
+	    
+	    // Skip if no posts or only one post
+	    if (posts.length <= 1) {
+	      console.log('Not enough posts to sort');
+	      return;
+	    }
+	    
+	    // Debug data attributes
+	    posts.forEach((post, index) => {
+	      const postElement = post.classList.contains('card') ? post : post.querySelector('.card');
+	      const created = postElement.getAttribute('data-created');
+	      const votes = postElement.getAttribute('data-votes');
+	      console.log(`Post ${index}:`, { created, votes });
+	    });
+	    
+	    // Sort based on criteria
+	    posts.sort((a, b) => {
+	      const postA = a.classList.contains('card') ? a : a.querySelector('.card');
+	      const postB = b.classList.contains('card') ? b : b.querySelector('.card');
+	      
+	      if (!postA || !postB) return 0;
+	      
+	      if (criteria === 'newest') {
+	        const dateA = new Date(postA.getAttribute('data-created') || 0);
+	        const dateB = new Date(postB.getAttribute('data-created') || 0);
+	        return dateB - dateA;
+	      } else if (criteria === 'oldest') {
+	        const dateA = new Date(postA.getAttribute('data-created') || 0);
+	        const dateB = new Date(postB.getAttribute('data-created') || 0);
+	        return dateA - dateB;
+	      } else if (criteria === 'top') {
+	        const votesA = parseInt(postA.getAttribute('data-votes') || 0);
+	        const votesB = parseInt(postB.getAttribute('data-votes') || 0);
+	        return votesB - votesA;
+	      }
+	      return 0;
+	    });
+	    
+	    // Remove active class from all buttons
+	    sortNewestBtn.classList.remove('btn-active');
+	    sortOldestBtn.classList.remove('btn-active');
+	    sortTopBtn.classList.remove('btn-active');
+	    
+	    // Add active class to selected button
+	    if (criteria === 'newest') sortNewestBtn.classList.add('btn-active');
+	    else if (criteria === 'oldest') sortOldestBtn.classList.add('btn-active');
+	    else if (criteria === 'top') sortTopBtn.classList.add('btn-active');
+	    
+	    // Reappend sorted posts
+	    posts.forEach(post => postsContainer.appendChild(post));
+	  }
+	  
+	  // Add event listeners to sort buttons
+	  sortNewestBtn.addEventListener('click', function(e) {
+	    e.preventDefault();
+	    console.log('Newest button clicked');
+	    sortPosts('newest');
+	  });
+	  
+	  sortOldestBtn.addEventListener('click', function(e) {
+	    e.preventDefault();
+	    console.log('Oldest button clicked');
+	    sortPosts('oldest');
+	  });
+	  
+	  sortTopBtn.addEventListener('click', function(e) {
+	    e.preventDefault();
+	    console.log('Top button clicked');
+	    sortPosts('top');
+	  });
+	  
+	  // Default sort: newest first
+	  sortPosts('newest');
+	});
+</script>
+{% include 'components/sort-posts-logic.jinja' %}
+<!-- Invite Modal -->
+{% if is_owner or is_moderator %}
+<div id="invite-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+	<div class="bg-base-100 p-6 rounded-box shadow-lg max-w-md w-full">
+		<h3 class="font-bold text-lg mb-4">Invite Users to {{ community.name }}</h3>
+		<form action="{{ url('community_invite', community.id) }}" method="post">
+			{% csrf_token %}
+			<div class="form-control mb-4">
+				<label class="label">
+				<span class="label-text">Username</span>
+				</label>
+				<input type="text" name="username" id="invite-username" placeholder="Enter username" class="input input-bordered w-full" required>
+			</div>
+			<div class="modal-action flex justify-between">
+				<button type="button" id="close-invite-modal" class="btn">Cancel</button>
+				<button type="submit" class="btn btn-primary">Send Invite</button>
+			</div>
+		</form>
+	</div>
+</div>
+{% endif %}
+{# --- START: Invite Modal JavaScript --- #}
+{% if is_owner or is_moderator %}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	  const inviteButton = document.getElementById('invite-users-btn');
+	  const inviteModal = document.getElementById('invite-modal');
+	  const closeButton = document.getElementById('close-invite-modal');
+	
+	  if (inviteButton && inviteModal && closeButton) {
+	    // Show modal on button click
+	    inviteButton.addEventListener('click', function() {
+	      inviteModal.classList.remove('hidden');
+	      inviteModal.classList.add('flex'); // Use flex to center it as per modal styles
+	    });
+	
+	    // Hide modal on close button clic
+	    closeButton.addEventListener('click', function() {
+	      inviteModal.classList.add('hidden');
+	      inviteModal.classList.remove('flex');
+	    });
+	
+	    // Hide modal on clicking outside the modal content
+	    inviteModal.addEventListener('click', function(event) {
+	      // Check if the click is directly on the background overlay
+	      if (event.target === inviteModal) {
+	        inviteModal.classList.add('hidden');
+	        inviteModal.classList.remove('flex');
+	      }
+	    });
+	  } else {
+	    console.error('Invite modal elements not found. Button:', inviteButton, 'Modal:', inviteModal, 'Close Button:', closeButton);
+	  }
+	});
+</script>
+{% endif %}
+{# --- END: Invite Modal JavaScript --- #}
+{# --- START: Create Post Toggle JavaScript --- #}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	  const createPostToggle = document.getElementById('create-post-toggle');
+	  const createPostForm = document.getElementById('create-post-form');
+	  const cancelPostBtn = document.getElementById('cancel-post-btn');
+	  
+	  if (createPostToggle && createPostForm) {
+	    // Show form when clicking the toggle button
+	    createPostToggle.addEventListener('click', function() {
+	      createPostToggle.classList.add('hidden');
+	      createPostForm.classList.remove('hidden');
+	      // Focus on title input after expanding
+	      const titleInput = document.querySelector('#create-post-form input[name="title"]');
+	      if (titleInput) {
+	        titleInput.focus();
+	      }
+	    });
+	    
+	    // Hide form when clicking cancel
+	    if (cancelPostBtn) {
+	      cancelPostBtn.addEventListener('click', function() {
+	        createPostForm.classList.add('hidden');
+	        createPostToggle.classList.remove('hidden');
+	        // Reset form fields if needed
+	        const form = document.querySelector('#create-post-form form');
+	        if (form) form.reset();
+	      });
+	    }
+	  } else {
+	    console.error('Create post elements not found. Toggle:', createPostToggle, 'Form:', createPostForm);
+	  }
+	  
+	  // Add form submission handling
+	  const postForm = document.querySelector('#create-post-form form');
+	  if (postForm) {
+	    postForm.addEventListener('submit', function(event) {
+	      // Log to verify the form is being submitted
+	      console.log('Form is being submitted');
+	      
+	      // If you're using the standard form submission, make sure the action is set correctly
+	      if (!postForm.getAttribute('action')) {
+	        // Set the action URL if it's not already set
+	        postForm.setAttribute('action', '{{ url("community_detail", community.id) }}');
+	      }
+	    });
+	  }
+	});
+</script>
+{# --- END: Create Post Toggle JavaScript --- #}
 {% endblock %}

@@ -1,91 +1,89 @@
 <div class="card bg-base-100 shadow-lg">
-  <div class="card-body">
-    <div class="tabs tabs-boxed mb-4">
-      <a id="feed-tab" class="tab tab-active">Feed</a>
-      <a id="my-posts-tab" class="tab">My Posts</a>
-    </div>
-    
-    <!-- Feed Section -->
-    <div id="feed-section" class="space-y-6">
-      {% if posts %}
-        {% for post in posts %}
-          <div class="card bg-base-200 shadow-sm">
-            <div class="card-body p-4">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="avatar placeholder">
-                  {% if post.user.profile_picture %}
-                    <div class="w-8 rounded-full">
-                      <img src="{{ post.user.profile_picture.url }}" alt="{{ post.user.username }}" />
-                    </div>
-                  {% else %}
-                    <div class="bg-neutral-focus text-neutral-content rounded-full w-8">
-                      <span>{{ post.user.username[0]|upper }}</span>
-                    </div>
-                  {% endif %}
-                </div>
-                <a href="{{ url('user_profile', username=post.user.username) }}" class="font-medium">{{ post.user.username }}</a>
-                <span class="text-xs text-gray-500">{{ post.created_at|date('M d, Y') }}</span>
-                {% if post.community %}
-                  <span class="text-xs">in <a href="{{ url('community_detail', community_id=post.community.id) }}" class="text-primary">{{ post.community.name }}</a></span>
-                {% endif %}
-              </div>
-              <h3 class="font-bold text-lg">{{ post.title }}</h3>
-              <p>{{ post.body|truncate(150) }}</p>
-              <div class="card-actions justify-end mt-2">
-                <a href="{{ url('post_detail', post_id=post.id) }}" class="btn btn-ghost btn-xs">Read More</a>
-                <button class="btn btn-ghost btn-xs">Comment</button>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      {% else %}
-        <div class="text-center py-8">
-          <p class="text-gray-500">No posts in your feed yet.</p>
-          <p class="text-sm mt-2">Join communities or follow users to see their posts here.</p>
-        </div>
-      {% endif %}
-    </div>
-    
-    <!-- My Posts Section (hidden by default) -->
-    <div id="my-posts-section" class="space-y-6 hidden">
-      {% if my_posts %}
-        {% for post in my_posts %}
-          <div class="card bg-base-200 shadow-sm">
-            <div class="card-body p-4">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="avatar placeholder">
-                  {% if post.user.profile_picture %}
-                    <div class="w-8 rounded-full">
-                      <img src="{{ post.user.profile_picture.url }}" alt="{{ post.user.username }}" />
-                    </div>
-                  {% else %}
-                    <div class="bg-neutral-focus text-neutral-content rounded-full w-8">
-                      <span>{{ post.user.username[0]|upper }}</span>
-                    </div>
-                  {% endif %}
-                </div>
-                <span class="font-medium">{{ post.user.username }}</span>
-                <span class="text-xs text-gray-500">{{ post.created_at|date('M d, Y') }}</span>
-                {% if post.community %}
-                  <span class="text-xs">in <a href="{{ url('community_detail', community_id=post.community.id) }}" class="text-primary">{{ post.community.name }}</a></span>
-                {% endif %}
-              </div>
-              <h3 class="font-bold text-lg">{{ post.title }}</h3>
-              <p>{{ post.body|truncate(150) }}</p>
-              <div class="card-actions justify-end mt-2">
-                <a href="{{ url('post_detail', post_id=post.id) }}" class="btn btn-ghost btn-xs">Read More</a>
-                <a href="{{ url('edit_post', post_id=post.id) }}" class="btn btn-ghost btn-xs">Edit</a>
-                <button class="btn btn-ghost btn-xs text-error">Delete</button>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      {% else %}
-        <div class="text-center py-8">
-          <p class="text-gray-500">You haven't created any posts yet.</p>
-          <p class="text-sm mt-2">Use the form above to create your first post!</p>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-</div> 
+	<div class="card-body">
+		<div class="tabs tabs-boxed mb-4">
+			<a id="feed-tab" class="tab tab-active">Feed</a>
+			<a id="my-posts-tab" class="tab">My Posts</a>
+		</div>
+		<!-- Feed Section -->
+		<div id="feed-section" class="space-y-6">
+			{% if posts %}
+			{% for post in posts %}
+			<div class="card bg-base-200 shadow-sm">
+				<div class="card-body p-4">
+					<div class="flex items-center gap-2 mb-2">
+						<div class="avatar placeholder">
+							{% if post.user.profile_picture %}
+							<div class="w-8 rounded-full">
+								<img src="{{ post.user.profile_picture.url }}" alt="{{ post.user.username }}" />
+							</div>
+							{% else %}
+							<div class="bg-neutral-focus text-neutral-content rounded-full w-8">
+								<span>{{ post.user.username[0]|upper }}</span>
+							</div>
+							{% endif %}
+						</div>
+						<a href="{{ url('user_profile', username=post.user.username) }}" class="font-medium">{{ post.user.username }}</a>
+						<span class="text-xs text-gray-500">{{ post.created_at|date('M d, Y') }}</span>
+						{% if post.community %}
+						<span class="text-xs">in <a href="{{ url('community_detail', community_id=post.community.id) }}" class="text-primary">{{ post.community.name }}</a></span>
+						{% endif %}
+					</div>
+					<h3 class="font-bold text-lg">{{ post.title }}</h3>
+					<p>{{ post.body|truncate(150) }}</p>
+					<div class="card-actions justify-end mt-2">
+						<a href="{{ url('post_detail', post_id=post.id) }}" class="btn btn-ghost btn-xs">Read More</a>
+						<button class="btn btn-ghost btn-xs">Comment</button>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			{% else %}
+			<div class="text-center py-8">
+				<p class="text-gray-500">No posts in your feed yet.</p>
+				<p class="text-sm mt-2">Join communities or follow users to see their posts here.</p>
+			</div>
+			{% endif %}
+		</div>
+		<!-- My Posts Section (hidden by default) -->
+		<div id="my-posts-section" class="space-y-6 hidden">
+			{% if my_posts %}
+			{% for post in my_posts %}
+			<div class="card bg-base-200 shadow-sm">
+				<div class="card-body p-4">
+					<div class="flex items-center gap-2 mb-2">
+						<div class="avatar placeholder">
+							{% if post.user.profile_picture %}
+							<div class="w-8 rounded-full">
+								<img src="{{ post.user.profile_picture.url }}" alt="{{ post.user.username }}" />
+							</div>
+							{% else %}
+							<div class="bg-neutral-focus text-neutral-content rounded-full w-8">
+								<span>{{ post.user.username[0]|upper }}</span>
+							</div>
+							{% endif %}
+						</div>
+						<span class="font-medium">{{ post.user.username }}</span>
+						<span class="text-xs text-gray-500">{{ post.created_at|date('M d, Y') }}</span>
+						{% if post.community %}
+						<span class="text-xs">in <a href="{{ url('community_detail', community_id=post.community.id) }}" class="text-primary">{{ post.community.name }}</a></span>
+						{% endif %}
+					</div>
+					<h3 class="font-bold text-lg">{{ post.title }}</h3>
+					<p>{{ post.body|truncate(150) }}</p>
+					<div class="card-actions justify-end mt-2">
+						<a href="{{ url('post_detail', post_id=post.id) }}" class="btn btn-ghost btn-xs">Read More</a>
+						<a href="{{ url('edit_post', post_id=post.id) }}" class="btn btn-ghost btn-xs">Edit</a>
+						<button class="btn btn-ghost btn-xs text-error">Delete</button>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			{% else %}
+			<div class="text-center py-8">
+				<p class="text-gray-500">You haven't created any posts yet.</p>
+				<p class="text-sm mt-2">Use the form above to create your first post!</p>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>

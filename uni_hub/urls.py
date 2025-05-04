@@ -108,7 +108,7 @@ urlpatterns = [
     path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(
-            template_name="accounts/password_reset.jinja",
+            template_name="accounts/password_reset/password_reset.jinja",
             subject_template_name="registration/password_reset_subject.txt",
             email_template_name="registration/password_reset_email.html",
         ),
@@ -117,21 +117,21 @@ urlpatterns = [
     path(
         "password_reset/done/",
         auth_views.PasswordResetDoneView.as_view(
-            template_name="accounts/password_reset_done.jinja"
+            template_name="accounts/password_reset/password_reset_done.jinja"
         ),
         name="password_reset_done",
     ),
     path(
         "reset/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(
-            template_name="accounts/password_reset_confirm.jinja"
+            template_name="accounts/password_reset/password_reset_confirm.jinja"
         ),
         name="password_reset_confirm",
     ),
     path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
-            template_name="accounts/password_reset_complete.jinja"
+            template_name="accounts/password_reset/password_reset_complete.jinja"
         ),
         name="password_reset_complete",
     ),

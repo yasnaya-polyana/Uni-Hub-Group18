@@ -1,92 +1,86 @@
 <div class="dropdown dropdown-end">
-    <label tabindex="0" class="btn btn-outline">
-      <span class="material-icons-outlined mr-1">filter_alt</span>
-      Filters
-    </label>
-    <div tabindex="0" class="dropdown-content z-[1] card card-compact w-96 p-2 shadow bg-base-100">
-      <div class="card-body">
-        <h3 class="card-title text-lg">Advanced Community Search</h3>
-        <form id="advanced-search-form" method="GET" action="{{ url('community_list') }}">
-          <!-- Hidden field to preserve the main search query -->
-          <input type="hidden" name="q" value="{{ search_str|default('') }}">
-          
-          <!-- Category filter -->
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Category</span>
-            </label>
-            <select name="category" class="select select-bordered select-sm w-full">
-              <option value="">All Categories</option>
-              <option value="academic" {% if request.GET.category == 'academic' %}selected{% endif %}>Academic</option>
-              <option value="social" {% if request.GET.category == 'social' %}selected{% endif %}>Social</option>
-              <option value="club" {% if request.GET.category == 'club' %}selected{% endif %}>Club</option>
-              <option value="sports" {% if request.GET.category == 'sports' %}selected{% endif %}>Sports</option>
-              <option value="other" {% if request.GET.category == 'other' %}selected{% endif %}>Other</option>
-            </select>
-          </div>
-          
-          <!-- Size filter -->
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Community Size</span>
-            </label>
-            <select name="size" class="select select-bordered select-sm w-full">
-              <option value="">Any Size</option>
-              <option value="small" {% if request.GET.size == 'small' %}selected{% endif %}>Small (< 50 members)</option>
-              <option value="medium" {% if request.GET.size == 'medium' %}selected{% endif %}>Medium (50-200 members)</option>
-              <option value="large" {% if request.GET.size == 'large' %}selected{% endif %}>Large (> 200 members)</option>
-            </select>
-          </div>
-          
-          <!-- Creation date filter -->
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Created</span>
-            </label>
-            <select name="created" class="select select-bordered select-sm w-full">
-              <option value="">Any Time</option>
-              <option value="last_week" {% if request.GET.created == 'last_week' %}selected{% endif %}>Last Week</option>
-              <option value="last_month" {% if request.GET.created == 'last_month' %}selected{% endif %}>Last Month</option>
-              <option value="last_3months" {% if request.GET.created == 'last_3months' %}selected{% endif %}>Last 3 Months</option>
-              <option value="last_year" {% if request.GET.created == 'last_year' %}selected{% endif %}>Last Year</option>
-            </select>
-          </div>
-          
-          <!-- Membership status filter -->
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Your Membership</span>
-            </label>
-            <select name="membership" class="select select-bordered select-sm w-full">
-              <option value="">Any Status</option>
-              <option value="member" {% if request.GET.membership == 'member' %}selected{% endif %}>Member</option>
-              <option value="not_member" {% if request.GET.membership == 'not_member' %}selected{% endif %}>Not a Member</option>
-              <option value="owner" {% if request.GET.membership == 'owner' %}selected{% endif %}>Owner</option>
-              <option value="moderator" {% if request.GET.membership == 'moderator' %}selected{% endif %}>Moderator</option>
-            </select>
-          </div>
-          
-          <!-- Sort options -->
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Sort By</span>
-            </label>
-            <select name="sort" class="select select-bordered select-sm w-full">
-              <option value="name_asc" {% if request.GET.sort == 'name_asc' %}selected{% endif %}>Name (A-Z)</option>
-              <option value="name_desc" {% if request.GET.sort == 'name_desc' %}selected{% endif %}>Name (Z-A)</option>
-              <option value="newest" {% if request.GET.sort == 'newest' or not request.GET.sort %}selected{% endif %}>Newest</option>
-              <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
-              <option value="most_members" {% if request.GET.sort == 'most_members' %}selected{% endif %}>Most Members</option>
-              <option value="most_posts" {% if request.GET.sort == 'most_posts' %}selected{% endif %}>Most Posts</option>
-            </select>
-          </div>
-          
-          <!-- Form actions -->
-          <div class="flex justify-between mt-4">
-            <a href="{{ url('community_list') }}" class="btn btn-sm btn-ghost">Reset</a>
-            <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div> 
+	<label tabindex="0" class="btn btn-outline">
+	<span class="material-icons-outlined mr-1">filter_alt</span>
+	Filters
+	</label>
+	<div tabindex="0" class="dropdown-content z-[1] card card-compact w-96 p-2 shadow bg-base-100">
+		<div class="card-body">
+			<h3 class="card-title text-lg">Advanced Community Search</h3>
+			<form id="advanced-search-form" method="GET" action="{{ url('community_list') }}">
+				<!-- Hidden field to preserve the main search query -->
+				<input type="hidden" name="q" value="{{ search_str|default('') }}">
+				<!-- Category filter -->
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Category</span>
+					</label>
+					<select name="category" class="select select-bordered select-sm w-full">
+						<option value="">All Categories</option>
+						<option value="academic" {% if request.GET.category == 'academic' %}selected{% endif %}>Academic</option>
+						<option value="social" {% if request.GET.category == 'social' %}selected{% endif %}>Social</option>
+						<option value="club" {% if request.GET.category == 'club' %}selected{% endif %}>Club</option>
+						<option value="sports" {% if request.GET.category == 'sports' %}selected{% endif %}>Sports</option>
+						<option value="other" {% if request.GET.category == 'other' %}selected{% endif %}>Other</option>
+					</select>
+				</div>
+				<!-- Size filter -->
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Community Size</span>
+					</label>
+					<select name="size" class="select select-bordered select-sm w-full">
+						<option value="">Any Size</option>
+						<option value="small" {% if request.GET.size == 'small' %}selected{% endif %}>Small (< 50 members)</option>
+						<option value="medium" {% if request.GET.size == 'medium' %}selected{% endif %}>Medium (50-200 members)</option>
+						<option value="large" {% if request.GET.size == 'large' %}selected{% endif %}>Large (> 200 members)</option>
+					</select>
+				</div>
+				<!-- Creation date filter -->
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Created</span>
+					</label>
+					<select name="created" class="select select-bordered select-sm w-full">
+						<option value="">Any Time</option>
+						<option value="last_week" {% if request.GET.created == 'last_week' %}selected{% endif %}>Last Week</option>
+						<option value="last_month" {% if request.GET.created == 'last_month' %}selected{% endif %}>Last Month</option>
+						<option value="last_3months" {% if request.GET.created == 'last_3months' %}selected{% endif %}>Last 3 Months</option>
+						<option value="last_year" {% if request.GET.created == 'last_year' %}selected{% endif %}>Last Year</option>
+					</select>
+				</div>
+				<!-- Membership status filter -->
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Your Membership</span>
+					</label>
+					<select name="membership" class="select select-bordered select-sm w-full">
+						<option value="">Any Status</option>
+						<option value="member" {% if request.GET.membership == 'member' %}selected{% endif %}>Member</option>
+						<option value="not_member" {% if request.GET.membership == 'not_member' %}selected{% endif %}>Not a Member</option>
+						<option value="owner" {% if request.GET.membership == 'owner' %}selected{% endif %}>Owner</option>
+						<option value="moderator" {% if request.GET.membership == 'moderator' %}selected{% endif %}>Moderator</option>
+					</select>
+				</div>
+				<!-- Sort options -->
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Sort By</span>
+					</label>
+					<select name="sort" class="select select-bordered select-sm w-full">
+					<option value="name_asc" {% if request.GET.sort == 'name_asc' %}selected{% endif %}>Name (A-Z)</option>
+					<option value="name_desc" {% if request.GET.sort == 'name_desc' %}selected{% endif %}>Name (Z-A)</option>
+					<option value="newest" {% if request.GET.sort == 'newest' or not request.GET.sort %}selected{% endif %}>Newest</option>
+					<option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
+					<option value="most_members" {% if request.GET.sort == 'most_members' %}selected{% endif %}>Most Members</option>
+					<option value="most_posts" {% if request.GET.sort == 'most_posts' %}selected{% endif %}>Most Posts</option>
+					</select>
+				</div>
+				<!-- Form actions -->
+				<div class="flex justify-between mt-4">
+					<a href="{{ url('community_list') }}" class="btn btn-sm btn-ghost">Reset</a>
+					<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

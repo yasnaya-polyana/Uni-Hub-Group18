@@ -1,5 +1,5 @@
 {% if (post|translate_repost).parent_post and not is_ui_child %}
 <p class="mb-5">
-    <a class="text-xs italic" href="{{ url('post', post_id=(post|translate_repost).parent_post.id) }}">Go to parent post... </a>
+	<a class="text-xs italic" href="{{ url('post', post_id=(post|translate_repost).parent_post.id) }}">Go to parent post... </a>
 </p>
 {% endif %}

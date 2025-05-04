@@ -1,10 +1,9 @@
 <div class="flex space-x-2 items-center justify-center">
-    {% include 'posts/profile-picture.jinja' %}
-    <p class="text-sm font-bold" title="@{{ (post|translate_repost).user.username }}">
-        {{ (post|translate_repost).user.first_name }} {{ (post|translate_repost).user.last_name }}
-        <span class="font-light">
-            <a href="{{ url("user", post.user.username) }}">@{{ post.user.username }}</a>
-        </span>
-    </p>
+	{% include 'posts/profile-picture.jinja' %}
+	<p class="text-sm font-bold" title="@{{ (post|translate_repost).user.username }}">
+		{{ (post|translate_repost).user.first_name }} {{ (post|translate_repost).user.last_name }}
+		<span class="font-light">
+		<a href="{{ url("user", post.user.username) }}">@{{ post.user.username }}</a>
+		</span>
+	</p>
 </div>
-

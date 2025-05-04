@@ -14,9 +14,9 @@ def events_list(request):
     # Also filter to only include events where the community still exists and is approved
     events = Event.objects.filter(
         end_at__gte=datetime.date.today(),
-        community__isnull=False,  # Ensure community exists
-        community__deleted_at__isnull=True,  # Ensure community is not deleted
-        community__status='approved'  # Only show events from approved communities
+        community__isnull=False,
+        community__deleted_at__isnull=True,
+        community__status='approved'
     ).order_by("start_at")
     
     # Filter out members-only events if not a member
@@ -26,22 +26,13 @@ def events_list(request):
             user=request.user
         ).values_list('community', flat=True)
         
-        # Create a filtered list removing members-only events where user isn't a member
-        filtered_events = []
-        for event in events:
-            # Skip events with no valid community
-            if not hasattr(event, 'community') or not event.community:
-                continue
-                
-            # If the event doesn't have members_only field or it's False, or user is in the community
-            if (not hasattr(event, 'members_only') or 
-                not event.members_only or 
-                event.community.id in user_community_ids):
-                filtered_events.append(event)
-        
-        events = filtered_events
+        # Filter events where the user is a member of the respective community
+        members_events = [
+            event for event in events
+            if hasattr(event, 'community') and event.community and event.community.id in user_community_ids
+        ]
     
-    return render(request, "events/events.jinja", {"events": events, "user": request.user})
+    return render(request, "events/events.jinja", {"events": events, "members_events": members_events, "user": request.user})
 
 
 @login_required

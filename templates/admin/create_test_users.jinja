@@ -1,33 +1,27 @@
 {% extends 'admin/base_site.html' %}
-
 {% block content %}
 <div class="card p-4 m-4 bg-base-100 shadow-xl">
-  <h1 class="text-2xl font-bold mb-4">Create Test Users</h1>
-  
-  <p class="mb-4">
-    This will create the following test users required for testing:
-  </p>
-  
-  <ul class="list-disc ml-8 mb-4">
-    <li><strong>James Wilson</strong> - Regular student</li>
-    <li><strong>Emma Davis</strong> - Community moderator</li>
-    <li><strong>Dr. Parker</strong> - Academic staff</li>
-    <li><strong>Michael Thompson</strong> - Suspended user</li>
-    <li><strong>Admin user</strong> - Administrator</li>
-  </ul>
-  
-  <p class="mb-4">
-    It will also create test communities:
-  </p>
-  
-  <ul class="list-disc ml-8 mb-4">
-    <li><strong>UWE Engineering Society</strong></li>
-    <li><strong>UWE Chess Club</strong></li>
-  </ul>
-  
-  <form action="{% url 'admin:create_test_users' %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-primary">Create Test Users</button>
-  </form>
+	<h1 class="text-2xl font-bold mb-4">Create Test Users</h1>
+	<p class="mb-4">
+		This will create the following test users required for testing:
+	</p>
+	<ul class="list-disc ml-8 mb-4">
+		<li><strong>James Wilson</strong> - Regular student</li>
+		<li><strong>Emma Davis</strong> - Community moderator</li>
+		<li><strong>Dr. Parker</strong> - Academic staff</li>
+		<li><strong>Michael Thompson</strong> - Suspended user</li>
+		<li><strong>Admin user</strong> - Administrator</li>
+	</ul>
+	<p class="mb-4">
+		It will also create test communities:
+	</p>
+	<ul class="list-disc ml-8 mb-4">
+		<li><strong>UWE Engineering Society</strong></li>
+		<li><strong>UWE Chess Club</strong></li>
+	</ul>
+	<form action="{% url 'admin:create_test_users' %}" method="post">
+		{% csrf_token %}
+		<button type="submit" class="btn btn-primary">Create Test Users</button>
+	</form>
 </div>
-{% endblock %} 
+{% endblock %}
