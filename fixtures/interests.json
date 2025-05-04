@@ -1,0 +1,282 @@
+[
+  {
+    "model": "accounts.interest",
+    "pk": 1,
+    "fields": {
+      "name": "Programming",
+      "description": "Writing code and developing software applications."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 2,
+    "fields": {
+      "name": "Web Development",
+      "description": "Creating websites and web applications."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 3,
+    "fields": {
+      "name": "Data Science",
+      "description": "Extracting knowledge and insights from data."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 4,
+    "fields": {
+      "name": "Artificial Intelligence",
+      "description": "Developing systems that can perform tasks requiring human intelligence."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 5,
+    "fields": {
+      "name": "Cybersecurity",
+      "description": "Protecting computer systems from attacks and unauthorized access."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 6,
+    "fields": {
+      "name": "Mobile App Development",
+      "description": "Building applications for mobile devices."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 7,
+    "fields": {
+      "name": "Gaming",
+      "description": "Playing or developing video games."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 8,
+    "fields": {
+      "name": "Robotics",
+      "description": "Design, construction, and use of robots."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 9,
+    "fields": {
+      "name": "Sports",
+      "description": "Participating in or watching athletic activities."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 10,
+    "fields": {
+      "name": "Music",
+      "description": "Creating, performing, or appreciating music."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 11,
+    "fields": {
+      "name": "Arts & Design",
+      "description": "Visual arts, graphic design, and creative expression."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 12,
+    "fields": {
+      "name": "Photography",
+      "description": "Taking, editing, and sharing photographs."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 13,
+    "fields": {
+      "name": "Travel",
+      "description": "Visiting new places and experiencing different cultures."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 14,
+    "fields": {
+      "name": "Fitness",
+      "description": "Maintaining physical health and wellness."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 15,
+    "fields": {
+      "name": "Reading",
+      "description": "Enjoying books and literature."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 16,
+    "fields": {
+      "name": "Film & TV",
+      "description": "Watching and discussing movies and television shows."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 17,
+    "fields": {
+      "name": "Creative Writing",
+      "description": "Writing fiction, poetry, scripts, or other creative works."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 18,
+    "fields": {
+      "name": "Environmental Studies",
+      "description": "Interest in sustainability, conservation, and environmental issues."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 19,
+    "fields": {
+      "name": "Cooking & Baking",
+      "description": "Preparing and experimenting with food."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 20,
+    "fields": {
+      "name": "Fashion",
+      "description": "Interest in clothing design, trends, and style."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 21,
+    "fields": {
+      "name": "Entrepreneurship",
+      "description": "Starting and running businesses or ventures."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 22,
+    "fields": {
+      "name": "Mental Health",
+      "description": "Interest in psychological wellness and mental health awareness."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 23,
+    "fields": {
+      "name": "Volunteering",
+      "description": "Giving time to help others or support causes."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 24,
+    "fields": {
+      "name": "Politics",
+      "description": "Interest in political systems, debates, and current affairs."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 25,
+    "fields": {
+      "name": "Performing Arts",
+      "description": "Theater, dance, and other staged performances."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 26,
+    "fields": {
+      "name": "Science",
+      "description": "Interest in scientific discoveries and research."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 27,
+    "fields": {
+      "name": "Meditation & Mindfulness",
+      "description": "Practices for mental clarity and emotional balance."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 28,
+    "fields": {
+      "name": "Foreign Languages",
+      "description": "Learning and practicing languages other than your native tongue."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 29,
+    "fields": {
+      "name": "Board Games",
+      "description": "Playing strategic or social tabletop games."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 30,
+    "fields": {
+      "name": "DIY & Crafts",
+      "description": "Making and creating things by hand."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 31,
+    "fields": {
+      "name": "Podcasts",
+      "description": "Listening to or creating audio content."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 32,
+    "fields": {
+      "name": "History",
+      "description": "Study of past events and their impact on society."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 33,
+    "fields": {
+      "name": "Social Activism",
+      "description": "Working to promote social change and justice."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 34,
+    "fields": {
+      "name": "Virtual Reality",
+      "description": "Experiencing and developing immersive digital environments."
+    }
+  },
+  {
+    "model": "accounts.interest",
+    "pk": 35,
+    "fields": {
+      "name": "Gardening",
+      "description": "Growing and caring for plants, flowers, and vegetables."
+    }
+  }
+] 
