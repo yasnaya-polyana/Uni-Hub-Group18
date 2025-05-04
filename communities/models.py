@@ -70,6 +70,7 @@ class CommunityMember(models.Model):
     )
 
     joined_at = models.DateTimeField(auto_now_add=True)
+    is_suspended = models.BooleanField(default=False)
 
     COMMUNITY_ROLES = [
         ("subscriber", "Subscriber"),
@@ -82,6 +83,7 @@ class CommunityMember(models.Model):
         unique_together = ("user", "community")
 
     def __str__(self):
+        status = " (suspended)" if self.is_suspended else ""
         return f"{self.user.username} in {self.community.name} ({self.role})"
 
 

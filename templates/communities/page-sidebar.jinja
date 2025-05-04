@@ -26,6 +26,13 @@
 				</button>
 			</div>
 			{% endif %}
+			{% if is_owner or is_moderator or is_admin %}
+			<div class="mt-2">
+				<a href="{{ url('community_members', community.id) }}" class="btn btn-sm btn-outline w-full">
+					Manage Members
+				</a>
+			</div>
+			{% endif %}
 			<div>
 				<h4 class="font-semibold">Community Rules</h4>
 				<ul class="text-sm list-disc list-inside">
