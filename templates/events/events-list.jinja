@@ -4,9 +4,10 @@
 	<div class="flex flex-col md:flex-row gap-6">
 		<!-- Main content -->
 		<div class="md:w-2/3">
-			<div class="flex justify-between items-center mb-6">
+			<div class="flex justify-between items-center">
 				<h1 class="text-2xl font-bold">Events</h1>
 			</div>
+			<div class="divider"></div>
 			<!-- Search bar -->
 			<div class="mb-6">
 				<form action="{{ url('events') }}" method="get" class="flex gap-2">
@@ -18,7 +19,7 @@
 				<h2 class="text-xl font-semibold mb-4">Upcoming Events</h2>
 				<div class="grid grid-cols-1 gap-4">
 					{% for event in events %}
-					{% include "events/event-card.jinja" %}
+						{% include "events/event-card.jinja" %}
 					{% endfor %}
 				</div>
 			</div>

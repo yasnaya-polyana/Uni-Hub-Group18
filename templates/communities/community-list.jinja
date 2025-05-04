@@ -85,7 +85,7 @@
 	</div>
 	{% endif %}
 	<h2 class="text-xl font-bold">All Communities</h2>
-	{% include 'search/search.jinja' %}
+	<div class="divider"></div>
 	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 		{% for community in all_communities %}
 		{% include 'communities/community-card.jinja' %}

@@ -149,7 +149,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     is_staff_member = forms.BooleanField(
         required=False,
-        label="I am an Academic Staff Member",
+        label="I\'m an Academic Staff Member",
         initial=False,
         widget=forms.CheckboxInput(
             attrs={"class": "checkbox checkbox-primary"}

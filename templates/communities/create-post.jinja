@@ -11,9 +11,11 @@
 				Create a post in {{ community.name }}...
 			</div>
 		</div>
-		<!-- Expandable form - hidden by default -->
-		<div id="create-post-form" class="hidden mt-4">
+		<!-- Expandable -->
+		<div id="create-post-form" class="hidden">
 			<h2 class="card-title">Create a Post</h2>
+			<p class="text-sm text-base-content/60">Share your thoughts, questions, or updates with {{ community.name }}.</p>
+			<div class="divider"></div>
 			<form method="post" action="{{ url('community_detail', community.id) }}">
 				{% csrf_token %}
 				<div class="space-y-4">

@@ -11,9 +11,10 @@
 {% block content %}
 <div class="max-w-screen-md mx-auto">
 	{% if is_comment %}
-	<h2 class="text-2xl font-bold mb-6">Create a Comment</h2>
+		<h2 class="text-2xl font-bold">Comment</h2>
+		<p class="text-sm text-base-content/60">Share your thoughts on {{ parent_post.title }}</p>
 	{% else %}
-	<h2 class="text-2xl font-bold mb-6">Create a Post</h2>
+		<h2 class="text-2xl font-bold mb-6">Create a Post</h2>
 	{% endif %}
 	{% if form.errors %}
 	<div class="alert alert-error mb-4">
@@ -23,7 +24,7 @@
 	</div>
 	{% endif %}
 	<form method="post" class="space-y-4">
-		{% csrf_token %} {# Username and Email #}
+		{% csrf_token %}
 		{% if is_comment %}
 		{% else %}
 		<div class="form-control">
@@ -57,9 +58,9 @@
 		</div>
 		<button type="submit" class="btn btn-primary w-full mt-6">
 		{% if is_comment %}
-		Create Comment
+			Comment
 		{% else %}
-		Create Post
+			Create Post
 		{% endif %}
 		</button>
 	</form>
