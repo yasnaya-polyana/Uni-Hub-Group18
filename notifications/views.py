@@ -45,6 +45,12 @@ def get_unread_notifications_count(request):
 def notifications_view(request):
     # Get notifications for the logged-in user (using username FK)
     notifications = Notification.objects.filter(username=request.user).order_by('-created_at')
+    
+    # Store which notifications were unread (to highlight them in the template)
+    unread_ids = list(notifications.filter(is_read=False).values_list('id', flat=True))
+    
+    # Mark all notifications as read
+    Notification.objects.filter(username=request.user, is_read=False).update(is_read=True)
 
     # Attach follower_user object based on follower_username in JSON data
     for notification in notifications:
@@ -56,6 +62,9 @@ def notifications_view(request):
                 notification.follower_user = None
         else:
             notification.follower_user = None
+        
+        # Add was_unread attribute to each notification
+        notification.was_unread = notification.id in unread_ids
 
     return render(request, 'notifications/notifications.jinja', {
         'notifications': notifications

@@ -1,24 +1,25 @@
 <div class="w-full bg-base-100 shadow-xl rounded-box p-6 mb-4" 
-	data-created="{{ post.created_at|date('c') }}" 
-	data-likes="{{ (post|translate_repost).interactions.filter(interaction='like').count()|default(0) }}"
-	data-comments="{{ (post|translate_repost).comments.count()|default(0) }}"
-	data-reposts="{{ (post|translate_repost).reposts.count()|default(0) }}">
-	{% include 'posts/back-to-parent.jinja' %}
-	{% include 'posts/header.jinja' %}
+     data-created="{{ post.created_at|date('c') }}" 
+     data-likes="{{ (post|translate_repost).interactions.filter(interaction='like').count()|default(0) }}"
+     data-comments="{{ (post|translate_repost).comments.count()|default(0) }}"
+     data-reposts="{{ (post|translate_repost).reposts.count()|default(0) }}">
+
     {% include 'posts/back-to-parent.jinja' %}
     {% include 'posts/header.jinja' %}
 
     {% if (post|translate_repost).title and not is_comment %}
     <div class="divider my-0"></div>
+    {% else %}
+    <div class="mb-2"></div>
     {% endif %}
 
     <div class="space-y-4">
         <!-- Post Body -->
-        <p class="break-words max-w-full overflow-hidden">
-          <a href="{{ url('post', post_id=(post|translate_repost).id) }}" class="focus:outline-black">
-            {{ (post|translate_repost).body|parse_md|default("") |safe }}
-          </a>
-        </p>
+        <a href="{{ url('post', post_id=(post|translate_repost).id) }}" class="focus:outline-black">
+            <p class="break-words max-w-full overflow-hidden">
+                {{ (post|translate_repost).body|parse_md|default("") |safe }}
+            </p>
+        </a>
         
         <!-- Interaction Buttons -->
         <div class="flex flex-wrap md:flex-nowrap space-x-6">
@@ -57,15 +58,5 @@
             </button>
         </div>
 
-        <!-- Nested Comments/Replies -->
-        {% if expanded %}
-        <div class="flex flex-col space-y-4">
-            {% for post in (post|translate_repost).comments.all() %}
-                <div class="ml-6 pl-4 border-l-2 border-gray-200">
-                    {% include "posts/post.jinja" %}
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 </div>

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.apps import apps
 from django.dispatch import receiver
 from django.db.models.signals import post_migrate
@@ -183,11 +183,32 @@ def dashboard_view(request):
     # Get only the user's posts for the "My Posts" section
     my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
 
-    events = Event.objects.filter(
-        post__interactions__interaction="rsvp", post__interactions__user=request.user
-    ).order_by("start_at")
+    from communities.models import CommunityMember
 
-    # event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid)
+    # Get communities where the user is a non-suspended member
+    active_memberships = CommunityMember.objects.filter(
+        user=request.user,
+        is_suspended=False
+    )
+    
+    # Create a subquery to check if the user is an active member of each event's community
+    is_active_member = CommunityMember.objects.filter(
+        user=request.user,
+        community=OuterRef('community'),
+        is_suspended=False
+    )
+    
+    # Get events the user RSVP'd to, with proper filtering based on suspension status and members_only
+    events = Event.objects.filter(
+        post__interactions__interaction="rsvp", 
+        post__interactions__user=request.user
+    ).annotate(
+        user_is_active_member=Exists(is_active_member)
+    ).filter(
+        # Either the event is not members_only OR the user is an active member
+        Q(members_only=False) | Q(members_only=True, user_is_active_member=True)
+    ).order_by("start_at")
+    
     return render(
         request,
         "dashboard/index.jinja",
