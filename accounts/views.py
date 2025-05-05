@@ -72,6 +72,11 @@ def signup_view(request):
         
         if form.is_valid():
             user = form.save()
+            
+            # Save the selected interests
+            if 'interests' in form.cleaned_data and form.cleaned_data['interests']:
+                user.interests.set(form.cleaned_data['interests'])
+            
             login(request, user)
             return redirect("home")
     else:
