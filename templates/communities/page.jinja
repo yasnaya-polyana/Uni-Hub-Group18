@@ -10,7 +10,7 @@
 	<!-- Main Content Area -->
 	<div class="flex gap-4">
 		<!-- Posts Column -->
-		<div class="w-3/4">
+		<div class="w-3/4">s
 			<!-- Create Post -->
 			{% if is_member or is_owner or is_moderator or user.is_superuser %}
 			{% include 'communities/create-post.jinja' %}
@@ -23,7 +23,7 @@
 			<div id="community-posts-list" class="space-y-4">
 				{% if posts %}
 				{% for post in posts %}
-				{% include 'posts/post.jinja' %}
+				{% include 'posts/post-card.jinja' %}
 				{% endfor %}
 				{% else %}
 				<div class="card bg-base-100 shadow">

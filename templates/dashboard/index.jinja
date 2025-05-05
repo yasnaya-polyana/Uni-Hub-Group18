@@ -26,7 +26,7 @@
 				<div id="feed-posts-container" class="space-y-4">
 					{% for post in posts %}
 					<div class="mb-4 w-full">
-						{% include 'posts/post.jinja' %}
+						{% include 'posts/post-card.jinja' %}
 					</div>
 					{% endfor %}
 				</div>
@@ -50,7 +50,7 @@
 				<div id="my-posts-container" class="space-y-4">
 					{% for post in my_posts[:10] %}
 					<div class="mb-4 w-full">
-						{% include 'posts/post.jinja' %}
+						{% include 'posts/post-card.jinja' %}
 					</div>
 					{% endfor %}
 				</div>
@@ -89,4 +89,4 @@
 	});
 </script>
 {% include 'components/sort-posts-logic.jinja' %}
-{% endblock %}
+{% endblock %} 

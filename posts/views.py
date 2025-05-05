@@ -1,13 +1,13 @@
 import logging
 import re
+
 import bleach
 import markdown
-from django.db.models import Q, Count
-from django.http import HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
-
 from accounts.models import CustomUser
 from communities.models import Communities
+from django.db.models import Count, Q
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from events.models import Event
 from md_extensions.tailwind import TailwindExtension
 from posts.forms import PostCreationForm
@@ -17,23 +17,41 @@ log = logging.getLogger("app")
 
 
 def post_view(request, post_id: str):
-    if request.method == "GET":
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.method == "POST":
+        form = PostCreationForm(request.POST, is_comment=True)
+        if form.is_valid():
+            comment_post = form.save(commit=False)
+            comment_post.user = request.user
+            comment_post.parent_post = post
+            if not post.title:
+                post.title = ""
+            comment_post.save()
+            return redirect("post", post_id=post_id)
+    elif request.method == "GET":
         # Get the post from the database
-        post = get_object_or_404(Post, id=post_id)
-        
+
         # Process markdown for the post
         md = markdown.Markdown(extensions=["extra", TailwindExtension()])
         clean_body = bleach.clean(post.body)
         post.md_body = md.convert(clean_body)
-        
+
         # Get comments for this post
         comments = Post.objects.filter(parent_post=post)
-        
-        return render(request, "posts/post-page.jinja", {
-            "post": post,
-            "comments": comments,
-            "user": request.user
-        })
+
+        comment_form = PostCreationForm()
+
+        return render(
+            request,
+            "posts/post-page.jinja",
+            {
+                "post": post,
+                "comments": comments,
+                "form": comment_form,
+                "user": request.user,
+            },
+        )
     elif request.method == "DELETE":
         post = Post.objects.get(id=post_id)
         if post.user == request.user:
@@ -48,53 +66,53 @@ def post_view(request, post_id: str):
 
 def posts_view(request):
     md = markdown.Markdown(extensions=["extra", TailwindExtension()])
-    
+
     # Start with all posts that aren't comments
     posts_qs = Post.objects.filter(parent_post=None)
-    
+
     # Get search query
     search_query = request.GET.get("q", "")
     if search_query:
         posts_qs = posts_qs.filter(
             Q(title__icontains=search_query) | Q(body__icontains=search_query)
         )
-    
+
     # Apply advanced filters
     # Date range
     date_from = request.GET.get("date_from")
     if date_from:
         posts_qs = posts_qs.filter(created_at__gte=date_from)
-    
+
     date_to = request.GET.get("date_to")
     if date_to:
         posts_qs = posts_qs.filter(created_at__lte=date_to)
-    
+
     # Author filter
     author = request.GET.get("author")
     if author:
         posts_qs = posts_qs.filter(user__username__icontains=author)
-    
+
     # Community filter
     community = request.GET.get("community")
     if community:
         posts_qs = posts_qs.filter(community__id=community)
-    
+
     # Content type filters
     has_image = request.GET.get("has_image")
     if has_image:
         posts_qs = posts_qs.filter(body__icontains="![")
-    
+
     has_link = request.GET.get("has_link")
     if has_link:
         posts_qs = posts_qs.filter(body__icontains="http")
-    
+
     # Interaction filters
     min_likes = request.GET.get("min_likes")
     if min_likes and min_likes.isdigit():
         posts_qs = posts_qs.annotate(
             like_count=Count("interactions", filter=Q(interactions__interaction="like"))
         ).filter(like_count__gte=int(min_likes))
-    
+
     min_comments = request.GET.get("min_comments")
     if min_comments and min_comments.isdigit():
         posts_qs = posts_qs.annotate(comment_count=Count("comments")).filter(
@@ -123,10 +141,10 @@ def posts_view(request):
         posts_qs = posts_qs.annotate(repost_count=Count("reposts")).order_by(
             "-repost_count", "-created_at"
         )
-    
+
     # Get all communities for the dropdown
     communities = Communities.objects.all()
-    
+
     # Process markdown for each post
     for post in posts_qs:
         clean_body = bleach.clean(post.body)
@@ -146,7 +164,7 @@ def posts_view(request):
 def post_create(request):
     if request.method == "POST":
         form = PostCreationForm(request.POST)
-        
+
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
@@ -161,13 +179,13 @@ def post_create(request):
             for username in mentions:
                 m_user = CustomUser.objects.get(username=username)
                 post.mentioned_users.add(m_user)
-            
+
             # Check if there's a next parameter or if we should redirect to dashboard
             next_url = request.POST.get("next", "dashboard")
             return redirect(next_url)
     else:
         form = PostCreationForm()
-    
+
     # bug fix: ValueError
     return render(
         request, "posts/create-post.jinja", {"form": form, "is_comment": False}
@@ -191,6 +209,7 @@ def post_repost(request, post_id: str):
 
     repost.delete()
     return HttpResponse(status=204)
+
 
 def post_comment(request, post_id: str):
     parent_post = Post.objects.get(id=post_id)
@@ -216,6 +235,7 @@ def post_comment(request, post_id: str):
     return render(
         request, "posts/create-post.jinja", {"form": form, "is_comment": True, "parent_post": parent_post}
     )
+
 
 def post_pin(request, post_id: int):
     post = Post.objects.get(id=post_id)

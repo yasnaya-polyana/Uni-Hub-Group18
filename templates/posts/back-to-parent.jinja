@@ -1,4 +1,4 @@
-{% if (post|translate_repost).parent_post and not is_ui_child %}
+{% if (post|translate_repost).parent_post and not rendering_as_comment %}
 <p class="mb-5">
 	<a class="text-xs italic" href="{{ url('post', post_id=(post|translate_repost).parent_post.id) }}">Go to parent post... </a>
 </p>
