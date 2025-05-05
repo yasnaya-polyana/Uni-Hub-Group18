@@ -13,8 +13,6 @@
     <div class="mb-2"></div>
     {% endif %}
 
-    {{ post.topics }}
-
     <div class="space-y-4">
         <!-- Post Body -->
         <a href="{{ url('post', post_id=(post|translate_repost).id) }}" class="focus:outline-black">

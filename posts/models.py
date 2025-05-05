@@ -20,6 +20,7 @@ class Post(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     
     # Topics
+    # TODO: Work
     topics = models.ManyToManyField(Topic, blank=True, related_name="posts")
 
     community = models.ForeignKey(
