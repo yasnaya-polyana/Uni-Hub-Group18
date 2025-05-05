@@ -197,17 +197,16 @@ def post_repost(request, post_id: str):
 
     try:
         repost = reposted_post.reposts.get(user_id=request.user.id)
+        repost.delete()
     except:
         repost = Post(
             title="REPOST",
-            body=f"/posts/${post_id}",
+            body=f"/p/{post_id}",
             ref_post=reposted_post,
             user=request.user,
         )
         repost.save()
-        return HttpResponse(status=204)
-
-    repost.delete()
+    
     return HttpResponse(status=204)
 
 
@@ -248,15 +247,17 @@ def post_pin(request, post_id: int):
 
 
 def post_interact(request, post_id: int, interaction: str):
+    if interaction == "repost":
+        return post_repost(request, post_id)
+        
     post = Post.objects.get(id=post_id)
     try:
         interaction = Interaction.objects.get(
             post_id=post.pkid, user_id=request.user.id
         )
+        interaction.delete()
     except:
         interaction = Interaction(user=request.user, post=post, interaction=interaction)
         interaction.save()
-        return HttpResponse(status=204)
-
-    interaction.delete()
+    
     return HttpResponse(status=204)
