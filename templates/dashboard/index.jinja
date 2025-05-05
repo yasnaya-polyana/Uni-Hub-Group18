@@ -1,6 +1,7 @@
 {% extends 'base/index.jinja' %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
+{% include "posts/post-logic.jinja" %}
 <div class="flex flex-col md:flex-row gap-4">
 	<!-- Left Sidebar - Events and Communities -->
 	<div class="w-full md:w-1/4 mb-4 md:mb-0 order-1 md:order-1">
