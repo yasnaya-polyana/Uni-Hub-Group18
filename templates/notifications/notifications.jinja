@@ -8,12 +8,17 @@
 	<div class="divider"></div>
 	<ul class="list-none">
 		{% for notification in notifications %}
-		<li class="flex items-center mb-4">
+		<li class="flex items-center mb-4 {% if notification.was_unread %}bg-base-200 border-l-4 border-primary pl-2{% endif %}">
 			<div class="notification flex items-center gap-2">
 				{% if notification.follower_user %}
-				<a href="#" class="flex items-center gap-2">
+				<a href="{{ url('user', notification.follower_user.username) }}" class="flex items-center gap-2">
+				{% if notification.follower_user.profile_picture and notification.follower_user.profile_picture.name %}
 				<img src="{{ notification.follower_user.profile_picture.url }}" alt="profile" class="w-10 h-10 rounded-full" />
-				<span>{{ notification.follower_user.username }}</span>
+				{% else %}
+				<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+					{{ notification.follower_user.username|first|upper }}
+				</div>
+				{% endif %}
 				</a>
 				{% else %}
 				{% endif %}
@@ -75,7 +80,7 @@
 					</div>
 					{% endif %}
 					{% else %}
-					<a href="#" class="{{ 'font-bold' if not notification.is_read else '' }}">
+					<a href="#">
 					Unknown notification type
 					</a>
 					{% endif %}

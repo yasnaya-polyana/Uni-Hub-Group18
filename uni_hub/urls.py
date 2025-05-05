@@ -95,6 +95,7 @@ urlpatterns = [
     # Events
     path("events/", event_views.events_list, name="events"),
     path("events/<str:event_id>/", event_views.event_detail, name="event_detail"),
+    path("events/<str:event_id>/edit/", event_views.event_edit, name="edit_event"),
     # Password Reset
     path(
         "password_reset/",
