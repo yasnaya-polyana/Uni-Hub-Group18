@@ -1,74 +1,117 @@
-import datetime
-
-from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from communities.models import CommunityMember
-
+from django.db.models import Q, Exists, OuterRef
 from .models import Event
-
+from communities.models import CommunityMember
+from search.service import compile_query
+from django.utils import timezone
+from django.http import HttpResponse  # For debugging
+from django.contrib import messages
+from django.urls import reverse
+from .forms import EventCreationForm
 
 @login_required
 def events_list(request):
-    # Get all public events where the end time is in the future
-    # Also filter to only include events where the community still exists and is approved
-    events = Event.objects.filter(
-        end_at__gte=datetime.date.today(),
-        community__isnull=False,  # Ensure community exists
-        community__deleted_at__isnull=True,  # Ensure community is not deleted
-        community__status='approved'  # Only show events from approved communities
+    # Get search query if available
+    query_str = request.GET.get("q", "")
+    
+    # Create a subquery to check if the user is an active member of each event's community
+    is_active_member = CommunityMember.objects.filter(
+        user=request.user,
+        community=OuterRef('community'),
+        is_suspended=False
+    )
+    
+    # Get all upcoming events
+    events_query = Event.objects.filter(
+        end_at__gte=timezone.now()  # Only show events that haven't ended
+    ).annotate(
+        user_is_active_member=Exists(is_active_member)
+    )
+    
+    # Filter events based on membership status and members_only flag
+    events = events_query.filter(
+        # Either the event is not members_only OR the user is an active member
+        Q(members_only=False) | Q(members_only=True, user_is_active_member=True)
     ).order_by("start_at")
     
-    # Filter out members-only events if not a member
-    if request.user.is_authenticated:
-        # Get user's communities
-        user_community_ids = CommunityMember.objects.filter(
-            user=request.user
-        ).values_list('community', flat=True)
-        
-        # Create a filtered list removing members-only events where user isn't a member
-        filtered_events = []
-        for event in events:
-            # Skip events with no valid community
-            if not hasattr(event, 'community') or not event.community:
-                continue
-                
-            # If the event doesn't have members_only field or it's False, or user is in the community
-            if (not hasattr(event, 'members_only') or 
-                not event.members_only or 
-                event.community.id in user_community_ids):
-                filtered_events.append(event)
-        
-        events = filtered_events
+    # Apply search if query exists
+    if query_str:
+        compiled_query = compile_query(query_str)
+        events = events.filter(
+            Q(title__icontains=compiled_query) |
+            Q(details__icontains=compiled_query) |
+            Q(location__icontains=compiled_query) |
+            Q(community__name__icontains=compiled_query)
+        )
     
-    return render(request, "events/events.jinja", {"events": events, "user": request.user})
-
+    context = {
+        'events': events,
+        'search_query': query_str
+    }
+    
+    return render(request, 'events/events-list.jinja', context)
 
 @login_required
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     
-    # Check if the community still exists and is approved
-    if not hasattr(event, 'community') or not event.community or hasattr(event.community, 'deleted_at') and event.community.deleted_at or event.community.status != 'approved':
-        messages.error(
-            request,
-            "This event is no longer available because its community has been deleted or is not approved."
-        )
-        return redirect("events")
+    # Check if user is allowed to view this event
+    is_member = CommunityMember.objects.filter(
+        user=request.user,
+        community=event.community,
+        is_suspended=False
+    ).exists()
     
-    # Check if event has members_only attribute and it's True
-    if hasattr(event, 'members_only') and event.members_only:
-        # Check if user is a member of the community
-        is_member = CommunityMember.objects.filter(
-            user=request.user,
-            community=event.community
-        ).exists()
-        
-        if not is_member and request.user != event.community.owner:
-            messages.error(
-                request,
-                "This event is for community members only. Please join the community to view details."
-            )
-            return redirect("community_detail", community_id=event.community.id)
+    # If it's a members-only event and user is not a member, redirect
+    if event.members_only and not is_member:
+        messages.error(request, "This event is only available to members of the community.")
+        return redirect('events')
     
-    return render(request, "events/event-detail.jinja", {"event": event})
+    return render(request, 'events/event-detail.jinja', {
+        'event': event,
+        'now': timezone.now()  # Pass the current time to the template
+    })
+
+@login_required
+def event_edit(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Check if user has permission to edit (must be a moderator, owner, admin, or superuser)
+    is_moderator = CommunityMember.objects.filter(
+        user=request.user, 
+        community=event.community, 
+        role="moderator"
+    ).exists()
+    is_admin = (request.user == event.community.owner)
+    is_superuser = request.user.is_superuser
+    
+    # Only allow moderators, community admins, and superusers to edit events
+    if not (is_moderator or is_admin or is_superuser):
+        messages.error(request, "Only moderators, community owners, and site admins can edit events.")
+        return redirect('event_detail', event_id=event_id)
+    
+    if request.method == "POST":
+        form = EventCreationForm(request.POST, instance=event)
+        if form.is_valid():
+            updated_event = form.save(commit=False)
+            
+            # Update the associated post
+            if event.post:
+                event.post.title = form.cleaned_data['title']
+                event.post.body = form.cleaned_data['details']
+                event.post.save()
+            
+            # Save the event
+            updated_event.save()
+            
+            messages.success(request, "Event updated successfully!")
+            return redirect('event_detail', event_id=event_id)
+    else:
+        form = EventCreationForm(instance=event)
+    
+    return render(request, "events/edit.jinja", {
+        "form": form, 
+        "event": event,
+        "community": event.community
+    })

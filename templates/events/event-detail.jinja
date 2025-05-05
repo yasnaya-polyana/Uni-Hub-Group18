@@ -1,8 +1,176 @@
 {% extends 'base/index.jinja' %}
-{% include 'posts/post-logic.jinja' %}
-{% block title %}{{ event.post.title }} - Event Details{% endblock %}
+{% block title %}{{ event.title }} | Event{% endblock %}
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-{% include 'events/event-detail-card.jinja' %}
+	<div class="flex flex-col md:flex-row gap-6">
+		<!-- Main content -->
+		<div class="md:w-2/3">
+			<div class="card bg-base-100 shadow-xl">
+				<div class="card-body">
+					<h1 class="card-title text-2xl">{{ event.title }}</h1>
+					
+					<!-- Admin/Moderator Controls -->
+					{% set is_moderator = event.community.community_members.filter(user=request.user, role="moderator").exists() %}
+					{% set is_admin = event.community.owner.id == request.user.id %}
+					{% set is_superuser = request.user.is_superuser %}
+					{% if is_moderator or is_admin or is_superuser %}
+					<div class="flex justify-end">
+						<a href="{{ url('edit_event', event_id=event.id) }}" class="btn btn-sm btn-outline">
+							<span class="material-icons-outlined">edit</span> Edit Event
+						</a>
+					</div>
+					{% endif %}
+					
+					<div class="divider"></div>
+					
+					<!-- Event details -->
+					<div class="space-y-4">
+						<!-- Time information -->
+						<div class="flex items-center gap-2 text-sm">
+							<span class="text-primary">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+								</svg>
+							</span>
+							<span>
+								{% if event.is_ongoing %}
+								<span class="badge badge-primary">Ongoing</span> 
+								{% endif %}
+								<strong>Starts:</strong> {{ event.start_at|date("DATETIME_FORMAT")}}
+								<br>
+								<strong>Ends:</strong> {{ event.end_at|date("DATETIME_FORMAT")}}
+							</span>
+						</div>
+						
+						<!-- Location information -->
+						<div class="flex items-center gap-2 text-sm">
+							<span class="text-primary">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+								</svg>
+							</span>
+							<span>{{ event.location }}</span>
+						</div>
+						
+						<!-- Community information -->
+						<div class="flex items-center gap-2 text-sm">
+							<span class="text-primary">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+								</svg>
+							</span>
+							<span>
+								<a href="{{ url('community_detail', community_id=event.community.id) }}" class="link link-primary">
+									{{ event.community.name }}
+								</a>
+								{% if event.members_only %}
+								<span class="badge badge-secondary">Members only</span>
+								{% endif %}
+							</span>
+						</div>
+						
+						<!-- Event description -->
+						<div class="mt-6">
+							<h3 class="text-lg font-semibold mb-2">Description</h3>
+							<div class="whitespace-pre-line text-base-content/80">
+								{{ event.details }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- RSVP Section -->
+			{% if event.post %}
+			<div class="card bg-base-100 shadow-lg mt-6">
+				<div class="card-body">
+					<h2 class="card-title">RSVP</h2>
+					<div class="flex items-center gap-4 my-2">
+						{% set is_going = event.post.interactions.filter(interaction="rsvp", user_id=request.user.id, post_id=event.post.pkid).exists() %}
+						<button class="btn btn-primary" onclick="rsvpPost('{{ event.post.id }}')">
+							{% if is_going %}
+								I'm not going
+							{% else %}
+								I'm going
+							{% endif %}
+						</button>
+					</div>
+					
+					<!-- List of RSVPed Users -->
+					{% with rsvp_users = event.post.interactions.filter(interaction="rsvp") %}
+					{% if rsvp_users.count() > 0 %}
+					<div class="mt-4">
+						<h3 class="font-medium text-sm mb-2">People going: {{ rsvp_users.count() }}</h3>
+						<div class="flex flex-wrap gap-2">
+							{% for interaction in rsvp_users %}
+							<div class="flex items-center gap-1">
+								<div class="avatar">
+									<div class="w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-xs">
+										{{ interaction.user.username|first|upper }}
+									</div>
+								</div>
+								<span class="text-xs">{{ interaction.user.username }}</span>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endif %}
+					{% endwith %}
+				</div>
+			</div>
+			{% endif %}
+		</div>
+		
+		<!-- Sidebar -->
+		<div class="md:w-1/3">
+			<div class="sticky top-4">
+				<!-- Related Events -->
+				<div class="card bg-base-100 shadow-lg">
+					<div class="card-body">
+						<h2 class="card-title">Other Events in {{ event.community.name }}</h2>
+						<div class="divider my-1"></div>
+						
+						<!-- Get other upcoming events in this community -->
+						{% with community_events=event.community.events.all() %}
+							{% set other_events = [] %}
+							{% for other_event in community_events %}
+								{% if other_event.id != event.id and other_event.end_at >= now %}
+									{% do other_events.append(other_event) %}
+									{% if loop.index >= 3 %}
+										{% break %}
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+							
+							{% if other_events|length > 0 %}
+								<div class="space-y-2">
+									{% for other_event in other_events %}
+									<div class="p-2 bg-base-200 rounded-lg">
+										<a href="{{ url('event_detail', event_id=other_event.id) }}" class="font-medium hover:text-primary">
+											{{ other_event.title }}
+										</a>
+										<p class="text-xs">{{ other_event.start_at|date("SHORT_DATE_FORMAT") }}</p>
+									</div>
+									{% endfor %}
+								</div>
+							{% else %}
+								<p class="text-sm">No other upcoming events in this community.</p>
+							{% endif %}
+						{% endwith %}
+						
+						<div class="mt-4">
+							<a href="{{ url('community_detail', community_id=event.community.id) }}" class="btn btn-outline btn-sm w-full">
+								View Community
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+<!-- Include the post-logic script for RSVP functionality -->
+{% include 'posts/post-logic.jinja' %}
 {% endblock %}

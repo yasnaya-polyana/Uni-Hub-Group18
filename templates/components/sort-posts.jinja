@@ -1,18 +1,18 @@
 <div class="sort-posts-container flex items-center gap-2 mb-4">
-  <span class="text-sm font-medium">Sort by:</span>
-  <div class="dropdown dropdown-bottom">
-    <label tabindex="0" class="btn btn-sm btn-ghost m-1 flex items-center gap-1">
-      <span class="sort-label">{{ default_sort|default('Newest') }}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-      </svg>
-    </label>
-    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-      <li><a class="sort-option" data-sort="newest" data-container="{{ container_id|default('community-posts-list') }}">Newest</a></li>
-      <li><a class="sort-option" data-sort="oldest" data-container="{{ container_id|default('community-posts-list') }}">Oldest</a></li>
-      <li><a class="sort-option" data-sort="most-liked" data-container="{{ container_id|default('community-posts-list') }}">Most Liked</a></li>
-      <li><a class="sort-option" data-sort="most-commented" data-container="{{ container_id|default('community-posts-list') }}">Most Commented</a></li>
-      <li><a class="sort-option" data-sort="most-reposted" data-container="{{ container_id|default('community-posts-list') }}">Most Reposted</a></li>
-    </ul>
-  </div>
-</div> 
+	<span class="text-sm font-medium">Sort by:</span>
+	<div class="dropdown dropdown-bottom">
+		<label tabindex="0" class="btn btn-sm btn-ghost m-1 flex items-center gap-1">
+			<span class="sort-label">{{ default_sort|default('Newest') }}</span>
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+				<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+			</svg>
+		</label>
+		<ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+			<li><a class="sort-option" data-sort="newest" data-container="{{ container_id|default('community-posts-list') }}">Newest</a></li>
+			<li><a class="sort-option" data-sort="oldest" data-container="{{ container_id|default('community-posts-list') }}">Oldest</a></li>
+			<li><a class="sort-option" data-sort="most-liked" data-container="{{ container_id|default('community-posts-list') }}">Most Liked</a></li>
+			<li><a class="sort-option" data-sort="most-commented" data-container="{{ container_id|default('community-posts-list') }}">Most Commented</a></li>
+			<li><a class="sort-option" data-sort="most-reposted" data-container="{{ container_id|default('community-posts-list') }}">Most Reposted</a></li>
+		</ul>
+	</div>
+</div>

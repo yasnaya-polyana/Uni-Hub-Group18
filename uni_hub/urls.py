@@ -31,19 +31,24 @@ from search import views as search_views
 urlpatterns = [
     # Admin
     path("admin/", admin.site.urls),
+
     # Root
     path("", views.HomeView.as_view(), name="home"),
     # Demo
     path("demo/", demo_views.setup, name="demo"),
     path("demo-init/", demo_views.init_demo_data, name="demo-init"),
+  
     # Dashboard
     path("dashboard/", views.dashboard_view, name="dashboard"),
+
     # Search
     path("search/", search_views.index_view, name="search"),
+
     # Auth
     path("login/", views.login_view, name="login"),
     path("signup/", views.signup_view, name="signup"),
     path("logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
+
     # Users
     path("u/<str:username>/", views.user_profile_view, name="user"),
     path("u-search", views.user_search_view, name="user-search"),
@@ -52,6 +57,7 @@ urlpatterns = [
     path("settings/", views.user_settings_view, name="user_settings"),
     path("u/<str:username>/follow/", views.follow_user, name="follow_user"),
     path("u/<str:username>/unfollow/", views.unfollow_user, name="unfollow_user"),
+
     # Posts
     path("p/", post_views.posts_view, name="posts"),
     path("p/create/", post_views.post_create, name="post_create"),
@@ -59,11 +65,7 @@ urlpatterns = [
     path("p/<str:post_id>/comment", post_views.post_comment, name="post_comment"),
     path("p/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
     path("p/<str:post_id>/pin", post_views.post_pin, name="post_pin"),
-    path(
-        "p/<str:post_id>/interact/<str:interaction>",
-        post_views.post_interact,
-        name="post_interact",
-    ),
+    path("p/<str:post_id>/interact/<str:interaction>", post_views.post_interact, name="post_interact"),
     # Notifications
     path("notifications/", notif_views.notifications_view, name="notifications"),
     path(
@@ -110,58 +112,28 @@ urlpatterns = [
     # Communities
     path("c/", community_views.community_list, name="community_list"),
     path("c/create", community_views.community_create, name="community_create"),
-    path(
-        "c/<str:community_id>/",
-        community_views.community_detail,
-        name="community_detail",
-    ),
-    path(
-        "c/<str:community_id>/join",
-        community_views.community_join,
-        name="community_join",
-    ),
-    path(
-        "c/<str:community_id>/leave",
-        community_views.community_leave,
-        name="community_leave",
-    ),
-    path(
-        "c/<str:community_id>/delete",
-        community_views.community_delete,
-        name="community_delete",
-    ),
-    path(
-        "c/<str:community_id>/restore",
-        community_views.community_restore,
-        name="community_restore",
-    ),
-    path(
-        "c/<str:community_id>/request_role/<str:role>",
-        community_views.request_role,
-        name="request_role",
-    ),
-    path(
-        "c/<str:community_id>/edit",
-        community_views.community_edit,
-        name="community_edit",
-    ),
-    path(
-        "c/<str:community_id>/invite",
-        community_views.community_invite,
-        name="community_invite",
-    ),
-    path(
-        "c/<str:community_id>/create-event",
-        community_views.create_event,
-        name="create_event",
-    ),
+    path("c/<str:community_id>/", community_views.community_detail, name="community_detail"),
+    path("c/<str:community_id>/join", community_views.community_join, name="community_join"),
+    path("c/<str:community_id>/leave", community_views.community_leave, name="community_leave"),
+    path("c/<str:community_id>/delete", community_views.community_delete, name="community_delete"),
+    path("c/<str:community_id>/restore", community_views.community_restore, name="community_restore"),
+    path("c/<str:community_id>/request_role/<str:role>", community_views.request_role, name="request_role"),
+    path('c/<str:community_id>/edit', community_views.community_edit, name='community_edit'),
+    path("c/<str:community_id>/invite", community_views.community_invite, name="community_invite"),
+    path("c/<str:community_id>/create-event", community_views.create_event, name="create_event"),
+    path("c/<str:community_id>/suspend/<str:username>/", community_views.community_suspend_user, name="community_suspend_user"),
+    path("c/<str:community_id>/unsuspend/<str:username>/", community_views.community_unsuspend_user, name="community_unsuspend_user"),
+    path("c/<str:community_id>/members/", community_views.community_members, name="community_members"),
+
+    # Events
     path("events/", event_views.events_list, name="events"),
     path("events/<str:event_id>/", event_views.event_detail, name="event_detail"),
+    path("events/<str:event_id>/edit/", event_views.event_edit, name="edit_event"),
     # Password Reset
     path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(
-            template_name="accounts/password_reset.jinja",
+            template_name="accounts/password_reset/password_reset.jinja",
             subject_template_name="registration/password_reset_subject.txt",
             email_template_name="registration/password_reset_email.html",
         ),
@@ -170,21 +142,21 @@ urlpatterns = [
     path(
         "password_reset/done/",
         auth_views.PasswordResetDoneView.as_view(
-            template_name="accounts/password_reset_done.jinja"
+            template_name="accounts/password_reset/password_reset_done.jinja"
         ),
         name="password_reset_done",
     ),
     path(
         "reset/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(
-            template_name="accounts/password_reset_confirm.jinja"
+            template_name="accounts/password_reset/password_reset_confirm.jinja"
         ),
         name="password_reset_confirm",
     ),
     path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
-            template_name="accounts/password_reset_complete.jinja"
+            template_name="accounts/password_reset/password_reset_complete.jinja"
         ),
         name="password_reset_complete",
     ),

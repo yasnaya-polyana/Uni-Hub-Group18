@@ -213,6 +213,9 @@ def post_repost(request, post_id: str):
 
 def post_comment(request, post_id: str):
     parent_post = Post.objects.get(id=post_id)
+    
+    if parent_post == None:
+        parent_post = []
 
     if request.method == "POST":
         form = PostCreationForm(request.POST, is_comment=True)
@@ -230,7 +233,7 @@ def post_comment(request, post_id: str):
         form = PostCreationForm(is_comment=True)
 
     return render(
-        request, "posts/create-post.jinja", {"form": form, "is_comment": True}
+        request, "posts/create-post.jinja", {"form": form, "is_comment": True, "parent_post": parent_post}
     )
 
 

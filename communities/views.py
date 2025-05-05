@@ -224,6 +224,14 @@ def community_detail(request, community_id: str):
             post = form.save(commit=False)
             post.user = request.user
             post.community = community
+            
+            # Handle visibility setting
+            visibility = request.POST.get('visibility', 'public')
+            # Only allow moderators and owners to set moderator-only visibility
+            if visibility == 'moderators' and not (is_moderator or is_owner or is_admin):
+                visibility = 'public'
+            post.visibility = visibility
+            
             post.save()
             return redirect("community_detail", community_id=community_id)
     else:
@@ -234,12 +242,47 @@ def community_detail(request, community_id: str):
         community=community,
     ).first()
 
+    if membership and membership.is_suspended and not (is_owner or is_admin):
+        messages.error(request, "You have been suspended from this community and cannot view its content.")
+        return redirect("community_list")
+
+    # Check if the community is pending and restrict access to owner and admins
+    if community.status == 'pending' and not (is_owner or is_admin):
+        messages.error(request, "This community is awaiting approval and is not publicly accessible yet.")
+        return redirect("community_list")
+    
+    # Start with all posts in this community
+    posts = community.posts
+    
+    # Filter posts based on user role and post visibility
+    if not (is_owner or is_admin):
+        # Get list of suspended users
+        suspended_users = CommunityMember.objects.filter(
+            community=community,
+            is_suspended=True
+        ).values_list('user', flat=True)
+        
+        # Exclude posts from suspended users
+        posts = posts.exclude(user__in=suspended_users)
+        
+        # Filter posts by visibility
+        if is_moderator:
+            # Moderators can see public, members-only and moderators-only posts
+            pass  # No additional filtering needed
+        elif is_member:
+            # Members can see public and members-only posts
+            posts = posts.exclude(visibility='moderators')
+        else:
+            # Non-members can only see public posts
+            posts = posts.filter(visibility='public')
+
+    # Rest of your code
     events = community.events.filter(end_at__gte=datetime.date.today())
 
-    posts = community.posts
     query_str = request.GET.get("q", "")
     query = compile_query(query_str)
     posts = search_posts(posts, query).order_by("created_at").order_by("-is_pinned")
+    
     context = {
         "community": community,
         "membership": membership,
@@ -484,7 +527,8 @@ def create_event(request, community_id: str):
             event.user = request.user
 
             # Handle the members_only field if it exists
-            members_only = request.POST.get("members_only", False)
+            members_only = request.POST.get('members_only') == 'on'
+
             event.members_only = members_only
 
             event.save()
@@ -493,8 +537,95 @@ def create_event(request, community_id: str):
             return redirect(f"/c/{community_id}")
     else:
         form = EventCreationForm()
+    
+    return render(request, "events/create.jinja", {"form": form, "community": community})
 
-    return render(
-        request, "events/create.jinja", {"form": form, "community": community}
-    )
+@login_required
+def community_members(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+    
+    # Check permissions
+    is_owner = user == community.owner
+    is_admin = user.is_superuser
+    is_moderator = CommunityMember.objects.filter(
+        user=user, community=community, role="moderator"
+    ).exists()
+    
+    # If not a member, owner, moderator or admin, redirect
+    if not (is_owner or is_admin or is_moderator or CommunityMember.objects.filter(
+        user=user, community=community
+    ).exists()):
+        messages.error(request, "You don't have permission to view community members.")
+        return redirect("community_detail", community_id=community_id)
+    
+    # Get all members
+    members = CommunityMember.objects.filter(community=community).select_related('user').order_by('role', 'user__username')
+    
+    return render(request, "communities/members.jinja", {
+        "community": community,
+        "members": members,
+        "is_owner": is_owner,
+        "is_admin": is_admin,
+        "is_moderator": is_moderator,
+    })
 
+@login_required
+def community_suspend_user(request, community_id: str, username: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+    target_user = get_object_or_404(CustomUser, username=username)
+    
+    # Check if requester has permission to suspend (owner, moderator, admin)
+    is_owner = user == community.owner
+    is_moderator = CommunityMember.objects.filter(
+        user=user, community=community, role="moderator"
+    ).exists()
+    is_admin = user.is_superuser
+    
+    if not (is_owner or is_moderator or is_admin):
+        messages.error(request, "You don't have permission to suspend users from this community.")
+        return redirect("community_detail", community_id=community_id)
+    
+    # Owner and admin can't be suspended
+    if target_user == community.owner or target_user.is_superuser:
+        messages.error(request, "Community owners and administrators cannot be suspended.")
+        return redirect("community_detail", community_id=community_id)
+    
+    # Moderators can only be suspended by owners or admins
+    target_membership = get_object_or_404(CommunityMember, user=target_user, community=community)
+    if target_membership.role == "moderator" and not (is_owner or is_admin):
+        messages.error(request, "Only community owners and administrators can suspend moderators.")
+        return redirect("community_detail", community_id=community_id)
+    
+    # Set suspension status
+    target_membership.is_suspended = True
+    target_membership.save()
+    
+    messages.success(request, f"User '{username}' has been suspended from this community.")
+    return redirect("community_detail", community_id=community_id)
+
+@login_required
+def community_unsuspend_user(request, community_id: str, username: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+    target_user = get_object_or_404(CustomUser, username=username)
+    
+    # Check if requester has permission
+    is_owner = user == community.owner
+    is_moderator = CommunityMember.objects.filter(
+        user=user, community=community, role="moderator"
+    ).exists()
+    is_admin = user.is_superuser
+    
+    if not (is_owner or is_moderator or is_admin):
+        messages.error(request, "You don't have permission to unsuspend users in this community.")
+        return redirect("community_detail", community_id=community_id)
+    
+    # Unsuspend the user
+    target_membership = get_object_or_404(CommunityMember, user=target_user, community=community)
+    target_membership.is_suspended = False
+    target_membership.save()
+    
+    messages.success(request, f"User '{username}' has been unsuspended from this community.")
+    return redirect("community_detail", community_id=community_id)

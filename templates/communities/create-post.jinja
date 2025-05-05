@@ -1,61 +1,67 @@
 <div class="card bg-base-100 shadow-lg mb-4">
-  <div class="card-body">
-    <!-- Collapsible toggle button - shown by default -->
-    <div id="create-post-toggle" class="flex items-center cursor-pointer">
-      <div class="avatar placeholder mr-2">
-        <div class="w-8 rounded-full bg-neutral-focus text-neutral-content">
-          <span>{{ user.username|make_list|first|upper }}</span>
+    <div class="card-body">
+        <!-- Collapsible toggle button - shown by default -->
+        <div id="create-post-toggle" class="flex items-center cursor-pointer">
+            <div class="avatar placeholder mr-2">
+                <div class="w-8 rounded-full bg-neutral-focus text-neutral-content">
+                    <span>{{ user.username|make_list|first|upper }}</span>
+                </div>
+            </div>
+            <div class="p-3 bg-base-200 rounded-box w-full text-base-content/60 hover:bg-base-300">
+                Create a post in {{ community.name }}...
+            </div>
         </div>
-      </div>
-      <div class="p-3 bg-base-200 rounded-box w-full text-base-content/60 hover:bg-base-300">
-        Create a post in {{ community.name }}...
-      </div>
-    </div>
-    
-    <!-- Expandable form - hidden by default -->
-    <div id="create-post-form" class="hidden mt-4">
-      <h2 class="card-title">Create a Post</h2>
-      <form method="post" action="{{ url('community_detail', community.id) }}">
-        {% csrf_token %}
-
-        <div class="space-y-4">
-          <div class="form-control">
-            <label class="label" for="{{ form.title.id_for_label }}">
-              <span class="label-text">{{ form.title.label }}</span>
-            </label>
-            {{ form.title }}
-            {% if form.title.errors %}
-              <label class="label">
-                <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
-              </label>
-            {% endif %}
-          </div>
-
-          <!-- Markdown Editor -->
-          <div class="form-control">
-            <label class="label" for="body">
-              <span class="label-text">Body</span>
-            </label>
-    
-            <!-- Markdown Body -->
-            {% set editor_id = 'body' %}
-            {% set editor_name = 'body' %}
-            {% set editor_class = 'textarea textarea-bordered w-full' %}
-    
-            {% include 'components/markdown-editor.jinja' %}
-    
-            {% if form.body.errors %}
-              <label class="label">
-                <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
-              </label>
-            {% endif %}
-          </div>
-          <div class="card-actions justify-end mt-2">
-            <button type="button" id="cancel-post-btn" class="btn btn-ghost">Cancel</button>
-            <button type="submit" class="btn btn-primary">Post</button>
-          </div>
+        <!-- Expandable -->
+        <div id="create-post-form" class="hidden">
+            <h2 class="card-title">Create a Post</h2>
+            <p class="text-sm text-base-content/60">Share your thoughts, questions, or updates with {{ community.name }}.</p>
+            <div class="divider"></div>
+            <form method="post" action="{{ url('community_detail', community.id) }}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div class="form-control">
+                        <label class="label" for="{{ form.title.id_for_label }}">
+                        <span class="label-text">{{ form.title.label }}</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <label class="label">
+                        <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                    <!-- Markdown Editor -->
+                    <div class="form-control">
+                        <label class="label" for="body">
+                        <span class="label-text">Body</span>
+                        </label>
+                        <!-- Markdown Body -->
+                        {% set editor_id = 'body' %}
+                        {% set editor_name = 'body' %}
+                        {% set editor_class = 'textarea textarea-bordered w-full' %}
+                        {% include 'components/markdown-editor.jinja' %}
+                        {% if form.body.errors %}
+                        <label class="label">
+                        <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                    <div class="card-actions justify-end mt-2 flex items-center">
+                        <!-- Visibility dropdown -->
+                        <div class="flex-grow mr-auto">
+                            <select name="visibility" class="select select-bordered select-sm">
+                                <option value="public">Visible to everyone</option>
+                                <option value="members">Members only</option>
+                                {% if is_moderator or is_owner or is_admin %}
+                                <option value="moderators">Moderators only</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <button type="button" id="cancel-post-btn" class="btn btn-ghost">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </div>
+                </div>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
 </div>

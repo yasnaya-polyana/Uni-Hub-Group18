@@ -4,25 +4,25 @@
 <div class="max-w-3xl mx-auto px-4 py-8">
 	<div class="card bg-base-100 shadow-xl">
 		<div class="card-body">
-			<h2 class="card-title text-2xl font-bold text-center mb-6">Create Your Account</h2>
+			<h2 class="card-title text-2xl font-bold text-center">Sign-up</h2>
 			{% if form.errors %}
-			<div class="alert alert-error mb-6 shadow-lg">
+			<div class="alert alert-error shadow-lg">
 				<div class="p-3">
 					<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 				</div>
-                <span>
-                    {% if form.errors %}
-                    <ul>
-                        {% for field, errors in form.errors.items() %}
-                            {% for error in errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </span>
+				<span>
+					{% if form.errors %}
+					<ul>
+					{% for field, errors in form.errors.items() %}
+						{% for error in errors %}
+						<li>{{ error }}</li>
+						{% endfor %}
+					{% endfor %}
+					</ul>
+					{% endif %}
+				</span>
 			</div>
 			{% endif %}
 			<form method="post" class="space-y-6">
@@ -107,18 +107,19 @@
 							</label>
 							{% endif %}
 						</div>
+						<div class="divider"></div>
 						<!-- Staff Status -->
-						<div class="form-control mt-2">
-							<label class="label cursor-pointer justify-start gap-2">
+						<div class="form-control">
+							<label class="label cursor-pointer justify-start p-0">
 							{{ form.is_staff_member }}
-							<span class="label-text font-medium">{{ form.is_staff_member.label }}</span>
+								<span class="label-text font-medium ml-3">{{ form.is_staff_member.label }}</span>
 							</label>
 							{% if form.is_staff_member.errors %}
 							<label class="label">
-							<span class="label-text-alt text-error">{{ form.is_staff_member.errors|join(", ") }}</span>
+								<span class="label-text-alt text-error">{{ form.is_staff_member.errors|join(", ") }}</span>
 							</label>
 							{% endif %}
-							<div class="text-xs opacity-75 mt-1">
+							<div class="text-xs opacity-75 mt-3 link-secondary">
 								<p>Note: Admin and Moderator roles can only be assigned by an administrator after your account is created.</p>
 							</div>
 						</div>
@@ -149,7 +150,7 @@
 							</div>
 							{% if form.interests.errors %}
 							<label class="label">
-							<span class="label-text-alt text-error">{{ form.interests.errors|join(", ") }}</span>
+								<span class="label-text-alt text-error">{{ form.interests.errors|join(", ") }}</span>
 							</label>
 							{% endif %}
 						</div>

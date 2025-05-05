@@ -41,6 +41,13 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    VISIBILITY_CHOICES = [
+        ('public', 'Public'),
+        ('members', 'Members Only'),
+        ('moderators', 'Moderators Only'),
+    ]
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
+
     def __str__(self):
         return self.title
 

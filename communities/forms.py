@@ -1,9 +1,14 @@
 from django import forms
 
 from .models import Communities, CommunityMember, Topic
+from events.models import Event
 
 
-class CreateEventForm(forms.Form):
+class EventCreationForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['title', 'details', 'start_at', 'end_at', 'members_only']
+        
     location = forms.CharField(label="location", max_length=100)
 
     def __init__(self, *args, **kwargs):

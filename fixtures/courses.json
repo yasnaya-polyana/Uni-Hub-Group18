@@ -1,0 +1,362 @@
+[
+  {
+    "model": "accounts.course",
+    "pk": 1,
+    "fields": {
+      "course_name": "Computer Science",
+      "department": "Department of Computer Science and Creative Technologies",
+      "description": "Study of computation, algorithms, data structures, programming, and computational systems."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 2,
+    "fields": {
+      "course_name": "Cyber Security",
+      "department": "Department of Computer Science and Creative Technologies",
+      "description": "Protection of computer systems from theft or damage to hardware, software, or electronic data."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 3,
+    "fields": {
+      "course_name": "Software Engineering",
+      "department": "Department of Computer Science and Creative Technologies",
+      "description": "Application of engineering to the development of software in a systematic method."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 4,
+    "fields": {
+      "course_name": "Mathematics",
+      "department": "Department of Engineering Mathematics",
+      "description": "Study of quantities, space, structure, and change."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 5,
+    "fields": {
+      "course_name": "Electrical and Electronic Engineering",
+      "department": "Department of Engineering",
+      "description": "Study and application of electricity, electronics, and electromagnetism."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 6,
+    "fields": {
+      "course_name": "Business Management",
+      "department": "Department of Business and Management",
+      "description": "Study of business administration and management of organizations."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 7,
+    "fields": {
+      "course_name": "Mechanical Engineering",
+      "department": "Department of Engineering",
+      "description": "Design, analysis, and manufacturing of mechanical systems."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 8,
+    "fields": {
+      "course_name": "Civil Engineering",
+      "department": "Department of Engineering",
+      "description": "Design and construction of physical and natural built environments."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 9,
+    "fields": {
+      "course_name": "Aerospace Engineering",
+      "department": "Department of Engineering",
+      "description": "Design and construction of aircraft, spacecraft, and related systems."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 10,
+    "fields": {
+      "course_name": "Biomedical Engineering",
+      "department": "Department of Health Sciences",
+      "description": "Application of engineering principles to medicine and biology for healthcare purposes."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 11,
+    "fields": {
+      "course_name": "Physics",
+      "department": "Department of Science",
+      "description": "Study of matter, energy, and the fundamental forces of nature."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 12,
+    "fields": {
+      "course_name": "Chemistry",
+      "department": "Department of Science",
+      "description": "Study of matter, its properties, and how it interacts with energy."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 13,
+    "fields": {
+      "course_name": "Biology",
+      "department": "Department of Health Sciences",
+      "description": "Study of living organisms and their interactions with each other and the environment."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 14,
+    "fields": {
+      "course_name": "Psychology",
+      "department": "Department of Health and Social Sciences",
+      "description": "Scientific study of mind and behavior."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 15,
+    "fields": {
+      "course_name": "Sociology",
+      "department": "Department of Health and Social Sciences",
+      "description": "Study of social behavior, its origins, development, and institutions."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 16,
+    "fields": {
+      "course_name": "Economics",
+      "department": "Department of Business and Management",
+      "description": "Study of how societies use scarce resources to produce valuable goods and services."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 17,
+    "fields": {
+      "course_name": "Marketing",
+      "department": "Department of Business and Management",
+      "description": "Study of promoting and selling products or services, including market research and advertising."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 18,
+    "fields": {
+      "course_name": "Accounting and Finance",
+      "department": "Department of Business and Management",
+      "description": "Recording financial transactions and analysis of investment decisions."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 19,
+    "fields": {
+      "course_name": "Law",
+      "department": "Department of Law",
+      "description": "Study of legal systems, principles, and procedures."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 20,
+    "fields": {
+      "course_name": "English Literature",
+      "department": "Department of Arts",
+      "description": "Study of literary works in the English language."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 21,
+    "fields": {
+      "course_name": "History",
+      "department": "Department of Arts",
+      "description": "Study of past events and their impact on society."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 22,
+    "fields": {
+      "course_name": "Media and Communications",
+      "department": "Department of Creative Industries",
+      "description": "Study of media production, communication theory, and media effects."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 23,
+    "fields": {
+      "course_name": "Journalism",
+      "department": "Department of Creative Industries",
+      "description": "Gathering, processing, and dissemination of news and information."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 24,
+    "fields": {
+      "course_name": "Film and Television Production",
+      "department": "Department of Creative Industries",
+      "description": "Creation of visual content for various platforms."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 25,
+    "fields": {
+      "course_name": "Fine Art",
+      "department": "Department of Arts",
+      "description": "Creation and study of visual arts primarily for aesthetic purposes."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 26,
+    "fields": {
+      "course_name": "Graphic Design",
+      "department": "Department of Creative Industries",
+      "description": "Visual communication and problem-solving through typography, photography, and illustration."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 27,
+    "fields": {
+      "course_name": "Architecture",
+      "department": "Department of Architecture and Built Environment",
+      "description": "Art and technique of designing and constructing buildings."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 28,
+    "fields": {
+      "course_name": "Urban Planning",
+      "department": "Department of Architecture and Built Environment",
+      "description": "Development and design of land use and the built environment."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 29,
+    "fields": {
+      "course_name": "Environmental Science",
+      "department": "Department of Science",
+      "description": "Study of environmental problems and their solutions."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 30,
+    "fields": {
+      "course_name": "Nursing",
+      "department": "Department of Health Sciences",
+      "description": "Healthcare profession focused on the care of individuals, families, and communities."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 31,
+    "fields": {
+      "course_name": "Physiotherapy",
+      "department": "Department of Health Sciences",
+      "description": "Treatment of disease, injury, or deformity by physical methods."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 32,
+    "fields": {
+      "course_name": "Occupational Therapy",
+      "department": "Department of Health Sciences",
+      "description": "Treatment through therapeutic use of everyday activities."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 33,
+    "fields": {
+      "course_name": "Sports Science",
+      "department": "Department of Health Sciences",
+      "description": "Study of how the human body works during exercise and how sport can promote health."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 34,
+    "fields": {
+      "course_name": "Music",
+      "department": "Department of Arts",
+      "description": "Study and practice of music, including performance, composition, and theory."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 35,
+    "fields": {
+      "course_name": "Drama and Theater Studies",
+      "department": "Department of Arts",
+      "description": "Study and performance of theatrical productions."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 36,
+    "fields": {
+      "course_name": "Languages and Linguistics",
+      "department": "Department of Arts",
+      "description": "Study of language, including its structure, history, and usage."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 37,
+    "fields": {
+      "course_name": "Philosophy",
+      "department": "Department of Arts",
+      "description": "Study of fundamental questions about existence, knowledge, and ethics."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 38,
+    "fields": {
+      "course_name": "International Relations",
+      "department": "Department of Social Sciences",
+      "description": "Study of relationships between countries and their interaction in global politics."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 39,
+    "fields": {
+      "course_name": "Education Studies",
+      "department": "Department of Education",
+      "description": "Study of education systems, teaching methods, and learning processes."
+    }
+  },
+  {
+    "model": "accounts.course",
+    "pk": 40,
+    "fields": {
+      "course_name": "Data Science",
+      "department": "Department of Computer Science and Creative Technologies",
+      "description": "Extraction of knowledge and insights from structured and unstructured data."
+    }
+  }
+] 

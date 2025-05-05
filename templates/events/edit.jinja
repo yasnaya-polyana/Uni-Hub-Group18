@@ -1,8 +1,8 @@
 {% extends 'base/index.jinja' %}
-{% block title %}Create Event{% endblock %}
+{% block title %}Edit Event{% endblock %}
 {% block content %}
 <div class="max-w-md mx-auto">
-	<h2 class="text-2xl font-bold mb-6">Create Event for {{ community.name }}</h2>
+	<h2 class="text-2xl font-bold mb-6">Edit Event for {{ community.name }}</h2>
 	<form method="post">
 		{% csrf_token %}
 		<div class="card bg-base-100 shadow-xl">
@@ -63,19 +63,17 @@
 					{% endif %}
 				</div>
 				<div class="form-control mt-4">
-					<label class="label cursor-pointer">
-					<span class="label-text">Members-only event</span>
-					<input type="checkbox" name="members_only" class="checkbox" />
+					<label class="cursor-pointer label justify-start gap-2">
+						{{ form.members_only }}
+						<span class="label-text">Members only</span>
 					</label>
-					<p class="text-xs text-base-content/60">
-						If checked, only community members will be able to view event details
-					</p>
 				</div>
-				<div class="card-actions justify-end mt-2">
-					<button type="submit" class="btn btn-primary">Create Event</button>
+				<div class="form-control mt-6">
+					<button type="submit" class="btn btn-primary">Update Event</button>
+					<a href="{{ url('event_detail', event_id=event.id) }}" class="btn btn-ghost mt-2">Cancel</a>
 				</div>
 			</div>
 		</div>
 	</form>
 </div>
-{% endblock %}
+{% endblock %} 

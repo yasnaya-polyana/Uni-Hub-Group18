@@ -1,0 +1,78 @@
+{% extends 'base/index.jinja' %}
+{% block title %}{{ community.name }} - Members{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">{{ community.name }} - Members</h1>
+        <a href="{{ url('community_detail', community.id) }}" class="btn btn-ghost">Back to Community</a>
+    </div>
+
+    <div class="overflow-x-auto bg-base-100 p-4 rounded-box shadow-lg">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td>
+                        <a href="{{ url('user', member.user.username) }}" class="flex items-center gap-2">
+                            <div class="avatar">
+                                <div class="w-8 rounded-full bg-neutral-focus text-neutral-content">
+                                    <span>{{ member.user.username[:2]|upper }}</span>
+                                </div>
+                            </div>
+                            {{ member.user.username }}
+                        </a>
+                    </td>
+                    <td>{{ member.get_role_display() }}</td>
+                    <td>{{ member.joined_at|timesince }} ago</td>
+                    <td>
+                        {% if member.is_suspended %}
+                        <span class="badge badge-error">Suspended</span>
+                        {% else %}
+                        <span class="badge badge-success">Active</span>
+                        {% endif %}
+                    </td>
+                    <td class="flex gap-2">
+                        {% if member.user != community.owner and member.user != request.user %}
+                            {% if member.role == "moderator" and (is_owner or is_admin) %}
+                                {% if member.is_suspended %}
+                                <form action="{{ url('community_unsuspend_user', community.id, member.user.username) }}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-xs btn-success">Unsuspend</button>
+                                </form>
+                                {% else %}
+                                <form action="{{ url('community_suspend_user', community.id, member.user.username) }}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-xs btn-error">Suspend</button>
+                                </form>
+                                {% endif %}
+                            {% elif member.role != "moderator" and (is_owner or is_moderator or is_admin) %}
+                                {% if member.is_suspended %}
+                                <form action="{{ url('community_unsuspend_user', community.id, member.user.username) }}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-xs btn-success">Unsuspend</button>
+                                </form>
+                                {% else %}
+                                <form action="{{ url('community_suspend_user', community.id, member.user.username) }}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-xs btn-error">Suspend</button>
+                                </form>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,11 @@
 <div class="bg-base-100 p-4 rounded-box shadow-lg">
-  <h2 class="text-xl font-bold mb-4">My Events</h2>
-  <div class="space-y-2">
-    {% for event in events %}
-        {% include 'events/event-card.jinja' %}
-    {% endfor %}
-  </div>
-  <a href="{{ url('events') }}" class="btn btn-ghost btn-sm w-full mt-2"
-    >View All Events</a
-  >
-  </div>
+	<h2 class="text-xl font-bold mb-4">My Events</h2>
+	<div class="space-y-2">
+		{% for event in events %}
+		{% include 'events/event-card.jinja' %}
+		{% endfor %}
+	</div>
+	<a href="{{ url('events') }}" class="btn btn-ghost btn-sm w-full mt-2"
+		>View All Events
+	</a>
+</div>

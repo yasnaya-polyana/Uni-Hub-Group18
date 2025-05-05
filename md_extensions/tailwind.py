@@ -29,8 +29,8 @@ class TailwindTreeProcessor(Treeprocessor):
         "p": "mt-0 mb-4 text-base",
         "a": "text-blue-700 hover:text-blue-500 underline",
         "blockquote": "border-l-4 border-gray-300 italic pl-6 text-gray-800 text-lg my-6",
-        "code": "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono",
-        "pre": "bg-gray-100 p-4 rounded overflow-x-auto text-sm",
+        "code": "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono whitespace-pre-wrap",  # Added `whitespace-pre-wrap`
+        "pre": "bg-gray-100 p-4 rounded text-sm",
         "ul": "list-disc list-inside mt-4 mb-4",
         "ol": "list-decimal list-inside mt-4 mb-4",
         "li": "mb-2",
@@ -94,6 +94,3 @@ class PostPreprocessor(Preprocessor):
         title = Post.objects.get(id=id).title
 
         return f'<a target="_blank" href="/p/{id}"  class="text-orange-600 bg-blue-100 font-medium px-1 py-0.5 rounded">{title}</a>'
-
-
-# TODO: Add functionality for other mention types.

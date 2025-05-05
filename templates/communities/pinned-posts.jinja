@@ -1,9 +1,9 @@
 {% if community.posts.filter(is_pinned=True).count() > 0 %}
 <div class="mb-4">
-    <h2 class="text-lg font-bold mb-2">📌 Pinned Posts</h2>
-    {% for post in community.posts.filter(is_pinned=True) %}
-      {% include 'posts/post.jinja' %}
-    {% endfor %}
+	<h2 class="text-lg font-bold mb-2">📌 Pinned Posts</h2>
+	{% for post in community.posts.filter(is_pinned=True) %}
+	{% include 'posts/post.jinja' %}
+	{% endfor %}
 </div>
 <div class="divider"></div>
 {% endif %}

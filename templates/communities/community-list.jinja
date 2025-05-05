@@ -1,106 +1,95 @@
 {% extends 'base/index.jinja' %}
-
 {% block title %}Communities{% endblock %}
-
 {% block content %}
 <div class="max-w-6xl mx-auto">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Communities</h1>
-        <a href="{{ url('community_create') }}" class="btn btn-primary">Create Community</a>
-    </div>
-
-    {% if is_admin and pending_communities %}
-    <div class="mb-8 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-box">
-        <h2 class="text-xl font-bold mb-4 flex items-center">
-            <span class="material-icons-outlined mr-2 text-amber-500">pending</span>
-            Pending Communities
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% for community in pending_communities %}
-                {% include 'communities/pending-community-card.jinja' %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-2">
-        <!-- Search bar -->
-        <div class="flex-grow">
-            <form method="GET" action="{{ url('community_list') }}" class="flex gap-2">
-                <input 
-                    type="text" 
-                    name="q" 
-                    placeholder="Search communities..." 
-                    class="input input-bordered w-full" 
-                    value="{{ search_str|default('') }}"
-                >
-                <button type="submit" class="btn btn-primary">
-                    <span class="material-icons-outlined">search</span>
-                </button>
-            </form>
-        </div>
-        
-        <!-- Advanced search dropdown -->
-        <div class="flex gap-2">
-            {% include 'components/community-advanced-search.jinja' %}
-        </div>
-    </div>
-    
-    <!-- Active filters display -->
-    {% if request.GET|length > 0 %}
-    <div class="bg-base-200 p-3 rounded-box mb-6">
-        <div class="flex justify-between items-center">
-            <h3 class="font-semibold">Active Filters:</h3>
-            <a href="{{ url('community_list') }}" class="btn btn-ghost btn-xs">Clear All</a>
-        </div>
-        <div class="flex flex-wrap gap-2 mt-2">
-            {% if search_str %}
-            <div class="badge badge-primary gap-1">
-                Search: {{ search_str }}
-                <a href="{{ url('community_list') }}?{{ request.GET|urlencode|replace('q='+search_str, '') }}" class="cursor-pointer">×</a>
-            </div>
-            {% endif %}
-            
-            {% if request.GET.category %}
-            <div class="badge badge-primary gap-1">
-                Category: {{ request.GET.category|title }}
-                <a href="{{ url('community_list') }}?{{ request.GET|urlencode|replace('category='+request.GET.category, '') }}" class="cursor-pointer">×</a>
-            </div>
-            {% endif %}
-            
-            <!-- Add more active filter badges as needed -->
-        </div>
-    </div>
-    {% endif %}
-
-    {% if created_communities %}
-    <div class="mb-8">
-        <h2 class="text-xl font-bold mb-4">Authored Communities</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% for community in created_communities %}
-                {% include 'communities/community-card.jinja' %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    {% if followed_communities %}
-    <div class="mb-8">
-        <h2 class="text-xl font-bold mb-4">Communities You Follow</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% for community in followed_communities %}
-                {% include 'communities/community-card.jinja' %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    <h2 class="text-xl font-bold">All Communities</h2>
-    {% include 'search/search.jinja' %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for community in all_communities %}
-            {% include 'communities/community-card.jinja' %}
-        {% endfor %}
-    </div>
+	<div class="flex justify-between items-center mb-6">
+		<h1 class="text-2xl font-bold">Communities</h1>
+		<a href="{{ url('community_create') }}" class="btn btn-primary">Create Community</a>
+	</div>
+	{% if is_admin and pending_communities %}
+	<div class="mb-8 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-box">
+		<h2 class="text-xl font-bold mb-4 flex items-center">
+			<span class="material-icons-outlined mr-2 text-amber-500">pending</span>
+			Pending Communities
+		</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			{% for community in pending_communities %}
+			{% include 'communities/pending-community-card.jinja' %}
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+	<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-2">
+		<!-- Search bar -->
+		<div class="flex-grow">
+			<form method="GET" action="{{ url('community_list') }}" class="flex gap-2">
+				<input 
+					type="text" 
+					name="q" 
+					placeholder="Search communities..." 
+					class="input input-bordered w-full" 
+					value="{{ search_str|default('') }}"
+					>
+				<button type="submit" class="btn btn-primary">
+				<span class="material-icons-outlined">search</span>
+				</button>
+			</form>
+		</div>
+		<!-- Advanced search dropdown -->
+		<div class="flex gap-2">
+			{% include 'components/community-advanced-search.jinja' %}
+		</div>
+	</div>
+	<!-- Active filters display -->
+	{% if request.GET|length > 0 %}
+	<div class="bg-base-200 p-3 rounded-box mb-6">
+		<div class="flex justify-between items-center">
+			<h3 class="font-semibold">Active Filters:</h3>
+			<a href="{{ url('community_list') }}" class="btn btn-ghost btn-xs">Clear All</a>
+		</div>
+		<div class="flex flex-wrap gap-2 mt-2">
+			{% if search_str %}
+			<div class="badge badge-primary gap-1">
+				Search: {{ search_str }}
+				<a href="{{ url('community_list') }}?{{ request.GET|urlencode|replace('q='+search_str, '') }}" class="cursor-pointer">×</a>
+			</div>
+			{% endif %}
+			{% if request.GET.category %}
+			<div class="badge badge-primary gap-1">
+				Category: {{ request.GET.category|title }}
+				<a href="{{ url('community_list') }}?{{ request.GET|urlencode|replace('category='+request.GET.category, '') }}" class="cursor-pointer">×</a>
+			</div>
+			{% endif %}
+			<!-- Add more active filter badges as needed -->
+		</div>
+	</div>
+	{% endif %}
+	{% if created_communities %}
+	<div class="mb-8">
+		<h2 class="text-xl font-bold mb-4">Authored Communities</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			{% for community in created_communities %}
+			{% include 'communities/community-card.jinja' %}
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+	{% if followed_communities %}
+	<div class="mb-8">
+		<h2 class="text-xl font-bold mb-4">Communities You Follow</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			{% for community in followed_communities %}
+			{% include 'communities/community-card.jinja' %}
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+	<h2 class="text-xl font-bold">All Communities</h2>
+	<div class="divider"></div>
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+		{% for community in all_communities %}
+		{% include 'communities/community-card.jinja' %}
+		{% endfor %}
+	</div>
 </div>
 {% endblock %}

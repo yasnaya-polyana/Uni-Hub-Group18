@@ -1,42 +1,22 @@
-{% extends "base/index.jinja" %}
-
+{% extends 'base/index.jinja' %}
+{% include 'posts/post-logic.jinja' %}
+{% block title %}Events{% endblock %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row gap-6">
-        <!-- Main content -->
-        <div class="md:w-2/3">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold">Events</h1>
-            </div>
-            
-            <!-- Search bar -->
-            <div class="mb-6">
-                <form action="{{ url('events') }}" method="get" class="flex gap-2">
-                    <input type="text" name="q" placeholder="Search events..." class="input input-bordered flex-grow" value="{{ search_query|default('') }}">
-                    <button type="submit" class="btn btn-primary">Search</button>
-                </form>
-            </div>
-            
-            <div>
-                <h2 class="text-xl font-semibold mb-4">Upcoming Events</h2>
-                <div class="grid grid-cols-1 gap-4">
-                    {% for event in events %}
-                        {% include "events/event-card.jinja" %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Sidebar -->
-        <div class="md:w-1/3">
-            {% include 'recommendations/recommendation_component.jinja' %}
-            
-            <div class="bg-base-200 p-4 rounded-lg shadow-sm mt-6">
-                <h3 class="text-lg font-semibold mb-3">Create an Event</h3>
-                <p class="text-sm mb-3">To create an event, you must be a moderator or owner of a community. Go to a community page to create an event.</p>
-                <a href="{{ url('community_list') }}" class="btn btn-primary btn-sm">Browse Communities</a>
-            </div>
-        </div>
-    </div>
+<!-- All Events -->
+<div class="flex justify-between items-center">
+	<h1 class="text-3xl font-bold">Events</h1>
+</div>
+<div class="divider"></div>
+<div class="grid grid-cols-1 gap-8">
+	{% for event in events %}
+		{% include 'events/large-event-card.jinja' %}
+	{% else %}
+	<div class="card bg-base-100 shadow-xl">
+		<div class="card-body text-center">
+			<h2 class="card-title justify-center">No events found</h2>
+			<p>There are no upcoming events at this time.</p>
+		</div>
+	</div>
+	{% endfor %}
 </div>
 {% endblock %} 

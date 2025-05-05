@@ -1,116 +1,109 @@
 <div class="dropdown dropdown-end">
-    <label tabindex="0" class="btn btn-outline btn-sm">
-      <span class="material-icons-outlined text-sm mr-1">filter_list</span>
-      Advanced Filters
-    </label>
-    <div tabindex="0" class="dropdown-content z-[1] card card-compact w-96 p-2 shadow bg-base-100">
-      <div class="card-body">
-        <h3 class="card-title text-lg">Advanced Search</h3>
-        <form id="advanced-search-form" method="GET" action="{{ url('posts') }}">
-          <!-- Hidden field to preserve the main search query -->
-          <input type="hidden" name="q" value="{{ search_str|default('') }}">
-          
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Date Range</span>
-            </label>
-            <div class="flex gap-2">
-              <div class="w-1/2">
-                <label class="label">
-                  <span class="label-text text-xs">From</span>
-                </label>
-                <input type="date" name="date_from" class="input input-bordered input-sm w-full" value="{{ request.GET.date_from|default('') }}">
-              </div>
-              <div class="w-1/2">
-                <label class="label">
-                  <span class="label-text text-xs">To</span>
-                </label>
-                <input type="date" name="date_to" class="input input-bordered input-sm w-full" value="{{ request.GET.date_to|default('') }}">
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Author</span>
-            </label>
-            <input type="text" name="author" placeholder="Username" class="input input-bordered input-sm w-full" value="{{ request.GET.author|default('') }}">
-          </div>
-          
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Community</span>
-            </label>
-            <select name="community" class="select select-bordered select-sm w-full">
-              <option value="">All Communities</option>
-              {% for community in communities %}
-                <option value="{{ community.id }}" {% if request.GET.community == community.id %}selected{% endif %}>
-                  {{ community.name }}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-          
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Content Type</span>
-            </label>
-            <div class="flex flex-wrap gap-2">
-              <label class="label cursor-pointer justify-start gap-2">
-                <input type="checkbox" name="has_image" class="checkbox checkbox-sm" {% if request.GET.has_image %}checked{% endif %}>
-                <span class="label-text">Has Images</span>
-              </label>
-              <label class="label cursor-pointer justify-start gap-2">
-                <input type="checkbox" name="has_link" class="checkbox checkbox-sm" {% if request.GET.has_link %}checked{% endif %}>
-                <span class="label-text">Has Links</span>
-              </label>
-            </div>
-          </div>
-          
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Interactions</span>
-            </label>
-            <div class="flex gap-2">
-              <div class="w-1/3">
-                <label class="label">
-                  <span class="label-text text-xs">Min Likes</span>
-                </label>
-                <input type="number" name="min_likes" min="0" class="input input-bordered input-sm w-full" value="{{ request.GET.min_likes|default('') }}">
-              </div>
-              <div class="w-1/3">
-                <label class="label">
-                  <span class="label-text text-xs">Min Comments</span>
-                </label>
-                <input type="number" name="min_comments" min="0" class="input input-bordered input-sm w-full" value="{{ request.GET.min_comments|default('') }}">
-              </div>
-              <div class="w-1/3">
-                <label class="label">
-                  <span class="label-text text-xs">Min Reposts</span>
-                </label>
-                <input type="number" name="min_reposts" min="0" class="input input-bordered input-sm w-full" value="{{ request.GET.min_reposts|default('') }}">
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-control mb-2">
-            <label class="label">
-              <span class="label-text">Sort By</span>
-            </label>
-            <select name="sort" class="select select-bordered select-sm w-full">
-              <option value="newest" {% if request.GET.sort == 'newest' or not request.GET.sort %}selected{% endif %}>Newest First</option>
-              <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
-              <option value="most_likes" {% if request.GET.sort == 'most_likes' %}selected{% endif %}>Most Likes</option>
-              <option value="most_comments" {% if request.GET.sort == 'most_comments' %}selected{% endif %}>Most Comments</option>
-              <option value="most_reposts" {% if request.GET.sort == 'most_reposts' %}selected{% endif %}>Most Reposts</option>
-            </select>
-          </div>
-          
-          <div class="flex justify-between mt-4">
-            <a href="{{ url('posts') }}" class="btn btn-sm btn-ghost">Reset</a>
-            <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div> 
+	<label tabindex="0" class="btn btn-outline btn-sm">
+	<span class="material-icons-outlined text-sm mr-1">filter_list</span>
+	Advanced Filters
+	</label>
+	<div tabindex="0" class="dropdown-content z-[1] card card-compact w-96 p-2 shadow bg-base-100">
+		<div class="card-body">
+			<h3 class="card-title text-lg">Advanced Search</h3>
+			<form id="advanced-search-form" method="GET" action="{{ url('posts') }}">
+				<!-- Hidden field to preserve the main search query -->
+				<input type="hidden" name="q" value="{{ search_str|default('') }}">
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Date Range</span>
+					</label>
+					<div class="flex gap-2">
+						<div class="w-1/2">
+							<label class="label">
+							<span class="label-text text-xs">From</span>
+							</label>
+							<input type="date" name="date_from" class="input input-bordered input-sm w-full" value="{{ request.GET.date_from|default('') }}">
+						</div>
+						<div class="w-1/2">
+							<label class="label">
+							<span class="label-text text-xs">To</span>
+							</label>
+							<input type="date" name="date_to" class="input input-bordered input-sm w-full" value="{{ request.GET.date_to|default('') }}">
+						</div>
+					</div>
+				</div>
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Author</span>
+					</label>
+					<input type="text" name="author" placeholder="Username" class="input input-bordered input-sm w-full" value="{{ request.GET.author|default('') }}">
+				</div>
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Community</span>
+					</label>
+					<select name="community" class="select select-bordered select-sm w-full">
+						<option value="">All Communities</option>
+						{% for community in communities %}
+						<option value="{{ community.id }}" {% if request.GET.community == community.id %}selected{% endif %}>
+						{{ community.name }}
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Content Type</span>
+					</label>
+					<div class="flex flex-wrap gap-2">
+						<label class="label cursor-pointer justify-start gap-2">
+						<input type="checkbox" name="has_image" class="checkbox checkbox-sm" {% if request.GET.has_image %}checked{% endif %}>
+						<span class="label-text">Has Images</span>
+						</label>
+						<label class="label cursor-pointer justify-start gap-2">
+						<input type="checkbox" name="has_link" class="checkbox checkbox-sm" {% if request.GET.has_link %}checked{% endif %}>
+						<span class="label-text">Has Links</span>
+						</label>
+					</div>
+				</div>
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Interactions</span>
+					</label>
+					<div class="flex gap-2">
+						<div class="w-1/3">
+							<label class="label">
+							<span class="label-text text-xs">Min Likes</span>
+							</label>
+							<input type="number" name="min_likes" min="0" class="input input-bordered input-sm w-full" value="{{ request.GET.min_likes|default('') }}">
+						</div>
+						<div class="w-1/3">
+							<label class="label">
+							<span class="label-text text-xs">Min Comments</span>
+							</label>
+							<input type="number" name="min_comments" min="0" class="input input-bordered input-sm w-full" value="{{ request.GET.min_comments|default('') }}">
+						</div>
+						<div class="w-1/3">
+							<label class="label">
+							<span class="label-text text-xs">Min Reposts</span>
+							</label>
+							<input type="number" name="min_reposts" min="0" class="input input-bordered input-sm w-full" value="{{ request.GET.min_reposts|default('') }}">
+						</div>
+					</div>
+				</div>
+				<div class="form-control mb-2">
+					<label class="label">
+					<span class="label-text">Sort By</span>
+					</label>
+					<select name="sort" class="select select-bordered select-sm w-full">
+					<option value="newest" {% if request.GET.sort == 'newest' or not request.GET.sort %}selected{% endif %}>Newest First</option>
+					<option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+					<option value="most_likes" {% if request.GET.sort == 'most_likes' %}selected{% endif %}>Most Likes</option>
+					<option value="most_comments" {% if request.GET.sort == 'most_comments' %}selected{% endif %}>Most Comments</option>
+					<option value="most_reposts" {% if request.GET.sort == 'most_reposts' %}selected{% endif %}>Most Reposts</option>
+					</select>
+				</div>
+				<div class="flex justify-between mt-4">
+					<a href="{{ url('posts') }}" class="btn btn-sm btn-ghost">Reset</a>
+					<button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
