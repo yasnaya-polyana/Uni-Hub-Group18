@@ -16,7 +16,19 @@
 					Happening now
 				</div>
 				{% endif %}
+                <!-- Admin/Moderator Controls -->
+                {% set is_moderator = event.community.community_members.filter(user=request.user, role="moderator").exists() %}
+                {% set is_admin = event.community.owner.id == request.user.id %}
+                {% set is_superuser = request.user.is_superuser %}
+                {% if is_moderator or is_admin or is_superuser %}
+                <div class="flex justify-end">
+                    <a href="{{ url('edit_event', event_id=event.id) }}" class="btn btn-sm btn-outline">
+                        <span class="material-icons-outlined">edit</span> Edit Event
+                    </a>
+                </div>
+                {% endif %}
 			</div>
+
 			<div class="divider"></div>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 				<div>
@@ -57,6 +69,33 @@
 						</a>
 					</div>
 					{% endif %}
+				</div>
+				<div>
+					{% with rsvp_users = event.post.interactions.filter(interaction="rsvp") %}
+					{% if rsvp_users.count() > 0 %}
+					    <h2 class="text-xl font-bold mb-4">Who's Going ({{ rsvp_users.count() }})</h2>
+						<div class="flex flex-wrap gap-2">
+							{% for interaction in rsvp_users %}
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="avatar">
+                                    <div class="w-8 rounded-full">
+                                        {% if interaction.user.profile_picture %}
+                                            <img src="{{ interaction.user.profile_picture.url }}" alt="Profile" />
+                                        {% else %}
+                                        <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                                            {{ interaction.user.username|make_list|first|upper }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <a href="{{ url('user', interaction.user.username) }}" class="link">
+                                {{ interaction.user.username }}
+                                </a>
+                            </div>
+							{% endfor %}
+						</div>
+					{% endif %}
+					{% endwith %}
 				</div>
 			</div>
 			<div class="divider"></div>
