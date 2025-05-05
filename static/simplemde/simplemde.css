@@ -11,12 +11,19 @@
 
 .CodeMirror pre {
     padding: 0 4px;
+
 }
 
+.CodeMirror:hover {
+    cursor: auto;
+}
+
+/*
 .CodeMirror-gutter-filler,
 .CodeMirror-scrollbar-filler {
-    /* background-color: #fff */
+    background-color: #fff
 }
+*/
 
 .CodeMirror-gutters {
     border-right: 1px solid #ddd;
@@ -466,7 +473,9 @@ span.CodeMirror-selectedtext {
     right: 0;
     bottom: 0;
     height: auto;
-    z-index: 9
+    z-index: 9;
+    /* Custom code */
+    border: none;
 }
 
 .CodeMirror-sided {
@@ -527,7 +536,8 @@ span.CodeMirror-selectedtext {
     padding-bottom: 10px;
     box-sizing: border-box;
     background: #fff;
-    border: 0;
+    /* border: 0; */
+    margin-left: 10px;
     position: fixed;
     top: 0;
     left: 0;

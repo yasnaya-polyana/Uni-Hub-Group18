@@ -44,7 +44,7 @@ class CreateCommunityForm(forms.ModelForm):
                 attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
             ),
             "icon_url": forms.FileInput(
-                attrs={"class": "file-input file-input-bordered w-full"}
+                attrs={"class": "file-input input-bordered w-full"}
             ),
             "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
             "colour": forms.TextInput(attrs={'type': 'color', 'class': 'input input-bordered w-full'}),
@@ -83,7 +83,7 @@ class EditCommunityForm(forms.ModelForm):
                 attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
             ),
             "icon_url": forms.FileInput(
-                attrs={"class": "file-input file-input-md w-full"}
+                attrs={"class": "file-input input-bordered file-input-md w-full"}
             ),
             "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
             "colour": forms.TextInput(attrs={'type': 'color', 'class': 'w-full'}),
