@@ -1,12 +1,11 @@
+from config import Config
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
-from config import Config
-
-from .models import Course, CustomUser, UserSettings, UserType, Interest
+from .models import Course, CustomUser, Interest, UserSettings, UserType
 
 
 # User Creation Form
@@ -82,14 +81,14 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
         empty_label="Select a course",
     )
-    
+
     interests = forms.ModelMultipleChoiceField(
-        queryset=Interest.objects.all().order_by('name'),
+        queryset=Interest.objects.all().order_by("name"),
         required=False,
         widget=forms.CheckboxSelectMultiple(
             attrs={"class": "interests-checkbox hidden"}
         ),
-        help_text="Select your interests"
+        help_text="Select your interests",
     )
 
     address_line1 = forms.CharField(
@@ -146,14 +145,12 @@ class CustomUserCreationForm(UserCreationForm):
             }
         ),
     )
-    
+
     is_staff_member = forms.BooleanField(
         required=False,
         label="I am an Academic Staff Member",
         initial=False,
-        widget=forms.CheckboxInput(
-            attrs={"class": "checkbox checkbox-primary"}
-        ),
+        widget=forms.CheckboxInput(attrs={"class": "checkbox checkbox-primary"}),
     )
 
     password1 = forms.CharField(
@@ -223,20 +220,20 @@ class CustomUserCreationForm(UserCreationForm):
             self.add_error("password2", "The passwords do not match.")
 
         return cleaned_data
-        
+
     def save(self, commit=True):
         user = super().save(commit=False)
-        is_staff = self.cleaned_data.get('is_staff_member', False)
-        
+        is_staff = self.cleaned_data.get("is_staff_member", False)
+
         # Set user type based on staff status
         user_type = None
         if is_staff:
-            user_type = UserType.objects.get_or_create(name='ACADEMIC')[0]
+            user_type = UserType.objects.get_or_create(name="ACADEMIC")[0]
         else:
-            user_type = UserType.objects.get_or_create(name='STUDENT')[0]
-            
+            user_type = UserType.objects.get_or_create(name="STUDENT")[0]
+
         user.user_type = user_type
-        
+
         if commit:
             user.save()
         return user
@@ -279,14 +276,14 @@ class ProfileEditForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
         empty_label="Select a course",
     )
-    
+
     interests = forms.ModelMultipleChoiceField(
-        queryset=Interest.objects.all().order_by('name'),
+        queryset=Interest.objects.all().order_by("name"),
         required=False,
         widget=forms.CheckboxSelectMultiple(
             attrs={"class": "interests-checkbox hidden"}
         ),
-        help_text="Select your interests"
+        help_text="Select your interests",
     )
 
     profile_picture = forms.FileField(
@@ -294,9 +291,9 @@ class ProfileEditForm(forms.ModelForm):
         widget=forms.FileInput(
             attrs={"class": "file-input file-input-bordered w-full"}
         ),
-        required=False
+        required=False,
     )
-    
+
     address_line1 = forms.CharField(
         required=True,
         label="Address Line 1",
@@ -354,7 +351,18 @@ class ProfileEditForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ("email", "bio", "profile_picture", "course", "interests", "address_line1", "address_line2", "city", "county", "postcode")
+        fields = (
+            "email",
+            "bio",
+            "profile_picture",
+            "course",
+            "interests",
+            "address_line1",
+            "address_line2",
+            "city",
+            "county",
+            "postcode",
+        )
         widgets = {
             "email": forms.EmailInput(attrs={"class": "input input-bordered w-full"}),
             "bio": forms.Textarea(
@@ -365,15 +373,23 @@ class ProfileEditForm(forms.ModelForm):
             ),
         }
 
+
 # Edit User Settings
 #
 #
 class UserSettingsForm(forms.ModelForm):
     class Meta:
         model = UserSettings
-        fields = ['like_notifications', 'comment_notifications', 'follow_notifications']
+        fields = ["like_notifications", "comment_notifications", "follow_notifications"]
         widgets = {
-            'like_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
-            'comment_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
-            'follow_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
+            "like_notifications": forms.CheckboxInput(
+                attrs={"class": "checkbox checkbox-primary"}
+            ),
+            "comment_notifications": forms.CheckboxInput(
+                attrs={"class": "checkbox checkbox-primary"}
+            ),
+            "follow_notifications": forms.CheckboxInput(
+                attrs={"class": "checkbox checkbox-primary"}
+            ),
         }
+

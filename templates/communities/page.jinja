@@ -27,7 +27,7 @@
         <div id="community-posts-list" class="space-y-4">
           {% if posts %}
             {% for post in posts %}
-              {% include 'posts/post.jinja' %}
+              {% include 'posts/post-card.jinja' %}
             {% endfor %}
           {% else %}
             <div class="card bg-base-100 shadow">
