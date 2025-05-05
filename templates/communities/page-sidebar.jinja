@@ -47,15 +47,18 @@
 			</div>
 			<div class="mt-5">
 				<h4 class="font-semibold">Topics</h4>
-				<ul class="text-sm list-disc list-inside">
-				{% if topics %}
-					{% for topic in topics %}
-						<li>{{ topic.name }}</li>
-					{% endfor %}
-				{% else %}
-					<li>No topics available yet.</li>
-				{% endif %}
-				</ul>
+				<div class="flex flex-wrap gap-2 mt-2">
+					{% if community.topics.all() %}
+						{% for topic in community.topics.all() %}
+							<a href="/search/?q=%23{{ topic.name }}" 
+							   class="text-purple-600 bg-purple-100 font-medium px-2 py-1 rounded text-xs hover:bg-purple-200">
+								#{{ topic.name }}
+							</a>
+						{% endfor %}
+					{% else %}
+						<p class="text-sm text-gray-500">No topics available yet.</p>
+					{% endif %}
+				</div>
 			</div>
 		</div>
 	</div>

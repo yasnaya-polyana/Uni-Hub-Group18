@@ -1,0 +1,162 @@
+[
+  {
+    "model": "communities.topic",
+    "pk": 1,
+    "fields": {
+      "name": "Programming",
+      "description": "Software development and coding topics"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 2,
+    "fields": {
+      "name": "WebDev",
+      "description": "Web development and design"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 3,
+    "fields": {
+      "name": "DataScience",
+      "description": "Data analysis, machine learning, and statistics"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 4,
+    "fields": {
+      "name": "Gaming",
+      "description": "Video games and esports"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 5,
+    "fields": {
+      "name": "Music",
+      "description": "Music creation, appreciation, and events"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 6,
+    "fields": {
+      "name": "Sports",
+      "description": "Athletic activities and sports news"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 7,
+    "fields": {
+      "name": "Art",
+      "description": "Visual arts, design, and creative expression"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 8,
+    "fields": {
+      "name": "Science",
+      "description": "Scientific research and discoveries"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 9,
+    "fields": {
+      "name": "Math",
+      "description": "Mathematics and related concepts"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 10,
+    "fields": {
+      "name": "History",
+      "description": "Historical events and perspectives"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 11,
+    "fields": {
+      "name": "Literature",
+      "description": "Books, poetry, and written works"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 12,
+    "fields": {
+      "name": "Movies",
+      "description": "Film and cinema discussion"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 13,
+    "fields": {
+      "name": "Television",
+      "description": "TV shows and streaming content"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 14,
+    "fields": {
+      "name": "Food",
+      "description": "Cooking, recipes, and culinary experiences"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 15,
+    "fields": {
+      "name": "Travel",
+      "description": "Travel experiences and destinations"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 16,
+    "fields": {
+      "name": "Fashion",
+      "description": "Clothing, style, and fashion trends"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 17,
+    "fields": {
+      "name": "Technology",
+      "description": "Tech news, gadgets, and innovations"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 18,
+    "fields": {
+      "name": "Politics",
+      "description": "Political discussions and current events"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 19,
+    "fields": {
+      "name": "Health",
+      "description": "Health and wellness topics"
+    }
+  },
+  {
+    "model": "communities.topic",
+    "pk": 20,
+    "fields": {
+      "name": "Fitness",
+      "description": "Exercise, workouts, and physical fitness"
+    }
+  }
+] 

@@ -1,5 +1,9 @@
 {% extends 'base/index.jinja' %}
 {% block title %}Communities{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ static('css/topics.css') }}">
+<script src="{{ static('js/topics.js') }}" defer></script>
+{% endblock %}
 {% block content %}
 <div class="max-w-6xl mx-auto">
 	<div class="flex justify-between items-center mb-6">
@@ -61,7 +65,25 @@
 				<label class="label" for="{{ form.colour.id_for_label }}">
 					<span class="label-text">{{ form.colour.label }}</span>
 				</label>
-				{{ form.colour }}
+				<div class="color-picker-container">
+					<!-- Original input visible but styled better -->
+					<div class="flex items-center gap-4">
+						<input type="color" name="colour" id="{{ form.colour.id_for_label }}" 
+							value="{{ form.colour.value|default('#FFFFFF') }}" 
+							class="h-12 w-24 cursor-pointer border rounded">
+							
+						<div class="flex flex-wrap gap-2">
+							<button type="button" class="color-preset w-8 h-8 rounded" style="background-color: #4A6FFF;" data-color="#4A6FFF"></button>
+							<button type="button" class="color-preset w-8 h-8 rounded" style="background-color: #FF5252;" data-color="#FF5252"></button>
+							<button type="button" class="color-preset w-8 h-8 rounded" style="background-color: #41B883;" data-color="#41B883"></button>
+							<button type="button" class="color-preset w-8 h-8 rounded" style="background-color: #FFD600;" data-color="#FFD600"></button>
+							<button type="button" class="color-preset w-8 h-8 rounded" style="background-color: #9C27B0;" data-color="#9C27B0"></button>
+							<button type="button" class="color-preset w-8 h-8 rounded" style="background-color: #FF9800;" data-color="#FF9800"></button>
+						</div>
+					</div>
+					
+					<p class="text-sm text-gray-500 mt-1">Select a color for your community banner</p>
+				</div>
 				{% if form.colour.errors %}
 					<label class="label">
 						{% for error in form.colour.errors %}
@@ -74,7 +96,29 @@
 				<label class="label" for="{{ form.topics.id_for_label }}">
 					<span class="label-text">{{ form.topics.label }}</span>
 				</label>
-				{{ form.topics }}
+				
+				<!-- Improved Topics Selection UI -->
+				<div class="topics-container">
+					<!-- Render the topics directly in a grid like interests -->
+					<div class="topics-wrapper">
+						<p class="font-medium mb-2">Select topics for this community:</p>
+						<div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+							<!-- Use field.subwidgets to render each checkbox properly -->
+							{% for checkbox in form.topics.subwidgets %}
+							<label class="cursor-pointer label justify-start">
+							<input type="checkbox" 
+							name="topics" 
+							value="{{ checkbox.data.value }}" 
+							{% if checkbox.data.selected %}checked{% endif %} 
+							class="checkbox checkbox-primary topics-checkbox">
+							<span class="label-text ml-2">{{ checkbox.choice_label }}</span>
+							</label>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				
+				<p class="text-sm text-gray-500 mt-1">Select topics that describe this community. These help users discover your community.</p>
 				{% if form.topics.errors %}
 				<label class="label">
 					<span class="label-text-alt text-error">{{ form.topics.errors|join(", ") }}</span>
@@ -85,4 +129,21 @@
 		<button type="submit" class="btn btn-primary w-full mt-6">Create Community</button>
 	</form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const colorInput = document.querySelector('[name="colour"]');
+        const presets = document.querySelectorAll('.color-preset');
+        
+        // Handle color preset clicks
+        presets.forEach(preset => {
+            preset.addEventListener('click', function() {
+                const color = this.getAttribute('data-color');
+                colorInput.value = color;
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.db.utils import IntegrityError, ProgrammingError
+import os
 
 from config import Config
 
@@ -10,6 +11,10 @@ class AccountsConfig(AppConfig):
     name = "accounts"
 
     def ready(self):
+        # Skip initialization during migrations
+        if os.environ.get('MIGRATING') == 'True':
+            return
+            
         from .models import CustomUser, Interest, Course  # Add these imports
         config = Config.config["users"]
 

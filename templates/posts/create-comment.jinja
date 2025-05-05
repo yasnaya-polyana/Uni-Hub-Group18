@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="{{ static('css/topics.css') }}">
+<script src="{{ static('js/topics.js') }}" defer></script>
+
 <div class="card bg-base-100 shadow-lg mb-4">
 	<div class="card-body">
 		<!-- Collapsible toggle button - shown by default -->
@@ -41,12 +44,29 @@
 						{% endif %}
 
 						<!-- Topics -->
-						<div class="form-group">
-							<label class="label" for="body">
-								<span class="label-text">Topics</span>
+						<div class="form-group mt-4">
+							<label class="label">
+								<span class="label-text font-medium">Select Topics</span>
 							</label>
-							{{ form.topics }}
+							<div class="topics-container bg-base-200 p-4 rounded-box">
+								<p class="text-sm mb-3">Topics will be added as hashtags to your comment. Select relevant topics below:</p>
+								<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+									{% for checkbox in form.topics %}
+									<div class="form-control">
+										<label class="cursor-pointer label justify-start gap-2 hover:bg-base-300 rounded-box p-2">
+											{{ checkbox.tag }}
+											<span class="label-text">{{ checkbox.choice_label }}</span>
+										</label>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
 						</div>
+						{% if form.topics.errors %}
+						<label class="label">
+							<span class="label-text-alt text-error">{{ form.topics.errors|join(", ") }}</span>
+						</label>
+						{% endif %}
 					</div>
 					<div class="card-actions justify-end mt-2">
 						<button type="button" id="cancel-post-btn" class="btn btn-ghost">Cancel</button>

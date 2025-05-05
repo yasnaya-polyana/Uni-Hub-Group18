@@ -87,6 +87,11 @@
                 return `<a target="_blank" href="/c/${tag}" class="text-green-600 bg-blue-100 font-medium px-1 py-0.5 rounded">#${tag}</a>`;
             });
 
+            // Topic hashtags
+            html = html.replace(/#([a-zA-Z0-9_]+)/g, function (_, topic) {
+                return `<span class="text-purple-600 bg-purple-100 font-medium px-1 py-0.5 rounded">#${topic}</span>`;
+            });
+
             // $
             html = html.replace(/\[$([a-zA-Z0-9_]+)\]/g, function (_, variable) {
                 return `<span class="text-yellow-700 bg-yellow-100 font-medium px-1 py-0.5 rounded">$${variable}</span>`;
@@ -102,6 +107,7 @@
         
             const mentionMatch = beforeCursor.match(/\[@([a-zA-Z0-9_]*)$/);
             const communityMatch = beforeCursor.match(/\[\#([a-zA-Z0-9_]*)$/);
+            const topicMatch = beforeCursor.match(/\#([a-zA-Z0-9_]*)$/);
         
             if (mentionMatch) {
                 const query = mentionMatch[1];
@@ -109,6 +115,9 @@
             } else if (communityMatch) {
                 const query = communityMatch[1];
                 query.length === 0 ? hideDropdown() : fetchCommunitySuggestions(query, cursor);
+            } else if (topicMatch) {
+                const query = topicMatch[1];
+                query.length === 0 ? hideDropdown() : fetchTopicSuggestions(query, cursor);
             } else {
                 hideDropdown();
             }
@@ -126,6 +135,13 @@
                 .then(res => res.json())
                 .then(communities => showCommunityDropdown(communities, cursor))
                 .catch(err => console.error("Community fetch error:", err));
+        }
+
+        function fetchTopicSuggestions(query, cursor) {
+            fetch(`/api/topic-search/?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(topics => showTopicDropdown(topics, cursor))
+                .catch(err => console.error("Topic fetch error:", err));
         }
 
         function showMentionDropdown(users, cursor) {
@@ -243,6 +259,60 @@
             };
 
             cm.replaceRange(`[@${username}]`, startPos, endPos);
+            cm.focus();
+        }
+
+        function showTopicDropdown(topics, cursor) {
+            if (!mde || !mde.codemirror) {
+                console.warn("SimpleMDE not ready yet");
+                return;
+            }
+
+            if (!dropdownEl) {
+                dropdownEl = document.createElement("div");
+                dropdownEl.className = "absolute z-50 bg-white border rounded shadow text-sm";
+                document.body.appendChild(dropdownEl);
+            }
+
+            const coords = mde.codemirror.cursorCoords(cursor, "page");
+            dropdownEl.style.left = `${coords.left}px`;
+            dropdownEl.style.top = `${coords.bottom}px`;
+            dropdownEl.style.display = "block";
+
+            dropdownEl.innerHTML = topics.map(topic => `
+                <div class="topic-option px-3 py-1 hover:bg-gray-100 cursor-pointer" data-name="${topic.name}">
+                    #${topic.name}
+                </div>
+            `).join("");
+
+            dropdownEl.querySelectorAll(".topic-option").forEach(el => {
+                el.addEventListener("click", () => {
+                    insertTopic(el.dataset.name);
+                    hideDropdown();
+                });
+            });
+        }
+
+        function insertTopic(name) {
+            const cm = mde.codemirror;
+            const cursor = cm.getCursor();
+            const line = cm.getLine(cursor.line);
+            const beforeCursor = line.slice(0, cursor.ch);
+
+            const match = beforeCursor.match(/\#([a-zA-Z0-9_]*)$/);
+            if (!match) return;
+
+            const startPos = {
+                line: cursor.line,
+                ch: beforeCursor.lastIndexOf("#")
+            };
+
+            const endPos = {
+                line: cursor.line,
+                ch: cursor.ch
+            };
+
+            cm.replaceRange(`#${name}`, startPos, endPos);
             cm.focus();
         }
     });

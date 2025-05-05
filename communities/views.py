@@ -230,6 +230,29 @@ def community_detail(request, community_id: str):
             post.user = request.user
             post.community = community
             
+            # Add selected topics as hashtags to post body - only add once
+            if 'topics' in form.cleaned_data and form.cleaned_data['topics']:
+                selected_topics = form.cleaned_data['topics']
+                topic_tags = []
+                
+                # Create a list of hashtags for the selected topics
+                for topic in selected_topics:
+                    topic_tags.append(f"#{topic.name}")
+                
+                # Add the hashtags to the post body if they're not already included
+                if post.body and topic_tags:
+                    # Only append if not already in text
+                    existing_text = post.body.strip()
+                    hashtag_text = " ".join(topic_tags)
+                    
+                    # Check if the hashtags are already in the post
+                    if not any(tag.lower() in existing_text.lower() for tag in topic_tags):
+                        # Add a newline if the post doesn't end with one
+                        if existing_text and not existing_text.endswith("\n"):
+                            post.body = existing_text + "\n\n" + hashtag_text
+                        else:
+                            post.body = existing_text + hashtag_text
+            
             # Handle visibility setting
             visibility = request.POST.get('visibility', 'public')
             # Only allow moderators and owners to set moderator-only visibility
@@ -238,10 +261,20 @@ def community_detail(request, community_id: str):
             post.visibility = visibility
             
             post.save()
+            
+            # Save m2m relationships
+            form.save_m2m()
+            
+            # Process hashtags from body - use the topics already associated with the post
+            # Don't add existing topics from hashtags since they're already included
             return redirect("community_detail", community_id=community_id)
     else:
         form = PostCreationForm()
 
+    # Debug the form output
+    print("Form topics field type:", type(form.fields['topics']))
+    print("Form topics widget type:", type(form.fields['topics'].widget))
+    
     membership = CommunityMember.objects.filter(
         user=request.user,
         community=community,

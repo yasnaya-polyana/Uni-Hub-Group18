@@ -21,6 +21,21 @@
             </p>
         </a>
         
+        <!-- Topics - Only display topics that aren't already in the post body as hashtags -->
+        {% if (post|translate_repost).topics.all() %}
+        {% set post_body = (post|translate_repost).body|default("") %}
+        <div class="flex flex-wrap gap-1 mt-2">
+            {% for topic in (post|translate_repost).topics.all() %}
+                {% if ("#" + topic.name) not in post_body %}
+                <a href="/search/?q=%23{{ topic.name }}" 
+                   class="text-purple-600 bg-purple-100 font-medium px-1.5 py-0.5 rounded text-xs hover:bg-purple-200">
+                    #{{ topic.name }}
+                </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <!-- Interaction Buttons -->
         <div class="flex flex-wrap md:flex-nowrap space-x-6">
             <!-- Like Button -->

@@ -1,7 +1,32 @@
 from django import forms
+from django.utils.safestring import mark_safe
 
 from .models import Communities, CommunityMember, Topic
 from events.models import Event
+
+
+class CustomCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+    """Custom checkbox widget that applies class to each checkbox input"""
+    
+    def __init__(self, attrs=None, check_test=None):
+        attrs = attrs or {}
+        attrs['class'] = 'checkbox checkbox-primary topics-checkbox'
+        super().__init__(attrs, check_test)
+        
+    def render(self, name, value, attrs=None, renderer=None):
+        attrs = attrs or {}
+        if 'class' not in attrs:
+            attrs['class'] = 'checkbox checkbox-primary topics-checkbox'
+        else:
+            attrs['class'] += ' checkbox checkbox-primary topics-checkbox'
+        
+        return super().render(name, value, attrs, renderer)
+        
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        attrs = attrs or {}
+        attrs['class'] = 'checkbox checkbox-primary topics-checkbox'
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        return option
 
 
 class EventCreationForm(forms.ModelForm):
@@ -28,11 +53,31 @@ class EventCreationForm(forms.ModelForm):
         return instance
 
 
+class ApproveRejectCommunityForm(forms.Form):
+    DECISION_CHOICES = [
+        ("approve", "Approve"),
+        ("reject", "Reject"),
+    ]
+
+    decision = forms.ChoiceField(
+        choices=DECISION_CHOICES,
+        widget=forms.RadioSelect(attrs={"class": "radio radio-primary"}),
+        required=True,
+    )
+    feedback = forms.CharField(
+        required=False,
+        widget=forms.Textarea(
+            attrs={"class": "textarea textarea-bordered w-full", "rows": 3}
+        ),
+    )
+
+
 class CreateCommunityForm(forms.ModelForm):
     topics = forms.ModelMultipleChoiceField(
-        queryset=Topic.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+        queryset=Topic.objects.all().order_by('name'),
+        widget=CustomCheckboxSelectMultiple(),
+        required=False,
+        label="Topics"
     )
 
     class Meta:
@@ -49,7 +94,6 @@ class CreateCommunityForm(forms.ModelForm):
             ),
             "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
             "colour": forms.TextInput(attrs={'type': 'color', 'class': 'w-full'}),
-            "topics": forms.Select(attrs={"class": "select select-bordered w-full"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -63,6 +107,7 @@ class CreateCommunityForm(forms.ModelForm):
             instance.owner = self.user
         if commit:
             instance.save()
+            self.save_m2m()  # Save topics relationship
             CommunityMember.objects.create(
                 user=self.user, community=instance, role="admin"
             )
@@ -71,9 +116,10 @@ class CreateCommunityForm(forms.ModelForm):
 
 class EditCommunityForm(forms.ModelForm):
     topics = forms.ModelMultipleChoiceField(
-        queryset=Topic.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+        queryset=Topic.objects.all().order_by('name'),
+        widget=CustomCheckboxSelectMultiple(),
+        required=False,
+        label="Topics"
     )
 
     class Meta:
@@ -89,7 +135,6 @@ class EditCommunityForm(forms.ModelForm):
             ),
             "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
             "colour": forms.TextInput(attrs={'type': 'color', 'class': 'w-full'}),
-            "topics": forms.Select(attrs={"class": "select select-bordered w-full"}),
         }
         
     def save(self, commit=True):
@@ -101,6 +146,7 @@ class EditCommunityForm(forms.ModelForm):
                 instance.topics.set(self.cleaned_data['topics'])
                 
         return instance
+
 
 class JoinCommunityForm(forms.ModelForm):
     class Meta:

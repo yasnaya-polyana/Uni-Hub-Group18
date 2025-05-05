@@ -1,5 +1,5 @@
 from django import forms
-
+from communities.forms import CustomCheckboxSelectMultiple
 from posts.models import Post
 
 
@@ -10,6 +10,11 @@ class PostCreationForm(forms.ModelForm):
 
         if is_comment:
             self.fields['title'].required = False
+            
+        # Style the topics field checkboxes
+        self.fields['topics'].widget.attrs.update({
+            'class': 'checkbox checkbox-primary'
+        })
 
     title = forms.CharField(
         required=True,
@@ -47,5 +52,5 @@ class PostCreationForm(forms.ModelForm):
         model = Post
         fields = ("title", "body", "topics", "post_ref")
         widgets = {
-            'topics': forms.CheckboxSelectMultiple,
+            'topics': CustomCheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-primary'}),
         }
