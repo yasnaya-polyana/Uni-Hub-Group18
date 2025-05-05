@@ -25,6 +25,52 @@ communities:
       owner_username: admin
       auto_populate_with_test_data: yes
 
+topics:
+  init_with:
+    # Academic Topics
+    - name: "Programming"
+      description: "Software development and coding topics"
+    - name: "WebDev" 
+      description: "Web development and design"
+    - name: "DataScience"
+      description: "Data analysis, machine learning, and statistics"
+    - name: "AI"
+      description: "Artificial intelligence and machine learning"
+    - name: "CompSci"
+      description: "Computer Science topics"
+    
+    # University Topics
+    - name: "UWE"
+      description: "University of the West of England related topics"
+    - name: "StudentLife"
+      description: "Student life experiences and discussions"
+    - name: "CampusEvents"
+      description: "Events happening on campus"
+    - name: "Library"
+      description: "Library resources and study spaces"
+    - name: "Accommodation"
+      description: "Student housing and accommodation issues"
+    
+    # General Topics
+    - name: "Gaming"
+      description: "Video games and esports"
+    - name: "Music"
+      description: "Music creation, appreciation, and events"
+    - name: "Sports"
+      description: "Athletic activities and sports news"
+    - name: "Food"
+      description: "Cooking, recipes, and culinary experiences"
+    - name: "Travel"
+      description: "Travel experiences and destinations"
+    - name: "Movies"
+      description: "Film and cinema discussion"
+    - name: "Technology"
+      description: "Tech news, gadgets, and innovations"
+    - name: "Health"
+      description: "Health and wellness topics"
+    - name: "Fitness"
+      description: "Exercise, workouts, and physical fitness"
+
 interests:
   init_with:
     # Academic Interests
