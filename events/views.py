@@ -71,6 +71,34 @@ def event_detail(request, event_id):
     #     'now': timezone.now()  # Pass the current time to the template
     # })
 
+@login_required
+def event_cancel(request, event_id):
+    # Fetch the event
+    event = get_object_or_404(Event, id=event_id)
+
+    # Check if the user has permission to cancel the event
+    is_moderator = CommunityMember.objects.filter(
+        user=request.user, community=event.community, role="moderator"
+    ).exists()
+    is_admin = request.user == event.community.owner
+    is_superuser = request.user.is_superuser
+
+    # Only allow moderators, community admins, and superusers to cancel events
+    if not (is_moderator or is_admin or is_superuser):
+        messages.error(
+            request,
+            "Only moderators, community owners, and site admins can cancel events.",
+        )
+        return redirect("event_detail", event_id=event_id)
+
+    # Cancel the event (e.g., mark it as canceled)
+    event.status = "canceled"
+    event.save()
+
+    # Notify the user
+    messages.success(request, "The event has been successfully canceled.")
+    return redirect("event_detail", event_id=event_id)
+
 
 @login_required
 def event_edit(request, event_id):

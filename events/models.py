@@ -37,6 +37,16 @@ class Event(models.Model):
     title = models.CharField(max_length=100)
     details = models.TextField()
     
+    # Event status choices
+    STATUS_CHOICES = [
+        ("scheduled", "Scheduled"),
+        ("canceled", "Canceled"),
+        ("completed", "Completed"),
+    ]
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default="scheduled"
+    )
+    
     # These fields are commented out but will be used in the code via hasattr
     members_only = models.BooleanField(default=False)
     # materials = models.FileField(upload_to='event_materials/', null=True, blank=True)

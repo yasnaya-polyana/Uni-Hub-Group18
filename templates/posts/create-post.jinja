@@ -75,13 +75,16 @@
                     <p class="text-sm mb-3">Topics will be added as hashtags to your post. Select relevant topics below:</p>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {% for checkbox in form.topics %}
-                        <div class="form-control">
-                            <label class="cursor-pointer label justify-start gap-2 hover:bg-base-300 rounded-box p-2">
-                                {{ checkbox.tag }}
-                                <span class="label-text">{{ checkbox.choice_label }}</span>
-                            </label>
-                        </div>
-                        {% endfor %}
+						<div class="form-control">
+							<label class="cursor-pointer label justify-start gap-2 hover:bg-base-300 rounded-box p-2">
+								<input type="checkbox" 
+										name="topics" 
+										value="{{ checkbox.data.value }}" 
+										class="checkbox checkbox-primary">
+								<span class="label-text">{{ checkbox.choice_label }}</span>
+							</label>
+						</div>
+						{% endfor %}
                     </div>
                 </div>
 			</div>

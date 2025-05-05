@@ -75,5 +75,11 @@
 			</div>
 		</div>
 	</form>
+	{% if is_admin or is_moderator or user.is_superuser %}
+	<form method="post" action="{% url 'event_cancel' event.id %}">
+		{% csrf_token %}
+		<button type="submit" class="btn btn-danger">Cancel Event</button>
+	</form>
+	{% endif %}
 </div>
 {% endblock %} 

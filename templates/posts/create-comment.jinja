@@ -15,7 +15,7 @@
 			</div>
 		</div>
 		<!-- Expandable form - hidden by default -->
-		<div id="create-post-form" class="hidden mt-4">
+		<div id="create-post-form" class="hidden">
 			<h2 class="card-title">Create a Comment</h2>
 			<p class="text-sm text-base-content/60">
 				You can use Markdown to format your comment. For more information, see the <a href="https://www.markdownguide.org/basic-syntax/" target="_blank" class="link">Markdown Guide</a>.
@@ -43,25 +43,6 @@
 							</label>
 						{% endif %}
 
-						<!-- Topics -->
-						<div class="form-group mt-4">
-							<label class="label">
-								<span class="label-text font-medium">Select Topics</span>
-							</label>
-							<div class="topics-container bg-base-200 p-4 rounded-box">
-								<p class="text-sm mb-3">Topics will be added as hashtags to your comment. Select relevant topics below:</p>
-								<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-									{% for checkbox in form.topics %}
-									<div class="form-control">
-										<label class="cursor-pointer label justify-start gap-2 hover:bg-base-300 rounded-box p-2">
-											{{ checkbox.tag }}
-											<span class="label-text">{{ checkbox.choice_label }}</span>
-										</label>
-									</div>
-									{% endfor %}
-								</div>
-							</div>
-						</div>
 						{% if form.topics.errors %}
 						<label class="label">
 							<span class="label-text-alt text-error">{{ form.topics.errors|join(", ") }}</span>

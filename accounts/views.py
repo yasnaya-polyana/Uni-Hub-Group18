@@ -78,7 +78,8 @@ def signup_view(request):
                 user.interests.set(form.cleaned_data['interests'])
             
             login(request, user)
-            return redirect("home")
+            # Redirect to the dashboard after signup
+            return redirect("dashboard")
     else:
         form = CustomUserCreationForm()
             

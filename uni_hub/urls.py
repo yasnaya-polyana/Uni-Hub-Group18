@@ -66,6 +66,7 @@ urlpatterns = [
     path("p/<str:post_id>/repost", post_views.post_repost, name="post_repost"),
     path("p/<str:post_id>/pin", post_views.post_pin, name="post_pin"),
     path("p/<str:post_id>/interact/<str:interaction>", post_views.post_interact, name="post_interact"),
+    
     # Notifications
     path("notifications/", notif_views.notifications_view, name="notifications"),
     path(
@@ -129,6 +130,7 @@ urlpatterns = [
     path("events/", event_views.events_list, name="events"),
     path("events/<str:event_id>/", event_views.event_detail, name="event_detail"),
     path("events/<str:event_id>/edit/", event_views.event_edit, name="edit_event"),
+    path("events/<int:event_id>/cancel/", event_views.event_cancel, name="event_cancel"),
     # Password Reset
     path(
         "password_reset/",

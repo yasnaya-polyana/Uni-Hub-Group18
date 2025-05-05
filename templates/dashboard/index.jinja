@@ -9,6 +9,20 @@
 	</div>
 	<!-- Main Content -->
 	<div class="w-full md:w-3/4 space-y-8 order-2 md:order-2">
+		<!-- Create Post Section -->
+		<a href="{{ url('post_create') }}">
+			<div class="flex items-center cursor-pointer">
+				<div class="avatar placeholder mr-2">
+					<div class="w-8 rounded-full bg-neutral-focus text-neutral-content">
+						<span>{{ user.username|make_list|first|upper }}</span>
+					</div>
+				</div>
+				<div class="p-3 bg-base-200 rounded-box w-full text-base-content/60 hover:bg-base-300">
+					Create a post...
+				</div>
+			</div>
+		</a>
+
 		<!-- Tabs for Feed and My Posts -->
 		<div class="tabs tabs-boxed">
 			<a class="tab tab-active" id="feed-tab">Your Feed</a>

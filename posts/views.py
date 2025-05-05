@@ -438,7 +438,7 @@ def post_comment(request, post_id: str):
             if not post.title:
                 post.title = ""
                 
-            # Add selected topics as hashtags to post body
+            # Add selected topics as hashtags to post body - only add once
             if 'topics' in form.cleaned_data and form.cleaned_data['topics']:
                 selected_topics = form.cleaned_data['topics']
                 topic_tags = []
