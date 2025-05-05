@@ -45,6 +45,18 @@
 				<h4 class="font-semibold">Description</h4>
 				<p class="text-sm">{{ community.description }}</p>
 			</div>
+			<div class="mt-5">
+				<h4 class="font-semibold">Topics</h4>
+				<ul class="text-sm list-disc list-inside">
+				{% if topics %}
+					{% for topic in topics %}
+						<li>{{ topic.name }}</li>
+					{% endfor %}
+				{% else %}
+					<li>No topics available yet.</li>
+				{% endif %}
+				</ul>
+			</div>
 		</div>
 	</div>
 	<div class="bg-base-100 p-4 rounded-box shadow-lg">

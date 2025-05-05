@@ -201,6 +201,11 @@ def community_detail(request, community_id: str):
     community = get_object_or_404(Communities, id=community_id)
     is_owner = request.user == community.owner
     is_admin = request.user.is_superuser
+    
+    # Trying to get Topics
+    topics = Topic.objects.filter(communities__id=community_id)
+    
+    print(topics)
 
     # Check if the community is pending and restrict access to owner and admins
     if community.status == "pending" and not (is_owner or is_admin):
@@ -285,6 +290,7 @@ def community_detail(request, community_id: str):
     
     context = {
         "community": community,
+        "topics": topics,
         "membership": membership,
         "events": events,
         "posts": posts,

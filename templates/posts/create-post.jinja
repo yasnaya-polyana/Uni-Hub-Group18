@@ -59,6 +59,19 @@
 				<span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
 			</label>
 			{% endif %}
+
+			<!-- Topics -->
+			<div class="form-group">
+				<label class="label" for="body">
+					<span class="label-text">Topics</span>
+				</label>
+				{{ form.topics }}
+			</div>
+			{% if form.topics.errors %}
+			<label class="label">
+				<span class="label-text-alt text-error">{{ form.topics.errors|join(", ") }}</span>
+			</label>
+			{% endif %}
 		</div>
 		<button type="submit" class="btn btn-primary w-full mt-6">
 		{% if is_comment %}

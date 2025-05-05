@@ -59,6 +59,9 @@ class Communities(SoftDeleteModel):
         return self.community_members.filter(
             # deleted_at__isnull=True
         ).count()
+        
+    def get_topics(self):
+        return self.topics.all()
 
     def __str__(self):
         return self.name

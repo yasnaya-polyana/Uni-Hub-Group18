@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from events.models import Event
 from md_extensions.tailwind import TailwindExtension
 from posts.forms import PostCreationForm
-from posts.models import Interaction, Post
+from posts.models import Interaction, Post, Topic
 
 log = logging.getLogger("app")
 
@@ -68,7 +68,7 @@ def posts_view(request):
     md = markdown.Markdown(extensions=["extra", TailwindExtension()])
 
     # Start with all posts that aren't comments
-    posts_qs = Post.objects.filter(parent_post=None)
+    posts_qs = Post.objects.filter(parent_post=None).prefetch_related("topics")
 
     # Get search query
     search_query = request.GET.get("q", "")
@@ -168,8 +168,11 @@ def post_create(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
-
             post.save()
+            
+            # Save m2m relationships
+            form.save_m2m()
+            print("Post saved with topics:", post.topics.all())
 
             # Find mentioned users
             mention_pattern = re.compile(r"\[@([a-zA-Z0-9_]+)\]")
@@ -177,8 +180,11 @@ def post_create(request):
 
             # print mentioned users
             for username in mentions:
-                m_user = CustomUser.objects.get(username=username)
-                post.mentioned_users.add(m_user)
+                try:
+                    m_user = CustomUser.objects.get(username=username)
+                    post.mentioned_users.add(m_user)
+                except CustomUser.DoesNotExist:
+                    continue
 
             # Check if there's a next parameter or if we should redirect to dashboard
             next_url = request.POST.get("next", "dashboard")

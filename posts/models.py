@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db import models
 
 from accounts.models import CustomUser
-from communities.models import Communities
+from communities.models import Communities, Topic
 
 
 def generate_nanoid():
@@ -18,6 +18,9 @@ class Post(models.Model):
     body = models.TextField(max_length=1000)
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+    # Topics
+    topics = models.ManyToManyField(Topic, blank=True, related_name="posts")
 
     community = models.ForeignKey(
         Communities,
@@ -51,9 +54,11 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+
 class PostAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "title", "parent_post", "created_at")
-
+    filter_horizontal = ("topics")
+    
 
 class Interaction(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

@@ -33,11 +33,20 @@
 						{% set editor_name = 'body' %}
 						{% set editor_class = 'textarea textarea-bordered w-full' %}
 						{% include 'components/markdown-editor.jinja' %}
+						
 						{% if form.body.errors %}
-						<label class="label">
-						<span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
-						</label>
+							<label class="label">
+								<span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
+							</label>
 						{% endif %}
+
+						<!-- Topics -->
+						<div class="form-group">
+							<label class="label" for="body">
+								<span class="label-text">Topics</span>
+							</label>
+							{{ form.topics }}
+						</div>
 					</div>
 					<div class="card-actions justify-end mt-2">
 						<button type="button" id="cancel-post-btn" class="btn btn-ghost">Cancel</button>

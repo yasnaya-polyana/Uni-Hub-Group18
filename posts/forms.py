@@ -42,7 +42,10 @@ class PostCreationForm(forms.ModelForm):
         max_length=1000,
         # Add validators?
     )
-
+    
     class Meta:
         model = Post
-        fields = ("title", "body", "post_ref")
+        fields = ("title", "body", "topics", "post_ref")
+        widgets = {
+            'topics': forms.CheckboxSelectMultiple,
+        }

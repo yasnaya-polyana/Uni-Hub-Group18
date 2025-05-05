@@ -36,17 +36,6 @@
 				{% endif %}
 			</div>
 			<div class="form-control">
-				<label class="label" for="{{ form.banner_url.id_for_label }}">
-				<span class="label-text">Banner</span>
-				</label>
-				{{ form.banner_url }}
-				{% if form.banner_url.errors %}
-				<label class="label">
-				<span class="label-text-alt text-error">{{ form.banner_url.errors|join(", ")}}</span>
-				</label>
-				{% endif %}
-			</div>
-			<div class="form-control">
 				<label class="label" for="{{ form.icon_url.id_for_label }}">
 				<span class="label-text">Icon</span>
 				</label>
@@ -65,6 +54,30 @@
 				{% if form.category.errors %}
 				<label class="label">
 				<span class="label-text-alt text-error">{{ form.category.errors|join(", ") }}</span>
+				</label>
+				{% endif %}
+			</div>
+			<div class="form-control">
+				<label class="label" for="{{ form.colour.id_for_label }}">
+					<span class="label-text">{{ form.colour.label }}</span>
+				</label>
+				{{ form.colour }}
+				{% if form.colour.errors %}
+					<label class="label">
+						{% for error in form.colour.errors %}
+							<span class="label-text-alt text-error">{{ error }}</span>
+						{% endfor %}
+					</label>
+				{% endif %}
+			</div>
+			<div class="form-control">
+				<label class="label" for="{{ form.topics.id_for_label }}">
+					<span class="label-text">{{ form.topics.label }}</span>
+				</label>
+				{{ form.topics }}
+				{% if form.topics.errors %}
+				<label class="label">
+					<span class="label-text-alt text-error">{{ form.topics.errors|join(", ") }}</span>
 				</label>
 				{% endif %}
 			</div>
