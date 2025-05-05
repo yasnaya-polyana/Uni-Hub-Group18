@@ -1,73 +1,72 @@
 {% extends 'base/index.jinja' %}
 {% block title %}Posts{% endblock %}
 {% block content %}
-  {% include "posts/post-logic.jinja" %}
-    <div class="flex flex-col h-[100%] mx-auto space-y-4">
-        {% if post.event.exists() %}
-            {% with event=post.event.get() %}
-            {% include "events/event-detail-card.jinja" %}
-            {% endwith %}
-        {% else %}
-            {% include "posts/post-card.jinja" %}
-        {% endif %}
-        <h2 id="comments">Comments</h2>
-        <div class="px-2">
-            {% include 'posts/create-comment.jinja' %}
-        </div>
-        {% with rendering_as_comment=True %}
-        {% for post in (post|translate_repost).comments.all() %}
-            <div class="px-2">
-                {% include "posts/post-card.jinja" %}
-            </div>
-        {% endfor %}
-        {% endwith %}
-    </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const createPostToggle = document.getElementById('create-post-toggle');
-      const createPostForm = document.getElementById('create-post-form');
-      const cancelPostBtn = document.getElementById('cancel-post-btn');
-      
-      if (createPostToggle && createPostForm) {
-        // Show form when clicking the toggle button
-        createPostToggle.addEventListener('click', function() {
-          createPostToggle.classList.add('hidden');
-          createPostForm.classList.remove('hidden');
-          // Focus on title input after expanding
-          const titleInput = document.querySelector('#create-post-form input[name="title"]');
-          if (titleInput) {
-            titleInput.focus();
-          }
-        });
-        
-        // Hide form when clicking cancel
-        if (cancelPostBtn) {
-          cancelPostBtn.addEventListener('click', function() {
-            createPostForm.classList.add('hidden');
-            createPostToggle.classList.remove('hidden');
-            // Reset form fields if needed
-            const form = document.querySelector('#create-post-form form');
-            if (form) form.reset();
-          });
-        }
-      } else {
-        console.error('Create post elements not found. Toggle:', createPostToggle, 'Form:', createPostForm);
-      }
-      
-      // Add form submission handling
-      const postForm = document.querySelector('#create-post-form form');
-      if (postForm) {
-        postForm.addEventListener('submit', function(event) {
-          // Log to verify the form is being submitted
-          console.log('Form is being submitted');
-          
-          // If you're using the standard form submission, make sure the action is set correctly
-          if (!postForm.getAttribute('action')) {
-            // Set the action URL if it's not already set
-            postForm.setAttribute('action', '{{ url("post", post.id) }}');
-          }
-        });
-      }
-    });
-  </script>
+{% include "posts/post-logic.jinja" %}
+<div class="flex flex-col h-[100%] mx-auto space-y-4 px-12">
+	{% if post.event.exists() %}
+		{% with event=post.event.get() %}
+			{% include "events/event-detail-card.jinja" %}
+		{% endwith %}
+	{% else %}
+		{% include "posts/post-card.jinja" %}
+	{% endif %}
+	
+	<h2 class="text-base-content/60" id="comments">Discussion</h2>
+
+	{% include 'posts/create-comment.jinja' %}
+
+	{% with rendering_as_comment=True %}
+		{% for post in (post|translate_repost).comments.all() %}
+			{% include "posts/post-card.jinja" %}
+		{% endfor %}
+	{% endwith %}
+</div>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	  const createPostToggle = document.getElementById('create-post-toggle');
+	  const createPostForm = document.getElementById('create-post-form');
+	  const cancelPostBtn = document.getElementById('cancel-post-btn');
+	  
+	  if (createPostToggle && createPostForm) {
+	    // Show form when clicking the toggle button
+	    createPostToggle.addEventListener('click', function() {
+	      createPostToggle.classList.add('hidden');
+	      createPostForm.classList.remove('hidden');
+	      // Focus on title input after expanding
+	      const titleInput = document.querySelector('#create-post-form input[name="title"]');
+	      if (titleInput) {
+	        titleInput.focus();
+	      }
+	    });
+	    
+	    // Hide form when clicking cancel
+	    if (cancelPostBtn) {
+	      cancelPostBtn.addEventListener('click', function() {
+	        createPostForm.classList.add('hidden');
+	        createPostToggle.classList.remove('hidden');
+	        // Reset form fields if needed
+	        const form = document.querySelector('#create-post-form form');
+	        if (form) form.reset();
+	      });
+	    }
+	  } else {
+	    console.error('Create post elements not found. Toggle:', createPostToggle, 'Form:', createPostForm);
+	  }
+	  
+	  // Add form submission handling
+	  const postForm = document.querySelector('#create-post-form form');
+	  if (postForm) {
+	    postForm.addEventListener('submit', function(event) {
+	      // Log to verify the form is being submitted
+	      console.log('Form is being submitted');
+	      
+	      // If you're using the standard form submission, make sure the action is set correctly
+	      if (!postForm.getAttribute('action')) {
+	        // Set the action URL if it's not already set
+	        postForm.setAttribute('action', '{{ url("post", post.id) }}');
+	      }
+	    });
+	  }
+	});
+</script>
 {% endblock %}
