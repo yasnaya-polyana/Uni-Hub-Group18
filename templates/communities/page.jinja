@@ -3,7 +3,18 @@
 {% block title %}
 {{ community.name }}
 {% endblock %}
+
+{% block heading %}
+<!-- Community Colour -->
+<div class="absolute inset-0 h-1/2 w-full" 
+     style="background: linear-gradient(to top, {{ community.colour }}, #ffffff);
+	 		z-index: -100; position:absolute; border: 0px; height: 100%; opacity: 30%;
+	 ">
+</div>
+{% endblock %}
+
 {% block content %}
+<!-- Community Page -->
 <div class="max-w-6xl mx-auto">
 	<!-- Community Header -->
 	{% include 'communities/page-header.jinja' %}

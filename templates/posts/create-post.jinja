@@ -12,7 +12,11 @@
 <div class="max-w-screen-md mx-auto">
 	{% if is_comment %}
 		<h2 class="text-2xl font-bold">Comment</h2>
-		<p class="text-sm text-base-content/60">Share your thoughts on {{ parent_post.title }}</p>
+		{% if parent_post.title == "" %}
+			<p class="text-sm text-base-content/60">Share your thoughts...</p>
+		{% else %}
+			<p class="text-sm text-base-content/60">Share your thoughts on {{ parent_post.title }}</p>
+		{% endif %}
 	{% else %}
 		<h2 class="text-2xl font-bold mb-6">Create a Post</h2>
 	{% endif %}

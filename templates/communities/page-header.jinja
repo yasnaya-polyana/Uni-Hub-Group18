@@ -20,13 +20,13 @@
 			<!-- Request Member -->
 			<form class="mb-0" action="{{ url('request_role', community.id, 'member') }}" method="post">
 				{% csrf_token %}
-				<button class="btn btn-secondary" type="submit" {% if membership.role == 'pending_member' %}disabled{% endif %}>Request Member</button>
+				<button class="btn" type="submit" {% if membership.role == 'pending_member' %}disabled{% endif %}>Request Member</button>
 			</form>
 			{% elif membership.role == 'member' %}
 			<!-- Request Mod -->
 			<form class="mb-0" action="{{ url('request_role', community.id, 'moderator') }}" method="post">
 				{% csrf_token %}
-				<button class="btn btn-secondary" type="submit" {% if membership.role == 'pending_moderator' %}disabled{% endif %}>Request Moderator</button>
+				<button class="btn" type="submit" {% if membership.role == 'pending_moderator' %}disabled{% endif %}>Request Moderator</button>
 			</form>
 			{% endif %}
 			<!-- Leave -->

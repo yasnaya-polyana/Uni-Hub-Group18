@@ -37,19 +37,17 @@ class CreateCommunityForm(forms.ModelForm):
 
     class Meta:
         model = Communities
-        fields = ['name', 'description', 'banner_url', 'icon_url', 'category']
+        fields = ['name', 'description', 'icon_url', 'category', 'colour']
         widgets = {
             "name": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "description": forms.Textarea(
                 attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
             ),
-            "banner_url": forms.FileInput(
-                attrs={"class": "file-input file-input-bordered w-full"}
-            ),
             "icon_url": forms.FileInput(
                 attrs={"class": "file-input file-input-bordered w-full"}
             ),
             "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
+            "colour": forms.TextInput(attrs={'type': 'color', 'class': 'input input-bordered w-full'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -84,13 +82,11 @@ class EditCommunityForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={"class": "textarea textarea-bordered w-full", "rows": 4}
             ),
-            "banner_url": forms.FileInput(
-                attrs={"class": "file-input file-input-bordered w-full"}
-            ),
             "icon_url": forms.FileInput(
-                attrs={"class": "file-input file-input-bordered w-full"}
+                attrs={"class": "file-input file-input-md w-full"}
             ),
             "category": forms.Select(attrs={"class": "select select-bordered w-full"}),
+            "colour": forms.TextInput(attrs={'type': 'color', 'class': 'w-full'}),
         }
         
     def save(self, commit=True):

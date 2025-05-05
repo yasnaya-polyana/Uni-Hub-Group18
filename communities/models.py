@@ -49,6 +49,11 @@ class Communities(SoftDeleteModel):
         ('rejected', 'Rejected'),
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    
+    colour = models.CharField(
+        max_length=7, # Hex value for colour
+        default="#FFFFFF" # Default as white
+    )
 
     def members_count(self):
         return self.community_members.filter(
