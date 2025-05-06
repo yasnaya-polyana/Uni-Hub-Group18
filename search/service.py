@@ -65,6 +65,9 @@ def search_communities(qs: QuerySet, q: SearchQuery) -> QuerySet:
 def search_accounts(qs: QuerySet, q: SearchQuery) -> QuerySet:
     qs = qs.filter(username__icontains=q.search_str)
 
+    if "interest" in q.conditions:
+        qs = qs.filter(interests__name=q.conditions["interest"][1].value)
+
     return qs
 
 
