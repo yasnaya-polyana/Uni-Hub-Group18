@@ -94,6 +94,9 @@ def search_posts(qs: QuerySet, q: SearchQuery) -> QuerySet:
     if "community" in q.conditions:
         qs = filter_with_eq_list(qs, "community__id", q.conditions["community"])
 
+    if "topic" in q.conditions:
+        qs = filter_with_eq_list(qs, "topics__name", q.conditions["topic"])
+
     return qs
 
 
