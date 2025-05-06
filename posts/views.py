@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from communities.models import CommunityMember
 
 log = logging.getLogger("app")
 
@@ -577,38 +578,21 @@ def post_delete(request, post_id: str):
 @login_required
 @require_POST
 def post_repost(request, post_id: str):
-    original_post = get_object_or_404(Post, id=post_id)
-
-    # Make sure we're not reposting a repost
-    if original_post.is_repost:
-        original_post = original_post.repost_of
-
-    # Check if the user has already reposted this post
-    existing_repost = Post.objects.filter(
-        user=request.user, repost_of=original_post, is_repost=True
-    ).first()
-
-    if existing_repost:
-        # User already reposted, so remove the repost
-        existing_repost.delete()
-        action = "unreposted"
-    else:
-        # Create a new repost
-        repost = Post(
-            user=request.user,
-            repost_of=original_post,
-            is_repost=True,
-            community=original_post.community,
-        )
-        repost.save()
-        action = "reposted"
-
-    # If this is an AJAX request, return JSON
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return JsonResponse({"status": "success", "action": action})
-
-    # Otherwise redirect back to the post
-    return redirect("post", post_id=post_id)
+     reposted_post = Post.objects.get(id=post_id)
+ 
+     try:
+         repost = reposted_post.reposts.get(user_id=request.user.id)
+         repost.delete()
+     except:
+         repost = Post(
+             title="REPOST",
+             body=f"/p/{post_id}",
+             ref_post=reposted_post,
+             user=request.user,
+         )
+         repost.save()
+     
+     return HttpResponse(status=204)
 
 
 @login_required
