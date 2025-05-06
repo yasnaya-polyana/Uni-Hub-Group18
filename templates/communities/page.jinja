@@ -31,6 +31,7 @@
 				{% include 'components/sort-posts.jinja' %}
 			</div>
 			<!-- Display Posts -->
+            {% include 'search/search.jinja' %}
 			<div id="community-posts-list" class="space-y-4">
 				{% if posts %}
 				{% for post in posts %}
