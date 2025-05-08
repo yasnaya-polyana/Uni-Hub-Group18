@@ -1,0 +1,256 @@
+{
+  "communities": [
+    {
+      "id": "uwe",
+      "name": "UWE",
+      "description": "Welcome to UWE.",
+      "owner_username": "admin",
+      "category": "academic",
+      "status": "approved",
+      "posts": [
+        {
+          "title": "Welcome Week Info",
+          "body": "Don't miss any events during welcome week!",
+          "username": "admin",
+          "is_pinned": true
+        },
+        {
+          "title": "Library Tour",
+          "body": "Come learn how to use our library facilities.",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "Clubs and Societies Fair",
+          "body": "Find the perfect group for you.",
+          "username": "admin",
+          "is_pinned": false
+        }
+      ],
+      "events": [
+        {
+          "title": "Campus Tour",
+          "details": "Get familiar with the layout of the university.",
+          "location": "Main Gate",
+          "start_at": "2025-09-01 10:00",
+          "end_at": "2025-09-01 12:00",
+          "username": "admin",
+          "members_only": false
+        },
+        {
+          "title": "Student Q&A",
+          "details": "Ask experienced students anything.",
+          "location": "Online",
+          "start_at": "2025-09-03 14:00",
+          "end_at": "2025-09-03 15:00",
+          "username": "demo",
+          "members_only": false
+        }
+      ]
+    },
+    {
+      "id": "comp-sci",
+      "name": "Computer Science",
+      "description": "Welcome to UWE Computer Science.",
+      "owner_username": "admin",
+      "category": "academic",
+      "status": "pending",
+      "posts": [],
+      "events": []
+    },
+    {
+      "id": "basketball",
+      "name": "UWE Basketball",
+      "description": "All about hoops at UWE!",
+      "owner_username": "demo",
+      "category": "sports",
+      "status": "approved",
+      "posts": [
+        {
+          "title": "Weekly Training",
+          "body": "Tuesdays & Thursdays 6–8pm at the sports hall.",
+          "username": "demo",
+          "is_pinned": true
+        },
+        {
+          "title": "Team Tryouts",
+          "body": "Come show off your skills!",
+          "username": "admin",
+          "is_pinned": false
+        },
+        {
+          "title": "Varsity Squad List",
+          "body": "Here are the players who made the cut.",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "Shoes Recommendations",
+          "body": "Best basketball shoes for indoor courts?",
+          "username": "demo",
+          "is_pinned": false
+        }
+      ],
+      "events": [
+        {
+          "title": "Varsity Game",
+          "details": "Biggest match of the year!",
+          "location": "UWE Sports Centre",
+          "start_at": "2025-06-12 18:00",
+          "end_at": "2025-06-12 20:00",
+          "username": "admin",
+          "members_only": true
+        },
+        {
+          "title": "Open Scrimmage",
+          "details": "Anyone can join for fun games.",
+          "location": "Outdoor Courts",
+          "start_at": "2025-05-14 16:00",
+          "end_at": "2025-05-14 18:00",
+          "username": "demo",
+          "members_only": false
+        }
+      ]
+    },
+    {
+      "id": "gaming-hub",
+      "name": "Gaming Hub",
+      "description": "For all things gaming – from retro to next-gen.",
+      "owner_username": "demo",
+      "category": "hobby",
+      "status": "approved",
+      "posts": [
+        {
+          "title": "FIFA Tournament Signup",
+          "body": "We need 16 players!",
+          "username": "demo",
+          "is_pinned": true
+        },
+        {
+          "title": "Game of the Month",
+          "body": "Vote now: Elden Ring, God of War, or Minecraft?",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "LAN Party Recap",
+          "body": "Here are highlights from last weekend.",
+          "username": "admin",
+          "is_pinned": false
+        },
+        {
+          "title": "Looking for Co-op Partners",
+          "body": "Anyone up for Dead by Daylight?",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "Steam Sale Picks",
+          "body": "What’s everyone buying?",
+          "username": "admin",
+          "is_pinned": false
+        },
+        {
+          "title": "Hardware Upgrades",
+          "body": "Need help choosing a new GPU.",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "Retro Night",
+          "body": "Bring your GameBoys and SNES cartridges.",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "Weekly Poll: FPS vs RPG",
+          "body": "Which genre rules?",
+          "username": "demo",
+          "is_pinned": false
+        }
+      ],
+      "events": [
+        {
+          "title": "FIFA Tournament",
+          "details": "Winner gets a £50 Steam voucher.",
+          "location": "SU Lounge",
+          "start_at": "2025-05-10 14:00",
+          "end_at": "2025-05-10 17:00",
+          "username": "demo",
+          "members_only": false
+        }
+      ]
+    },
+    {
+      "id": "film-soc",
+      "name": "Film Society",
+      "description": "Watch and discuss films weekly.",
+      "owner_username": "admin",
+      "category": "society",
+      "status": "approved",
+      "posts": [
+        {
+          "title": "Movie Night Poll",
+          "body": "Which Tarantino movie should we show?",
+          "username": "admin",
+          "is_pinned": false
+        },
+        {
+          "title": "Oscars Watch Party",
+          "body": "Come in formal dress!",
+          "username": "demo",
+          "is_pinned": true
+        },
+        {
+          "title": "Film Club Merch",
+          "body": "We’ve got shirts and hoodies available.",
+          "username": "demo",
+          "is_pinned": false
+        }
+      ],
+      "events": [
+        {
+          "title": "Classic Film Marathon",
+          "details": "Back-to-back screenings of classic black and white films.",
+          "location": "SU Theatre",
+          "start_at": "2025-05-20 18:00",
+          "end_at": "2025-05-21 02:00",
+          "username": "admin",
+          "members_only": false
+        },
+        {
+          "title": "Documentary Debate",
+          "details": "Discussion following the screening.",
+          "location": "Room 2B12",
+          "start_at": "2025-05-25 18:00",
+          "end_at": "2025-05-25 20:00",
+          "username": "admin",
+          "members_only": true
+        }
+      ]
+    },
+    {
+      "id": "knitting-club",
+      "name": "Knitting Club",
+      "description": "A cozy place for yarn lovers.",
+      "owner_username": "demo",
+      "category": "hobby",
+      "status": "pending",
+      "posts": [
+        {
+          "title": "Wool Types for Beginners",
+          "body": "A breakdown of different materials and their uses.",
+          "username": "demo",
+          "is_pinned": false
+        },
+        {
+          "title": "Next Project Ideas",
+          "body": "Socks, scarves or hats?",
+          "username": "demo",
+          "is_pinned": false
+        }
+      ],
+      "events": []
+    }
+  ]
+}

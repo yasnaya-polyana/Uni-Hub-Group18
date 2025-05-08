@@ -1,0 +1,46 @@
+<!-- Address Fields -->
+<div class="divider">Address</div>
+<div class="form-control">
+	<label class="label">
+	<span class="label-text">Address Line 1</span>
+	</label>
+	{{ form.address_line1 }}
+	{% if form.address_line1.errors %}
+	<label class="label"><span class="label-text-alt text-error">{{ form.address_line1.errors }}</span></label>
+	{% endif %}
+</div>
+<div class="form-control">
+	<label class="label">
+	<span class="label-text">Address Line 2 (Optional)</span>
+	</label>
+	{{ form.address_line2 }}
+</div>
+<div class="grid grid-cols-2 gap-4">
+	<div class="form-control">
+		<label class="label">
+		<span class="label-text">City</span>
+		</label>
+		{{ form.city }}
+		{% if form.city.errors %}
+		<label class="label"><span class="label-text-alt text-error">{{ form.city.errors }}</span></label>
+		{% endif %}
+	</div>
+	<div class="form-control">
+		<label class="label">
+		<span class="label-text">Postal Code</span>
+		</label>
+		{{ form.postal_code }}
+		{% if form.postal_code.errors %}
+		<label class="label"><span class="label-text-alt text-error">{{ form.postal_code.errors }}</span></label>
+		{% endif %}
+	</div>
+</div>
+<div class="form-control">
+	<label class="label">
+	<span class="label-text">Country</span>
+	</label>
+	{{ form.country }}
+	{% if form.country.errors %}
+	<label class="label"><span class="label-text-alt text-error">{{ form.country.errors }}</span></label>
+	{% endif %}
+</div>

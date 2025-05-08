@@ -4,16 +4,38 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator
+from django.db.models import Q, Exists, OuterRef
+from django.apps import apps
+from django.dispatch import receiver
+from django.db.models.signals import post_migrate
 
 from posts.models import Post
 from search.service import compile_query, search_accounts
+from events.models import Event
 
 from .decorators import anonymous_required
 from .forms import CustomLoginForm, CustomUserCreationForm, ProfileEditForm, UserSettingsForm
-from .models import CustomUser, Follow, UserFollow, UserSettings
+from .models import CustomUser, Follow, UserFollow, UserSettings, UserType
 from notifications.manager import NotificationManager
 
 # Create your views here.
+
+# Signal to create default UserType entries when app is migrated
+@receiver(post_migrate)
+def create_user_types(sender, **kwargs):
+    if sender.name == 'accounts':
+        UserType = apps.get_model('accounts', 'UserType')
+        
+        # Create default user types if they don't exist
+        user_types = [
+            ('STUDENT', 'Student'),
+            ('MODERATOR', 'Moderator'),
+            ('ACADEMIC', 'Academic Staff'),
+            ('ADMIN', 'Admin'),
+        ]
+        
+        for type_name, display_name in user_types:
+            UserType.objects.get_or_create(name=type_name)
 
 
 class HomeView(TemplateView):
@@ -32,16 +54,39 @@ def user_search_view(request):
     )
 
 
+@anonymous_required
 def signup_view(request):
+    # Ensure user types exist
+    user_types = [
+        ('STUDENT', 'Student'),
+        ('MODERATOR', 'Moderator'),
+        ('ACADEMIC', 'Academic Staff'),
+        ('ADMIN', 'Admin'),
+    ]
+    
+    for type_name, _ in user_types:
+        UserType.objects.get_or_create(name=type_name)
+    
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
+        
         if form.is_valid():
             user = form.save()
+            
+            # Save the selected interests
+            if 'interests' in form.cleaned_data and form.cleaned_data['interests']:
+                user.interests.set(form.cleaned_data['interests'])
+            
             login(request, user)
-            return redirect("home")
+            # Redirect to the dashboard after signup
+            return redirect("dashboard")
     else:
         form = CustomUserCreationForm()
-    return render(request, "accounts/signup.jinja", {"form": form})
+            
+    return render(request, "accounts/signup.jinja", {
+        "form": form,
+        "is_signup": True  # Flag to identify this is the signup form
+    })
 
 
 @anonymous_required
@@ -67,7 +112,8 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect("profile")
+
+            return redirect("my_profile")
     else:
         form = ProfileEditForm(instance=request.user)
     return render(request, "accounts/edit-profile.jinja", {"form": form})
@@ -142,11 +188,42 @@ def dashboard_view(request):
     
     # Get only the user's posts for the "My Posts" section
     my_posts = Post.objects.filter(user=request.user).order_by("-created_at")
+
+    from communities.models import CommunityMember
+
+    # Get communities where the user is a non-suspended member
+    active_memberships = CommunityMember.objects.filter(
+        user=request.user,
+        is_suspended=False
+    )
     
-    return render(request, "dashboard/index.jinja", {
-        "posts": posts,
-        "my_posts": my_posts
-    })
+    # Create a subquery to check if the user is an active member of each event's community
+    is_active_member = CommunityMember.objects.filter(
+        user=request.user,
+        community=OuterRef('community'),
+        is_suspended=False
+    )
+    
+    # Get events the user RSVP'd to, with proper filtering based on suspension status and members_only
+    events = Event.objects.filter(
+        post__interactions__interaction="rsvp", 
+        post__interactions__user=request.user
+    ).annotate(
+        user_is_active_member=Exists(is_active_member)
+    ).filter(
+        # Either the event is not members_only OR the user is an active member
+        Q(members_only=False) | Q(members_only=True, user_is_active_member=True)
+    ).order_by("start_at")
+    
+    return render(
+        request,
+        "dashboard/index.jinja",
+        {
+            "posts": posts,
+            "my_posts": my_posts,
+            "events": events
+        },
+    )
 
 @login_required
 def follow_user(request, username):

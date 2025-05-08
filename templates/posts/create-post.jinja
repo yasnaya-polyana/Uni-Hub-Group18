@@ -1,70 +1,106 @@
 {% extends 'base/index.jinja' %}
 
 {% block title %}
-  {% if is_comment %}
-    Create a Comment
-  {% else %}
-    Create a Post
-  {% endif %}
+	{% if is_comment %}
+	Create a Comment
+	{% else %}
+	Create a Post
+	{% endif %}
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ static('css/topics.css') }}">
+<script src="{{ static('js/topics.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-  <div class="max-w-screen-md mx-auto">
-    {% if is_comment %}
-      <h2 class="text-2xl font-bold mb-6">Create a Comment</h2>
-    {% else %}
-      <h2 class="text-2xl font-bold mb-6">Create a Post</h2>
-    {% endif %}
+<div class="max-w-screen-md mx-auto">
+	{% if is_comment %}
+		<h2 class="text-2xl font-bold">Comment</h2>
+		{% if parent_post.title == "" %}
+			<p class="text-sm text-base-content/60">Share your thoughts...</p>
+		{% else %}
+			<p class="text-sm text-base-content/60">Share your thoughts on {{ parent_post.title }}</p>
+		{% endif %}
+	{% else %}
+		<h2 class="text-2xl font-bold mb-6">Create a Post</h2>
+	{% endif %}
+	{% if form.errors %}
+	<div class="alert alert-error mb-4">
+		<div class="flex-1">
+			<label>Please correct the errors below.</label>
+		</div>
+	</div>
+	{% endif %}
+	<form method="post" class="space-y-4">
+		{% csrf_token %}
+		{% if is_comment %}
+		{% else %}
+		<div class="form-control">
+			<label class="label" for="{{ form.title.id_for_label }}">
+			<span class="label-text">{{ form.title.label }}</span>
+			</label>
+			{{ form.title }}
+		</div>
+		{% if form.title.errors %}
+		<label class="label">
+		<span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
+		</label>
+		{% endif %}
+		{% endif %}
+		<div class="form-control">
+			<label class="label" for="body">
+				<span class="label-text">Body</span>
+			</label>
 
-    {% if form.errors %}
-      <div class="alert alert-error mb-4">
-        <div class="flex-1">
-          <label>Please correct the errors below.</label>
-        </div>
-      </div>
-    {% endif %}
-    
-    <form method="post" class="space-y-4">
-      {% csrf_token %} {# Username and Email #}
+			<!-- Markdown Body -->
+			{% set editor_id = 'body' %}
+			{% set editor_name = 'body' %}
+			{% set editor_class = 'textarea textarea-bordered w-full' %}
+			
+			{% include 'components/markdown-editor.jinja' %}
+			{% if form.body.errors %}
+			<label class="label">
+				<span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
+			</label>
+			{% endif %}
 
-      <div class="form-control">
-        <label class="label" for="{{ form.title.id_for_label }}">
-          <span class="label-text">{{ form.title.label }}</span>
-        </label>
-        {{ form.title }}
-        {% if form.title.errors %}
-          <label class="label">
-            <span class="label-text-alt text-error">{{ form.title.errors|join(", ") }}</span>
-          </label>
-        {% endif %}
-      </div>
+			<!-- Topics -->
+			<div class="form-group mt-4">
+				<label class="label">
+					<span class="label-text font-medium">Select Topics</span>
+				</label>
 
-      <div class="form-control">
-        <label class="label" for="body">
-          <span class="label-text">Body</span>
-        </label>
-
-        <!-- Markdown Body -->
-        {% set editor_id = 'body' %}
-        {% set editor_name = 'body' %}
-        {% set editor_class = 'textarea textarea-bordered w-full' %}
-
-        {% include 'components/markdown-editor.jinja' %}
-
-        {% if form.body.errors %}
-          <label class="label">
-            <span class="label-text-alt text-error">{{ form.body.errors|join(", ") }}</span>
-          </label>
-        {% endif %}
-      </div>
-
-      <button type="submit" class="btn btn-primary w-full mt-6">
-        {% if is_comment %}
-          Create Comment
-        {% else %}
-          Create Post
-        {% endif %}
-      </button>
-    </form>
-  </div>
+                <div class="topics-container bg-base-200 p-4 rounded-box">
+                    <p class="text-sm mb-3">Topics will be added as hashtags to your post. Select relevant topics below:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {% for checkbox in form.topics %}
+						<div class="form-control">
+							<label class="cursor-pointer label justify-start gap-2 hover:bg-base-300 rounded-box p-2">
+								<input type="checkbox" 
+										name="topics" 
+										value="{{ checkbox.data.value }}" 
+										class="checkbox checkbox-primary">
+								<span class="label-text">{{ checkbox.choice_label }}</span>
+							</label>
+						</div>
+						{% endfor %}
+                    </div>
+                </div>
+			</div>
+			{% if form.topics.errors %}
+			<label class="label">
+				<span class="label-text-alt text-error">{{ form.topics.errors|join(", ") }}</span>
+			</label>
+			{% endif %}
+		</div>
+		<button type="submit" class="btn btn-primary w-full mt-6">
+		{% if is_comment %}
+			Comment
+		{% else %}
+			Create Post
+		{% endif %}
+		</button>
+	</form>
+</div>
 {% endblock %}

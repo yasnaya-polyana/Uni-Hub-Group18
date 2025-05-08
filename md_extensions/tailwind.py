@@ -3,7 +3,7 @@ from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from markdown.preprocessors import Preprocessor
 
-from communities.models import Communities
+from communities.models import Communities, Topic
 from posts.models import Post
 
 # Tailwind Extension
@@ -14,6 +14,7 @@ class TailwindExtension(Extension):
         md.preprocessors.register(MentionPreprocessor(md), "mention_preprocessor", 25)
         md.preprocessors.register(CommunityPreprocessor(md), "community_preprocessor", 25)
         md.preprocessors.register(PostPreprocessor(md), "post_preprocessor", 25)
+        md.preprocessors.register(TopicPreprocessor(md), "topic_preprocessor", 25)
         md.treeprocessors.register(TailwindTreeProcessor(md), "tailwind", 25)
 
 class TailwindTreeProcessor(Treeprocessor):
@@ -29,8 +30,8 @@ class TailwindTreeProcessor(Treeprocessor):
         "p": "mt-0 mb-4 text-base",
         "a": "text-blue-700 hover:text-blue-500 underline",
         "blockquote": "border-l-4 border-gray-300 italic pl-6 text-gray-800 text-lg my-6",
-        "code": "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono",
-        "pre": "bg-gray-100 p-4 rounded overflow-x-auto text-sm",
+        "code": "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono whitespace-pre-wrap",  # Added `whitespace-pre-wrap`
+        "pre": "bg-gray-100 p-4 rounded text-sm",
         "ul": "list-disc list-inside mt-4 mb-4",
         "ol": "list-decimal list-inside mt-4 mb-4",
         "li": "mb-2",
@@ -48,6 +49,7 @@ class TailwindTreeProcessor(Treeprocessor):
 MENTION_PATTERN = re.compile(r'\[@([a-zA-Z0-9_]+)\]')
 COMMUNITY_PATTERN = re.compile(r'\[#([a-zA-Z0-9_-]+)\]')
 POST_PATTERN = re.compile(r'\[!([a-zA-Z0-9_-]+)\]')
+TOPIC_PATTERN = re.compile(r'#([a-zA-Z0-9_]+)')
 
 # Mention Preprocessor
 class MentionPreprocessor(Preprocessor):
@@ -95,5 +97,25 @@ class PostPreprocessor(Preprocessor):
 
         return f'<a target="_blank" href="/p/{id}"  class="text-orange-600 bg-blue-100 font-medium px-1 py-0.5 rounded">{title}</a>'
 
+# Topic Preprocessor
+class TopicPreprocessor(Preprocessor):
+    def run(self, lines):
+        new_lines = []
+        for line in lines:
+            line = TOPIC_PATTERN.sub(self.topic_to_link, line)
+            new_lines.append(line)
+        return new_lines
 
-# TODO: Add functionality for other mention types.
+    def topic_to_link(self, match):
+        topic_name = match.group(1)
+        try:
+            # Only use existing topics - don't create new ones
+            topic = Topic.objects.filter(name__iexact=topic_name).first()
+            if topic:
+                return f'<a href="/search/?q=%23{topic_name}" class="text-purple-600 bg-purple-100 font-medium px-1 py-0.5 rounded">#{topic_name}</a>'
+            else:
+                # Still make it linkable but don't create a topic
+                return f'<a href="/search/?q=%23{topic_name}" class="text-purple-600 bg-purple-100 font-medium px-1 py-0.5 rounded">#{topic_name}</a>'
+        except:
+            # If there's an error, just return the original hashtag
+            return f'#{topic_name}'

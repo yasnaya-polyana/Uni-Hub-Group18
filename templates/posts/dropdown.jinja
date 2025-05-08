@@ -1,38 +1,38 @@
 {% if post.user == request.user or is_moderator %}
 <details class="dropdown dropdown-end">
-    <summary
-      class="btn bg-transparent p-0 ml-2 border-none h-fit min-h-fit focus:outline-black"
-    >
-      <span class="material-icons-outlined text-sm hover:text-blue-400"
-        >more_vert</span
-      >
-    </summary>
-    <ul
-      class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-    >
-      <li>
-        <button onclick="deletePost('{{ post.id }}')">
-          <span class="hover:text-blue-400">Delete</span>
-        </button>
-      </li>
-      {% if is_moderator or is_owner or is_superuser %}
-      <li>
-        <button onclick="pinPost('{{ post.id }}')">
-          <span class="hover:text-blue-400">
-            {% if post.is_pinned %}
-                Unpin
-            {% else %}
-                Pin
-            {% endif %}
-          </span>
-        </button>
-      </li>
-      <li>
-        <button onclick="copyMentionID('{{ post.id }}')">
-          <span class="hover:text-blue-400">Copy Mention</span>
-        </button>
-      </li>
-      {% endif %}
-    </ul>
+	<summary
+		class="btn bg-transparent p-0 ml-2 border-none h-fit min-h-fit focus:outline-black"
+		>
+		<span class="material-icons-outlined text-sm hover:text-blue-400"
+			>more_vert</span
+			>
+	</summary>
+	<ul
+		class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+		>
+		<li>
+			<button onclick="deletePost('{{ post.id }}')">
+			<span class="hover:text-blue-400">Delete</span>
+			</button>
+		</li>
+		{% if is_moderator or is_owner or is_superuser %}
+		<li>
+			<button onclick="pinPost('{{ post.id }}')">
+			<span class="hover:text-blue-400">
+			{% if post.is_pinned %}
+			Unpin
+			{% else %}
+			Pin
+			{% endif %}
+			</span>
+			</button>
+		</li>
+		<li>
+			<button onclick="copyMentionID('{{ post.id }}')">
+			<span class="hover:text-blue-400">Copy Mention</span>
+			</button>
+		</li>
+		{% endif %}
+	</ul>
 </details>
 {% endif %}

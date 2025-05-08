@@ -1,34 +1,52 @@
-<div class="card bg-base-100 shadow-lg">
-    <figure class="px-4 pt-4">
-        <img src="https://placehold.co/600x400" class="rounded-xl" alt="Event Image"/>
+{% set is_going = event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid).exists() %}
+
+<div class="card bg-base-100 shadow-xl mb-4 overflow-hidden">
+    {% if event.post.image_url %}
+    <figure>
+        <img src="{{ event.post.image_url }}" alt="{{ event.post.title }}" class="w-full h-48 object-cover" />
     </figure>
+    {% endif %}
     <div class="card-body">
         <div class="flex justify-between items-start">
             <div>
+                <a href="{{ url('event_detail', event_id=event.id) }}" >
                 <h2 class="card-title">{{ event.post.title }}</h2>
+                </a>
+                {% if event.community and not event.community.deleted_at %}
                 <p class="text-sm text-base-content/60">{{ event.community.name }}</p>
+                {% else %}
+                <p class="text-sm text-error">Community no longer available</p>
+                {% endif %}
             </div>
-            {% if event.isOngoing() %}
-                <div class="badge badge-info">Ongoing</div>
-            {% else %}
-                <div class="badge badge-primary">Upcoming</div>
-            {% endif %}
+            <div class="flex gap-2">
+                {% if event.is_ongoing %}
+                <div class="badge badge-success gap-2">
+                    <span class="bg-success rounded-full w-2 h-2 animate-pulse"></span>
+                    Happening now
+                </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="space-y-2">
-            <p class="text-sm">
-                <i class="fas fa-calendar"></i>Start: {{ event.start_at|date("DATETIME_FORMAT")}}
-            </p>
-            <p class="text-sm">
-                <i class="fas fa-clock"></i>End: {{ event.end_at|date("DATETIME_FORMAT")}}
-            </p>
-            <p class="text-sm">
-                <i class="fas fa-location-dot"></i> {{ event.location }}
-            </p>
+        
+        <div class="flex items-center gap-2 my-2">
+            <span class="material-icons-outlined text-base-content/70">event</span>
+            <span>{{ event.start_at|date("D, M j, Y") }} at {{ event.start_at|time("g:i A") }}</span>
+        </div>
+        
+        <div class="flex items-center gap-2 mb-2">
+            <span class="material-icons-outlined text-base-content/70">location_on</span>
+            <span>{{ event.location }}</span>
         </div>
         <p>{{ event.post.body }}</p>
         <div class="card-actions justify-end mt-2">
-            <button class="btn btn-primary btn-sm">RSVP</button>
-            <button class="btn btn-ghost btn-sm">Share</button>
+            <a href="{{ url('event_detail', event_id=event.id) }}" class="btn btn-outline btn-sm">
+                View Details
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="rsvpPost('{{ event.post.id }}')">{% if event.post.interactions.filter(interaction="rsvp", user_id=user.id, post_id=event.post.pkid).count() == 0 %} I'm going {% else %} I'm not going {% endif %} </button>
+            <button class="btn btn-ghost btn-sm" onclick="navigator.share({ url: `/events/{{ event.id }}`, title: '{{ event.post.title }}', text: 'Join community'})">
+                <span class="material-icons-outlined">share</span>
+				Share
+            </button>
         </div>
     </div>
 </div>

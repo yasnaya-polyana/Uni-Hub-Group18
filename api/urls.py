@@ -2,6 +2,7 @@ from django.urls import path
 from .views import UserProfileDetail
 from .views import user_search_api
 from .views import community_search_api
+from .views import topic_search_api
 
 # Setup API End-points
 #
@@ -11,4 +12,5 @@ urlpatterns = [
     # Post Search API
     path('user-search/', user_search_api, name='user-search-api'),
     path('community-search/', community_search_api, name='community-search-api'),
+    path('topic-search/', topic_search_api, name='topic-search-api'),
 ]

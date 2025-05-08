@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Notification
 from communities.models import Communities, CommunityMember
 from django.contrib import messages
+from notifications.manager import NotificationManager
+from accounts.models import CustomUser
 
 # Create your views here.
 @login_required
@@ -41,8 +43,32 @@ def get_unread_notifications_count(request):
 
 @login_required
 def notifications_view(request):
+    # Get notifications for the logged-in user (using username FK)
     notifications = Notification.objects.filter(username=request.user).order_by('-created_at')
-    return render(request, 'notifications/notifications.jinja', {'notifications': notifications})
+    
+    # Store which notifications were unread (to highlight them in the template)
+    unread_ids = list(notifications.filter(is_read=False).values_list('id', flat=True))
+    
+    # Mark all notifications as read
+    Notification.objects.filter(username=request.user, is_read=False).update(is_read=True)
+
+    # Attach follower_user object based on follower_username in JSON data
+    for notification in notifications:
+        follower_username = notification.data.get("follower_username")
+        if follower_username:
+            try:
+                notification.follower_user = CustomUser.objects.get(username=follower_username)
+            except CustomUser.DoesNotExist:
+                notification.follower_user = None
+        else:
+            notification.follower_user = None
+        
+        # Add was_unread attribute to each notification
+        notification.was_unread = notification.id in unread_ids
+
+    return render(request, 'notifications/notifications.jinja', {
+        'notifications': notifications
+    })
 
 @login_required
 def mark_all_as_read(request):
@@ -54,19 +80,38 @@ def mark_all_as_read(request):
 @login_required
 def approve_community(request, community_id: str):
     if not request.user.is_superuser:
-        return JsonResponse(status=403)
+        return JsonResponse({"error": "You do not have permission to approve communities."}, status=403)
     
-    community = get_object_or_404(Communities, id=community_id)
+    try:
+        # Attempt to retrieve the community
+        community = Communities.objects.get(id=community_id)
+    except Communities.DoesNotExist:
+        # Handle the case where the community does not exist so remove it
+        Notification.objects.filter(data__community_id=community_id).delete() 
+        
+        messages.error(request, "The community you are trying to approve does not exist.")
+        return redirect("notifications")
+    
+    # Approve the community
     community.status = 'approved'
     community.save()
     
-    notification = Notification.objects.filter(data__community_id=community_id).first()
+    # Notify the owner about the approval decision
+    NotificationManager.community_decision(
+        owner=community.owner,
+        community=community,
+        decision='approved'
+    )
+    
+    # Update the notification related to this community
+    notification = Notification.objects.filter(data__community_id=community.id).first()
     if notification:
         notification.is_interact = True
         notification.save()
     
+    # Add a success message and redirect
     messages.success(request, f"Community '{community.name}' has been approved.")
-    return redirect("community_list")
+    return redirect("notifications")
 
 @login_required
 def reject_community(request, community_id: str):
@@ -77,13 +122,19 @@ def reject_community(request, community_id: str):
     community.status = 'rejected'
     community.delete()
     
-    notification = Notification.objects.filter(data__community_id=community_id).first()
+    NotificationManager.community_decision(
+        owner=community.owner,
+        community=community,
+        decision='rejected'
+    )
+    
+    notification = Notification.objects.filter(data__community_id=community.id).first()
     if notification:
         notification.is_interact = True
         notification.save()
     
     messages.success(request, f"Community '{community.name}' has been rejected.")
-    return redirect("community_list")
+    return redirect("notifications")
 
 @login_required
 def approve_role(request, community_id: str, role: str):
@@ -97,7 +148,13 @@ def approve_role(request, community_id: str, role: str):
     if membership:
         membership.role = role
         membership.save()
-        notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
+        
+        notification = Notification.objects.filter(
+            data__community_id=community_id, 
+            data__requested_role=role,
+            data__requester_username=membership.user.username
+        ).first()
+        
         if notification:
             notification.is_interact = True
             notification.save()
@@ -105,7 +162,7 @@ def approve_role(request, community_id: str, role: str):
     else:
         messages.error(request, "No pending role request found.")
 
-    return redirect("community_detail", community_id=community_id)
+    return redirect("notifications")
 
 @login_required
 def reject_role(request, community_id: str, role: str):
@@ -119,7 +176,13 @@ def reject_role(request, community_id: str, role: str):
     if membership:
         membership.role = "subscriber" if role == "member" else "member"
         membership.save()
-        notification = Notification.objects.filter(data__community_id=community_id, data__requested_role=role).first()
+        
+        notification = Notification.objects.filter(
+            data__community_id=community_id, 
+            data__requested_role=role,
+            data__requester_username=membership.user.username
+        ).first()
+        
         if notification:
             notification.is_interact = True
             notification.save()
@@ -127,4 +190,55 @@ def reject_role(request, community_id: str, role: str):
     else:
         messages.error(request, "No pending role request found.")
 
-    return redirect("community_detail", community_id=community_id)
+    return redirect("notifications")
+
+@login_required
+def community_accept_invite(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    # Check if already a member
+    is_already_member = (
+        CommunityMember.objects.filter(user=user, community=community).count() > 0
+    )
+
+    if is_already_member:
+        messages.warning(request, "You are already a member of this community.")
+    else:
+        #create membership with role="member" since it's from an invite
+        CommunityMember.objects.create(user=user, community=community, role="member")
+        messages.success(request, f"You have joined {community.name}!")
+    
+    # Mark notification as interacted with
+    notification = Notification.objects.filter(
+        username=user,
+        type='community_invite',
+        data__community_id=community_id,
+        is_interact=False
+    ).first()
+    
+    if notification:
+        notification.is_interact = True
+        notification.save()
+    
+    return redirect("notifications")
+
+@login_required
+def community_decline_invite(request, community_id: str):
+    community = get_object_or_404(Communities, id=community_id)
+    user = request.user
+
+    # Mark notification as interacted with
+    notification = Notification.objects.filter(
+        username=user,
+        type='community_invite',
+        data__community_id=community_id,
+        is_interact=False
+    ).first()
+    
+    if notification:
+        notification.is_interact = True
+        notification.save()
+    
+    messages.info(request, f"You declined the invitation to join {community.name}.")
+    return redirect("notifications")

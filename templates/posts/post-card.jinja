@@ -1,0 +1,77 @@
+<div class="w-full bg-base-100 shadow-xl rounded-box p-6 mb-4" 
+     data-created="{{ post.created_at|date('c') }}" 
+     data-likes="{{ (post|translate_repost).interactions.filter(interaction='like').count()|default(0) }}"
+     data-comments="{{ (post|translate_repost).comments.count()|default(0) }}"
+     data-reposts="{{ (post|translate_repost).reposts.count()|default(0) }}">
+
+    {% include 'posts/back-to-parent.jinja' %}
+    {% include 'posts/header.jinja' %}
+
+    {% if (post|translate_repost).title and not is_comment %}
+    <div class="divider my-0"></div>
+    {% else %}
+    <div class="mb-2"></div>
+    {% endif %}
+
+    <div class="space-y-4">
+        <!-- Post Body -->
+        <a href="{{ url('post', post_id=(post|translate_repost).id) }}" class="focus:outline-black">
+            <p class="break-words max-w-full overflow-hidden">
+                {{ (post|translate_repost).body|parse_md|default("") |safe }}
+            </p>
+        </a>
+        
+        <!-- Topics - Only display topics that aren't already in the post body as hashtags -->
+        {% if (post|translate_repost).topics.all() %}
+        {% set post_body = (post|translate_repost).body|default("") %}
+        <div class="flex flex-wrap gap-1 mt-2">
+            {% for topic in (post|translate_repost).topics.all() %}
+                {% if ("#" + topic.name) not in post_body %}
+                <a href="/search/?q=%23{{ topic.name }}" 
+                   class="text-purple-600 bg-purple-100 font-medium px-1.5 py-0.5 rounded text-xs hover:bg-purple-200">
+                    #{{ topic.name }}
+                </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Interaction Buttons -->
+        <div class="flex flex-wrap md:flex-nowrap space-x-6">
+            <!-- Like Button -->
+            <button onclick="likePost('{{ (post|translate_repost).id }}')">
+                <span class="flex items-center justify-center">
+                    {% if (post|translate_repost).interactions.filter(interaction="like", user_id=user.id, post_id=(post|translate_repost).pkid).count() == 0 %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">favorite_outline</span>
+                    {% else %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-red-400">favorite</span>
+                    {% endif %}
+                    <span class="font-light ml-1">
+                        {{ (post|translate_repost).interactions.filter(interaction="like").count()|default(0) }}
+                    </span>
+                </span>
+            </button>
+
+            <!-- Comment Button -->
+            <a href="{{ url('post', post_id=(post|translate_repost).id) }}#comments">
+                <span class="flex items-center justify-center">
+                    <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">chat</span>
+                    <span class="font-light ml-1">{{ (post|translate_repost).comments.count() }}</span>
+                </span>
+            </a>
+
+            <!-- Repost Button -->
+            <button onclick="repostPost('{{ (post|translate_repost).id }}')">
+                <span class="flex items-center justify-center">
+                    {% if (post|translate_repost).reposts.filter(user_id=user.id).count() == 0 %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400">repeat</span>
+                    {% else %}
+                        <span class="material-icons-outlined text-lg ml-2 hover:text-blue-400 text-blue-400">repeat</span>
+                    {% endif %}
+                    <span class="font-light ml-1">{{ (post|translate_repost).reposts.count() |default(0) }}</span>
+                </span>
+            </button>
+        </div>
+
+    </div>
+</div>

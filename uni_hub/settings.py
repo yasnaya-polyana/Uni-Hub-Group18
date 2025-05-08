@@ -13,10 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from config.Config import Config
 from django_jinja.builtins import DEFAULT_EXTENSIONS
 from dotenv import load_dotenv
-
-from config.Config import Config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +31,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-your-secret-key-here")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+]
 
 # Application definition
 
@@ -48,12 +51,13 @@ INSTALLED_APPS = [
     "django_jinja",
     # local
     "common",
+    "demo",
     "accounts",
     "posts",
     "communities",
     "events",
     "search",
-    "notifications"
+    "notifications",
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
@@ -116,14 +120,14 @@ WSGI_APPLICATION = "uni_hub.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "uni_hub_db"),
-        "USER": os.getenv("POSTGRES_USER", "admin"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "password"),
-        "HOST": "db",
-        "PORT": "5432",
-    }
+     "default": {
+         "ENGINE": "django.db.backends.postgresql",
+         "NAME": os.getenv("POSTGRES_DB", "uni_hub_db"),
+         "USER": os.getenv("POSTGRES_USER", "admin"),
+         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "password"),
+         "HOST": "db",
+         "PORT": "5432"
+     }
 }
 
 # Rest API
@@ -133,7 +137,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 
 # Password validation
@@ -172,7 +176,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static'),
+    os.path.join(BASE_DIR, "static"),
 ]
 
 # Default primary key field type

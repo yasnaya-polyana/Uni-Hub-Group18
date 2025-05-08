@@ -1,24 +1,11 @@
 <div class="bg-base-100 p-4 rounded-box shadow-lg">
-  <h2 class="text-xl font-bold mb-4">My Events</h2>
-  <div class="space-y-2">
-    <a href="{{ url('events') }}" class="block">
-      <div class="card bg-base-200 hover:bg-base-300 transition-colors">
-        <div class="card-body p-4">
-          <h3 class="card-title text-sm">Tech Meetup</h3>
-          <p class="text-xs text-base-content/60">Tomorrow at 6 PM</p>
-        </div>
-      </div>
-    </a>
-    <a href="{{ url('events') }}" class="block">
-      <div class="card bg-base-200 hover:bg-base-300 transition-colors">
-        <div class="card-body p-4">
-          <h3 class="card-title text-sm">Study Group</h3>
-          <p class="text-xs text-base-content/60">Friday at 2 PM</p>
-        </div>
-      </div>
-    </a>
-  </div>
-  <a href="{{ url('events') }}" class="btn btn-ghost btn-sm w-full mt-2"
-    >View All Events</a
-  >
-  </div>
+	<h2 class="text-xl font-bold mb-4">My Events</h2>
+	<div class="space-y-2">
+		{% for event in events %}
+		{% include 'events/event-card.jinja' %}
+		{% endfor %}
+	</div>
+	<a href="{{ url('events') }}" class="btn btn-ghost btn-sm w-full mt-2"
+		>View All Events
+	</a>
+</div>

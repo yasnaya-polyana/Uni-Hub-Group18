@@ -1,5 +1,5 @@
 from rest_framework import generics
-from communities.models import Communities
+from communities.models import Communities, Topic
 from accounts.models import CustomUser
 from .serializers import CustomUserSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -65,6 +65,28 @@ def user_search_api(request):
             "avatar_url": user.profile.avatar_url if hasattr(user, 'profile') else "",  # optional
         }
         for user in users
+    ]
+
+    return JsonResponse(results, safe=False)
+
+@login_required
+@require_GET
+def topic_search_api(request):
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return JsonResponse([], safe=False)
+
+    topics = Topic.objects.filter(
+        name__icontains=query
+    )[:10]  # Limit to 10 results
+
+    results = [
+        {
+            "name": topic.name,
+            "id": topic.id
+        }
+        for topic in topics
     ]
 
     return JsonResponse(results, safe=False)

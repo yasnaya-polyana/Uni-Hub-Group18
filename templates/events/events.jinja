@@ -1,21 +1,22 @@
 {% extends 'base/index.jinja' %}
-
+{% include 'posts/post-logic.jinja' %}
 {% block title %}Events{% endblock %}
-
 {% block content %}
-<div class="max-w-6xl mx-auto">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Events</h1>
-        <button class="btn btn-primary">Create Event</button>
-    </div>
-
-    <!-- Events Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for event in events %}
-            {% include 'events/large-event-card.jinja' %}
-        {% endfor %}
-
-        <!-- Add more event cards here -->
-    </div>
+<!-- All Events -->
+<div class="flex justify-between items-center">
+	<h1 class="text-3xl font-bold">Events</h1>
 </div>
-{% endblock %} 
+<div class="divider"></div>
+<div class="grid grid-cols-1 gap-8">
+	{% for event in events %}
+		{% include 'events/large-event-card.jinja' %}
+	{% else %}
+	<div class="card bg-base-100 shadow-xl">
+		<div class="card-body text-center">
+			<h2 class="card-title justify-center">No events found</h2>
+			<p>There are no upcoming events at this time.</p>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

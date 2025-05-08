@@ -1,12 +1,17 @@
 <div class="flex space-x-2 items-center justify-center">
-    {% include 'posts/profile-picture.jinja' %}
-    <p
-        class="text-sm font-bold"
-        title="@{{ (post|translate_repost).user.username }}"
-    >
-        {{ (post|translate_repost).user.first_name }} 
-        {{ (post|translate_repost).user.last_name }}
-        <span class="italic font-light">@{{ post.user.username }}</span>
-  </p>
+	{% include 'posts/profile-picture.jinja' %}
+  <a class="text-sm font-bold" title="@{{ (post|translate_repost).user.username }}" href="{{ url("user", post.user.username) }}">
+        {{ (post|translate_repost).user.first_name }} {{ (post|translate_repost).user.last_name }}
+        <span class="font-light text-xs">@{{ post.user.username }} </span>
+  </a>
+	</p>
+	{% if post.visibility != 'public' %}
+		<div class="ml-2">
+		{% if post.visibility == 'members' %}
+			<span class="badge badge-primary">Members View Only</span>
+		{% elif post.visibility == 'moderators' %}
+			<span class="badge badge-secondary">Moderators View Only</span>
+		{% endif %}
+		</div>
+	{% endif %}
 </div>
-

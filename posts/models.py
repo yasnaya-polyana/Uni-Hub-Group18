@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db import models
 
 from accounts.models import CustomUser
-from communities.models import Communities
+from communities.models import Communities, Topic
 
 
 def generate_nanoid():
@@ -14,10 +14,14 @@ class Post(models.Model):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.CharField(default=generate_nanoid, editable=False, unique=True)
 
-    title = models.CharField(max_length=60)
+    title = models.CharField(max_length=100, null=True, blank=True)
     body = models.TextField(max_length=1000)
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+    # Topics
+    # TODO: Work
+    topics = models.ManyToManyField(Topic, blank=True, related_name="posts")
 
     community = models.ForeignKey(
         Communities,
@@ -41,12 +45,21 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    VISIBILITY_CHOICES = [
+        ('public', 'Public'),
+        ('members', 'Members Only'),
+        ('moderators', 'Moderators Only'),
+    ]
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
+
     def __str__(self):
         return self.title
 
+
 class PostAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "title", "parent_post", "created_at")
-
+    filter_horizontal = ("topics")
+    
 
 class Interaction(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

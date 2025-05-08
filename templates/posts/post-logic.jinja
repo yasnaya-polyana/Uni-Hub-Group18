@@ -1,54 +1,77 @@
 <script>
-  function deletePost(postID) {
-    fetch(`/p/${postID}/`, {
-      method: "DELETE",
-      headers: { "X-CSRFToken": "{{csrf_token}}" },
-    })
-      .then((res) => res.text()) // or res.json()
-      .then((res) => {
-        console.log(res);
-        showSuccess("Post deleted.");
-        window.location.reload();
-      });
-  }
-
-  function likePost(postID) {
-    fetch(`/p/${postID}/interact/like`, {
-      method: "POST",
-      headers: { "X-CSRFToken": "{{csrf_token}}" },
-    })
-      .then((res) => res.text()) // or res.json()
-      .then((res) => {
-        console.log(res);
-        window.location.reload();
-      });
-  }
-
-  function pinPost(postID) {
-    fetch(`/p/${postID}/pin`, {
-      method: "POST",
-      headers: { "X-CSRFToken": "{{csrf_token}}" },
-    })
-      .then((res) => res.text()) // or res.json()
-      .then((res) => {
-        console.log(res);
-        window.location.reload();
-      });
-  }
-
-  function repostPost(postID) {
-    fetch(`/p/${postID}/repost`, {
-      method: "POST",
-      headers: { "X-CSRFToken": "{{csrf_token}}" },
-    })
-      .then((res) => res.text()) // or res.json()
-      .then((res) => {
-        console.log(res);
-        window.location.reload();
-      });
-  }
-
-  function copyMentionID(postID) {
-    navigator.clipboard.writeText(`[!${postID}]`);
-  }
+	function deletePost(postID) {
+	  fetch(`/p/${postID}/`, {
+	    method: "DELETE",
+	    headers: { "X-CSRFToken": "{{csrf_token}}" },
+	  })
+	    .then((res) => res.text()) // or res.json()
+	    .then((res) => {
+	      console.log(res);
+	      showSuccess("Post deleted.");
+	      window.location.reload();
+	    });
+	}
+	function rsvpPost(postID) {
+	  fetch(`/p/${postID}/interact/rsvp`, {
+	    method: "POST",
+	    headers: { "X-CSRFToken": "{{csrf_token}}" },
+	  })
+	    .then((res) => res.text()) // or res.json()
+	    .then((res) => {
+	      console.log(res);
+	      window.location.reload();
+	    });
+	}
+	
+	function rsvpPost(postID) {
+	  fetch(`/p/${postID}/interact/rsvp`, {
+	    method: "POST",
+	    headers: { "X-CSRFToken": "{{csrf_token}}" },
+	  })
+	    .then((res) => res.text()) // or res.json()
+	    .then((res) => {
+	      console.log(res);
+	      window.location.reload();
+	    });
+	}
+	
+	function likePost(postID) {
+	  fetch(`/p/${postID}/interact/like`, {
+	    method: "POST",
+	    headers: { "X-CSRFToken": "{{csrf_token}}" },
+	  })
+	    .then((res) => res.text()) // or res.json()
+	    .then((res) => {
+	      console.log(res);
+	      window.location.reload();
+	    });
+	}
+	
+	function pinPost(postID) {
+	  fetch(`/p/${postID}/pin`, {
+	    method: "POST",
+	    headers: { "X-CSRFToken": "{{csrf_token}}" },
+	  })
+	    .then((res) => res.text()) // or res.json()
+	    .then((res) => {
+	      console.log(res);
+	      window.location.reload();
+	    });
+	}
+	
+	function repostPost(postID) {
+	  fetch(`/p/${postID}/interact/repost`, {
+	    method:	 "POST",
+	    headers: { "X-CSRFToken": "{{csrf_token}}" },
+	  })
+	    .then((res) => res.text()) // or res.json()
+	    .then((res) => {
+	      console.log(res);
+	      window.location.reload();
+	    });
+	}
+	
+	function copyMentionID(postID) {
+	  navigator.clipboard.writeText(`[!${postID}]`);
+	}
 </script>

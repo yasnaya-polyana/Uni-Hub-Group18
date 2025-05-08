@@ -1,12 +1,11 @@
+from config import Config
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
-from config import Config
-
-from .models import Course, CustomUser, UserSettings
+from .models import Course, CustomUser, Interest, UserSettings, UserType
 
 
 # User Creation Form
@@ -76,6 +75,84 @@ class CustomUserCreationForm(UserCreationForm):
         ),
     )
 
+    course = forms.ModelChoiceField(
+        queryset=Course.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
+        empty_label="Select a course",
+    )
+
+    interests = forms.ModelMultipleChoiceField(
+        queryset=Interest.objects.all().order_by("name"),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "interests-checkbox hidden"}
+        ),
+        help_text="Select your interests",
+    )
+
+    address_line1 = forms.CharField(
+        required=True,
+        label="Address Line 1",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Street address",
+            }
+        ),
+    )
+
+    address_line2 = forms.CharField(
+        required=False,
+        label="Address Line 2",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Apartment, suite, etc. (optional)",
+            }
+        ),
+    )
+
+    city = forms.CharField(
+        required=True,
+        label="City",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "City",
+            }
+        ),
+    )
+
+    county = forms.CharField(
+        required=False,
+        label="County",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "County (optional)",
+            }
+        ),
+    )
+
+    postcode = forms.CharField(
+        required=True,
+        label="Postcode",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Postcode",
+            }
+        ),
+    )
+
+    is_staff_member = forms.BooleanField(
+        required=False,
+        label="I\'m an Academic Staff Member",
+        initial=False,
+        widget=forms.CheckboxInput(attrs={"class": "checkbox checkbox-primary"}),
+    )
+
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(
@@ -104,6 +181,14 @@ class CustomUserCreationForm(UserCreationForm):
             "first_name",
             "last_name",
             "student_id",
+            "course",
+            "interests",
+            "address_line1",
+            "address_line2",
+            "city",
+            "county",
+            "postcode",
+            "is_staff_member",
             "password1",
             "password2",
         )
@@ -135,6 +220,23 @@ class CustomUserCreationForm(UserCreationForm):
             self.add_error("password2", "The passwords do not match.")
 
         return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        is_staff = self.cleaned_data.get("is_staff_member", False)
+
+        # Set user type based on staff status
+        user_type = None
+        if is_staff:
+            user_type = UserType.objects.get_or_create(name="ACADEMIC")[0]
+        else:
+            user_type = UserType.objects.get_or_create(name="STUDENT")[0]
+
+        user.user_type = user_type
+
+        if commit:
+            user.save()
+        return user
 
 
 # User Login Form
@@ -172,7 +274,16 @@ class ProfileEditForm(forms.ModelForm):
         queryset=Course.objects.all(),
         required=False,
         widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
-        empty_label=None,
+        empty_label="Select a course",
+    )
+
+    interests = forms.ModelMultipleChoiceField(
+        queryset=Interest.objects.all().order_by("name"),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "interests-checkbox hidden"}
+        ),
+        help_text="Select your interests",
     )
 
     profile_picture = forms.FileField(
@@ -180,11 +291,78 @@ class ProfileEditForm(forms.ModelForm):
         widget=forms.FileInput(
             attrs={"class": "file-input file-input-bordered w-full"}
         ),
+        required=False,
+    )
+
+    address_line1 = forms.CharField(
+        required=True,
+        label="Address Line 1",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Street address",
+            }
+        ),
+    )
+
+    address_line2 = forms.CharField(
+        required=False,
+        label="Address Line 2",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Apartment, suite, etc. (optional)",
+            }
+        ),
+    )
+
+    city = forms.CharField(
+        required=True,
+        label="City",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "City",
+            }
+        ),
+    )
+
+    county = forms.CharField(
+        required=False,
+        label="County",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "County (optional)",
+            }
+        ),
+    )
+
+    postcode = forms.CharField(
+        required=True,
+        label="Postcode",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Postcode",
+            }
+        ),
     )
 
     class Meta:
         model = CustomUser
-        fields = ("email", "bio", "profile_picture", "course")
+        fields = (
+            "email",
+            "bio",
+            "profile_picture",
+            "course",
+            "interests",
+            "address_line1",
+            "address_line2",
+            "city",
+            "county",
+            "postcode",
+        )
         widgets = {
             "email": forms.EmailInput(attrs={"class": "input input-bordered w-full"}),
             "bio": forms.Textarea(
@@ -195,15 +373,23 @@ class ProfileEditForm(forms.ModelForm):
             ),
         }
 
+
 # Edit User Settings
 #
 #
 class UserSettingsForm(forms.ModelForm):
     class Meta:
         model = UserSettings
-        fields = ['like_notifications', 'comment_notifications', 'follow_notifications']
+        fields = ["like_notifications", "comment_notifications", "follow_notifications"]
         widgets = {
-            'like_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
-            'comment_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
-            'follow_notifications': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
+            "like_notifications": forms.CheckboxInput(
+                attrs={"class": "checkbox checkbox-primary"}
+            ),
+            "comment_notifications": forms.CheckboxInput(
+                attrs={"class": "checkbox checkbox-primary"}
+            ),
+            "follow_notifications": forms.CheckboxInput(
+                attrs={"class": "checkbox checkbox-primary"}
+            ),
         }
+

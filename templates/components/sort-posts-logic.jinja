@@ -1,83 +1,92 @@
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const sortOptions = document.querySelectorAll('.sort-option');
-    
-    sortOptions.forEach(option => {
-      option.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const sortType = this.dataset.sort;
-        const containerId = this.dataset.container;
-        const container = document.getElementById(containerId);
-        
-        if (!container) {
-          console.error(`Container with ID ${containerId} not found`);
-          return;
-        }
-        
-        const sortLabel = this.closest('.sort-posts-container').querySelector('.sort-label');
-        if (sortLabel) {
-          sortLabel.textContent = this.textContent;
-        }
-        
-        // Get all post elements in the container
-        const posts = Array.from(container.children);
-        
-        posts.sort((a, b) => {
-          switch (sortType) {
-            case 'newest':
-              return compareTimestamps(b, a); // Newest first (descending)
-            case 'oldest':
-              return compareTimestamps(a, b); // Oldest first (ascending)
-            case 'most-liked':
-              return compareLikes(b, a); // Most likes first (descending)
-            case 'most-commented':
-              return compareComments(b, a); // Most comments first (descending)
-            case 'most-reposted':
-              return compareReposts(b, a); // Most reposts first (descending)
-            default:
-              return 0;
-          }
-        });
-        
-        posts.forEach(post => {
-          container.appendChild(post);
-        });
-      });
-    });
-    
-    // compare timestamps
-    function compareTimestamps(postA, postB) {
-      const timestampA = postA.dataset.timestamp || postA.querySelector('[data-timestamp]')?.dataset.timestamp;
-      const timestampB = postB.dataset.timestamp || postB.querySelector('[data-timestamp]')?.dataset.timestamp;
-      
-      if (!timestampA || !timestampB) return 0;
-      
-      return new Date(timestampA) - new Date(timestampB);
-    }
-    
-    // compare likes
-    function compareLikes(postA, postB) {
-      const likesA = parseInt(postA.dataset.likes || postA.querySelector('[data-likes]')?.dataset.likes || 0);
-      const likesB = parseInt(postB.dataset.likes || postB.querySelector('[data-likes]')?.dataset.likes || 0);
-      
-      return likesA - likesB;
-    }
-    
-    // compare comments
-    function compareComments(postA, postB) {
-      const commentsA = parseInt(postA.dataset.comments || postA.querySelector('[data-comments]')?.dataset.comments || 0);
-      const commentsB = parseInt(postB.dataset.comments || postB.querySelector('[data-comments]')?.dataset.comments || 0);
-      
-      return commentsA - commentsB;
-    }
-    
-    // compare reposts
-    function compareReposts(postA, postB) {
-      const repostsA = parseInt(postA.dataset.reposts || postA.querySelector('[data-reposts]')?.dataset.reposts || 0);
-      const repostsB = parseInt(postB.dataset.reposts || postB.querySelector('[data-reposts]')?.dataset.reposts || 0);
-      
-      return repostsA - repostsB;
-    }
-  });
-</script> 
+	document.addEventListener('DOMContentLoaded', function() {
+	  // Get all sort option elements
+	  const sortOptions = document.querySelectorAll('.sort-option');
+	  
+	  // Add click event listener to each sort option
+	  sortOptions.forEach(option => {
+	    option.addEventListener('click', function(e) {
+	      e.preventDefault();
+	      
+	      // Get sort criteria and container ID from data attributes
+	      const sortCriteria = this.getAttribute('data-sort');
+	      const containerId = this.getAttribute('data-container');
+	      const container = document.getElementById(containerId);
+	      
+	      if (!container) {
+	        console.error('Container not found:', containerId);
+	        return;
+	      }
+	      
+	      console.log('Sorting by:', sortCriteria, 'in container:', containerId);
+	      
+	      // Update the sort label
+	      const sortLabel = this.closest('.dropdown').querySelector('.sort-label');
+	      if (sortLabel) {
+	        sortLabel.textContent = this.textContent;
+	      }
+	      
+	      // Get all post elements - look for both card class and rounded-box class
+	      const posts = Array.from(container.children).filter(child => 
+	        child.classList.contains('card') || 
+	        child.classList.contains('rounded-box') ||
+	        child.querySelector('.card') ||
+	        child.querySelector('.rounded-box')
+	      );
+	      
+	      console.log('Found posts to sort:', posts.length);
+	      
+	      if (posts.length <= 1) {
+	        console.log('Not enough posts to sort');
+	        return;
+	      }
+	      
+	      // Debug data attributes
+	      posts.forEach((post, index) => {
+	        console.log(`Post ${index} data:`, {
+	          created: post.getAttribute('data-created'),
+	          likes: post.getAttribute('data-likes'),
+	          comments: post.getAttribute('data-comments'),
+	          reposts: post.getAttribute('data-reposts')
+	        });
+	      });
+	      
+	      // Sort posts based on criteria
+	      posts.sort((a, b) => {
+	        // No need to look for nested elements since we're using the top-level div for data attributes
+	        if (sortCriteria === 'newest') {
+	          const dateA = new Date(a.getAttribute('data-created') || 0);
+	          const dateB = new Date(b.getAttribute('data-created') || 0);
+	          return dateB - dateA;
+	        } else if (sortCriteria === 'oldest') {
+	          const dateA = new Date(a.getAttribute('data-created') || 0);
+	          const dateB = new Date(b.getAttribute('data-created') || 0);
+	          return dateA - dateB;
+	        } else if (sortCriteria === 'most-liked') {
+	          const likesA = parseInt(a.getAttribute('data-likes') || 0);
+	          const likesB = parseInt(b.getAttribute('data-likes') || 0);
+	          return likesB - likesA;
+	        } else if (sortCriteria === 'most-commented') {
+	          const commentsA = parseInt(a.getAttribute('data-comments') || 0);
+	          const commentsB = parseInt(b.getAttribute('data-comments') || 0);
+	          return commentsB - commentsA;
+	        } else if (sortCriteria === 'most-reposted') {
+	          const repostsA = parseInt(a.getAttribute('data-reposts') || 0);
+	          const repostsB = parseInt(b.getAttribute('data-reposts') || 0);
+	          return repostsB - repostsA;
+	        }
+	        return 0;
+	      });
+	      
+	      // Reappend sorted posts
+	      posts.forEach(post => container.appendChild(post));
+	    });
+	  });
+	  
+	  // Sort by newest by default
+	  const defaultSort = document.querySelector('.sort-option[data-sort="newest"]');
+	  if (defaultSort) {
+	    defaultSort.click();
+	  }
+	});
+</script>

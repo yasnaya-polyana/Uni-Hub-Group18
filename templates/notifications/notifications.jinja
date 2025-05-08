@@ -1,80 +1,98 @@
 {% extends 'base/index.jinja' %}
-
 {% block title %}Notifications{% endblock %}
 {% block content %}
-
 <div class="card max-w-6xl mx-auto bg-base-100 shadow-lg p-5 pr-8 pl-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Notifications</h1>
-    </div>
-
-    <ul class="list-none">
-        {% for notification in notifications %}
-        <li class="flex items-center mb-4">
-            <!-- 
-                TODO: Fix profile picture to display respective user object sender of the notification
-            -->
-            {% if user.username.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" class="w-8 h-8 rounded-full ml-2" alt="Profile" />
-            {% else %}
-                <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                    {{ user.username|make_list|first|upper }}
-                </div>
-            {% endif %}
-            <div class="flex-1 flex justify-between items-center">
-                <div class="flex-1 flex items-center">
-                    {% if notification.type == 'like' %}
-                    <a href="{{ notification.data.post_link }}">
-                        <strong>{{ notification.data.liker_username }}</strong> liked your post.
-                    </a>
-                    {% elif notification.type == 'follow' %}
-                    <a href="{{ notification.data.profile_link }}">
-                        <strong>{{ notification.data.follower_username }}</strong> started following you.
-                    </a>
-                    {% elif notification.type == 'community_request' %}
-                    <span>{{ notification.data.requester_username }} has requested to create {{ notification.data.community_name }}</span>
-                    {% if not notification.is_interact %}
-                    <div class="flex justify-end space-x-2 ml-4">
-                        <form action="{{ url('approve_community', notification.data.community_id) }}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm">Accept</button>
-                        </form>
-                        <form action="{{ url('reject_community', notification.data.community_id) }}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
-                        </form>
-                    </div>
-                    {% endif %}
-                    {% elif notification.type == 'role_request' %}
-                    <span>{{ notification.data.requester_username }} has requested to become a {{ notification.data.requested_role }} of {{ notification.data.community_name }}</span>
-                    {% if not notification.is_interact %}
-                    <div class="flex justify-end space-x-2 ml-4">
-                        <form action="{{ url('approve_role', notification.data.community_id, notification.data.requested_role) }}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm">Accept</button>
-                        </form>
-                        <form action="{{ url('reject_role', notification.data.community_id, notification.data.requested_role) }}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
-                        </form>
-                    </div>
-                    {% endif %}
-                    {% else %}
-                    <a href="#" class="{{ 'font-bold' if not notification.is_read else '' }}">
-                        Unknown notification type
-                    </a>
-                    {% endif %}
-                </div>
-                <div class="text-right">
-                    <div class="text-sm text-gray-500">{{ notification.created_at.strftime('%B %d, %Y, %I:%M %p') }}</div>
-                </div>
-            </div>
-        </li>
-        {% else %}
-        <li><span>No new notifications</span></li>
-        {% endfor %}
-    </ul>
-
+	<div class="flex justify-between items-center">
+		<h1 class="text-2xl font-bold">Notifications</h1>
+	</div>
+	<div class="divider"></div>
+	<ul class="list-none">
+		{% for notification in notifications %}
+		<li class="flex items-center mb-4 {% if notification.was_unread %}bg-base-200 border-l-4 border-primary pl-2{% endif %}">
+			<div class="notification flex items-center gap-2">
+				{% if notification.follower_user %}
+				<a href="{{ url('user', notification.follower_user.username) }}" class="flex items-center gap-2">
+				{% if notification.follower_user.profile_picture and notification.follower_user.profile_picture.name %}
+				<img src="{{ notification.follower_user.profile_picture.url }}" alt="profile" class="w-10 h-10 rounded-full" />
+				{% else %}
+				<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+					{{ notification.follower_user.username|first|upper }}
+				</div>
+				{% endif %}
+				</a>
+				{% else %}
+				{% endif %}
+			</div>
+			<div class="flex-1 flex justify-between items-center">
+				<div class="flex-1 flex items-center">
+					{% if notification.type == 'like' %}
+					<a href="{{ notification.data.post_link }}">
+					<strong>{{ notification.data.liker_username }}</strong> liked your post.
+					</a>
+					{% elif notification.type == 'follow' %}
+					<a href="{{ notification.data.profile_link }}">
+					<strong>{{ notification.data.follower_username }}</strong> started following you.
+					</a>
+					{% elif notification.type == 'community_request' %}
+					<span>{{ notification.data.requester_username }} has requested to create {{ notification.data.community_name }}</span>
+					{% if not notification.is_interact %}
+					<div class="flex justify-end space-x-2 ml-4">
+						<form action="{{ url('approve_community', notification.data.community_id) }}" method="post" style="display:inline;">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-success btn-sm">Accept</button>
+						</form>
+						<form action="{{ url('reject_community', notification.data.community_id) }}" method="post" style="display:inline;">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
+						</form>
+					</div>
+					{% endif %}
+					{% elif notification.type == 'community_decision' %}
+					<span>Your community '{{ notification.data.community_name }}' was {{ notification.data.decision }}.</span>
+					{% elif notification.type == 'role_request' %}
+					<span>{{ notification.data.requester_username }} has requested to become a {{ notification.data.requested_role }} of {{ notification.data.community_name }}</span>
+					{% if not notification.is_interact %}
+					<div class="flex justify-end space-x-2 ml-4">
+						<form action="{{ url('approve_role', notification.data.community_id, notification.data.requested_role) }}" method="post" style="display:inline;">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-success btn-sm">Accept</button>
+						</form>
+						<form action="{{ url('reject_role', notification.data.community_id, notification.data.requested_role) }}" method="post" style="display:inline;">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
+						</form>
+					</div>
+					{% endif %}
+					{% elif notification.type == 'role_decision' %}
+					<span>Your request to become a {{ notification.data.role }} in {{ notification.data.community_name }} was {{ notification.data.decision }}.</span>
+					{% elif notification.type == 'community_invite' %}
+					<span><strong>{{ notification.data.inviter_username }}</strong> has invited you to join {{ notification.data.community_name }}</span>
+					{% if not notification.is_interact %}
+					<div class="flex justify-end space-x-2 ml-4">
+						<form action="{{ url('community_accept_invite', notification.data.community_id) }}" method="post" style="display:inline;">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-success btn-sm">Accept</button>
+						</form>
+						<form action="{{ url('community_decline_invite', notification.data.community_id) }}" method="post" style="display:inline;">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-danger btn-sm mr-3">Decline</button>
+						</form>
+					</div>
+					{% endif %}
+					{% else %}
+					<a href="#">
+					Unknown notification type
+					</a>
+					{% endif %}
+				</div>
+				<div class="text-right">
+					<div class="text-sm text-gray-500">{{ notification.created_at.strftime('%B %d, %Y, %I:%M %p') }}</div>
+				</div>
+			</div>
+		</li>
+		{% else %}
+		<li><span>No new notifications</span></li>
+		{% endfor %}
+	</ul>
 </div>
-
 {% endblock %}

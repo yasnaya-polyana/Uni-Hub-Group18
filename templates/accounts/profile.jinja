@@ -1,162 +1,187 @@
 {% extends 'base/index.jinja' %}
-
 {% block title %}Profile{% endblock %}
-
 {% block content %}
+{% include "posts/post-logic.jinja" %}
 <div class="max-w-screen-md mx-auto pb-12">
-    <div class="bg-base-100 shadow-xl rounded-box p-6">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                {% if profile_user.profile_picture %}
-                    <div class="avatar online">
-                        <div class="w-24 rounded-full">
-                            <img src="{{ profile_user.profile_picture.url }}" alt="{{ profile_user.profile_picture.label }}">
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="avatar placeholder">
-                        <div class="w-24 h-24 rounded-full bg-neutral-focus text-neutral-content">
-                            <span class="text-3xl">{{ profile_user.username|make_list|first|upper }}</span>
-                        </div>
-                    </div>
-                {% endif %}
-                <div>
-                    <h2 class="text-2xl font-bold">{{ profile_user.username }}</h2>
-                    <p class="text-base-content/60">{{ profile_user.email }}</p>
-                    <p class="text-base-content/60">{{ profile_user.course }}</p>
-                    
-                    <!-- Add follower and following counts -->
-                    <div class="mt-2 flex space-x-4">
-                        <div class="badge badge-primary">
-                            {{ profile_user.user_followers.count() }} Followers
-                        </div>
-                        <div class="badge badge-secondary">
-                            {{ profile_user.user_following.count() }} Following
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                {% if request.user != profile_user %}
-                    {% if is_following %}
-                        <form action="{{ url('unfollow_user', profile_user.username) }}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline">Unfollow</button>
-                        </form>
-                    {% else %}
-                        <form action="{{ url('follow_user', profile_user.username) }}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary">Follow</button>
-                        </form>
-                    {% endif %}
-                {% else %}
-                    <a href="{{ url('edit_profile') }}" class="btn btn-primary">Edit Profile</a>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="divider"></div>
-
-        <div class="space-y-4">
-            <h3 class="text-xl font-semibold">Bio</h3>
-            <p>{{ profile_user.bio|default("No bio yet.") }}</p>
-        </div>
-        
-        <!-- Add followers and following lists -->
-        <div class="divider"></div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Followers List -->
-            <div>
-                <h3 class="text-xl font-semibold mb-2">Followers</h3>
-                {% if profile_user.user_followers.count() > 0 %}
-                    <div class="overflow-y-auto max-h-60">
-                        {% for follow in profile_user.user_followers.all() %}
-                            <div class="flex items-center space-x-2 mb-2">
-                                <div class="avatar">
-                                    <div class="w-8 rounded-full">
-                                        {% if follow.follower.profile_picture %}
-                                            <img src="{{ follow.follower.profile_picture.url }}" alt="Profile" />
-                                        {% else %}
-                                            <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
-                                                {{ follow.follower.username|make_list|first|upper }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <a href="{{ url('user', follow.follower.username) }}" class="link">
-                                    {{ follow.follower.username }}
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-gray-500">No followers yet</p>
-                {% endif %}
-            </div>
-            
-            <!-- Following List -->
-            <div>
-                <h3 class="text-xl font-semibold mb-2">Following</h3>
-                {% if profile_user.user_following.count() > 0 %}
-                    <div class="overflow-y-auto max-h-60">
-                        {% for follow in profile_user.user_following.all() %}
-                            <div class="flex items-center space-x-2 mb-2">
-                                <div class="avatar">
-                                    <div class="w-8 rounded-full">
-                                        {% if follow.followed.profile_picture %}
-                                            <img src="{{ follow.followed.profile_picture.url }}" alt="Profile" />
-                                        {% else %}
-                                            <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
-                                                {{ follow.followed.username|make_list|first|upper }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <a href="{{ url('user', follow.followed.username) }}" class="link">
-                                    {{ follow.followed.username }}
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-gray-500">Not following anyone yet</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- User's Posts -->
-        <div class="divider"></div>
-        <h3 class="text-xl font-semibold mb-4">Posts</h3>
-        {% if posts %}
-            <div class="space-y-4">
-                {% for post in posts %}
-                    <div class="card bg-base-200">
-                        <div class="card-body">
-                            {% if post.ref_post %}
-                            <p class="text-md text-gray-500 mb-2">Reposted from @{{ post.ref_post.user.username }}</p>
-                                <div class="bg-base-100 p-4 rounded">
-                                    <div class="prose max-w-none">
-                                        {{ post.ref_post.body|parse_md|default("")|safe }}
-                                    </div>
-                                </div>
-                            {% else %}
-                                <h4 class="card-title">{{ post.title }}</h4>
-                                <div class="prose max-w-none">
-                                    {{ post.body|parse_md|default("")|safe }}
-                                </div>
-                            {% endif %}
-                    
-                            <div class="card-actions justify-end">
-                                <a href="{{ url('post', post.id) }}" class="btn btn-sm">View Post</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-gray-500">No posts yet</p>
-        {% endif %}
-    </div>
+	<div class="bg-base-100 shadow-xl rounded-box p-6">
+		<div class="flex items-center justify-between">
+			<div class="flex items-center space-x-4">
+				{% if profile_user.profile_picture %}
+				<div class="avatar online">
+					<div class="w-24 rounded-full">
+						<img src="{{ profile_user.profile_picture.url }}" alt="{{ profile_user.profile_picture.label }}">
+					</div>
+				</div>
+				{% else %}
+				<div class="avatar placeholder">
+					<div class="w-24 h-24 rounded-full bg-neutral-focus text-neutral-content">
+						<span class="text-3xl">{{ profile_user.username|make_list|first|upper }}</span>
+					</div>
+				</div>
+				{% endif %}
+				<div>
+					<h2 class="text-2xl font-bold">{{ profile_user.username }}</h2>
+					<p class="text-base-content/60">{{ profile_user.email }}</p>
+					<!-- Course Information -->
+					{% if profile_user.course %}
+					<p class="text-base-content font-medium">
+						<span class="badge badge-outline">{{ profile_user.course }}</span>
+					</p>
+					{% endif %}
+					<!-- User Account Type -->
+					{% if profile_user.user_type %}
+					<div class="mt-1">
+						<span class="badge badge-lg 
+							{% if profile_user.user_type.name == 'ADMIN' %}
+							badge-error
+							{% elif profile_user.user_type.name == 'MODERATOR' %}
+							badge-warning
+							{% elif profile_user.user_type.name == 'ACADEMIC' %}
+							badge-info
+							{% else %}
+							badge-primary
+							{% endif %}">
+						{{ profile_user.user_type }}
+						</span>
+					</div>
+					{% endif %}
+					<!-- Add follower and following counts -->
+					<div class="mt-2 flex space-x-4">
+						<div class="badge badge-primary">
+							{{ profile_user.user_followers.count() }} Followers
+						</div>
+						<div class="badge badge-secondary">
+							{{ profile_user.user_following.count() }} Following
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>
+				{% if request.user != profile_user %}
+				{% if is_following %}
+				<form action="{{ url('unfollow_user', profile_user.username) }}" method="post">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-outline">Unfollow</button>
+				</form>
+				{% else %}
+				<form action="{{ url('follow_user', profile_user.username) }}" method="post">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-primary">Follow</button>
+				</form>
+				{% endif %}
+				{% else %}
+				<a href="{{ url('edit_profile') }}" class="btn btn-primary">Edit Profile</a>
+				{% endif %}
+			</div>
+		</div>
+		<div class="divider"></div>
+		<div class="space-y-4">
+			<h3 class="text-xl font-semibold">Bio</h3>
+			<p>{{ profile_user.bio|default("No bio yet.") }}</p>
+		</div>
+		<!-- User Interests -->
+		<div class="divider"></div>
+		<div class="space-y-4">
+			<h3 class="text-xl font-semibold">Interests</h3>
+			{% if profile_user.interests.all() %}
+			<div class="flex flex-wrap gap-2">
+				{% for interest in profile_user.interests.all() %}
+				<span class="badge badge-accent">{{ interest.name }}</span>
+				{% endfor %}
+			</div>
+			{% else %}
+			<p>No interests specified.</p>
+			{% endif %}
+		</div>
+		<!-- Add address information -->
+		<div class="divider"></div>
+		<div class="space-y-4">
+			<h3 class="text-xl font-semibold">Address</h3>
+			{% if profile_user.address_line1 %}
+			<address class="not-italic">
+				{{ profile_user.address_line1 }}<br>
+				{% if profile_user.address_line2 %}
+				{{ profile_user.address_line2 }}<br>
+				{% endif %}
+				{{ profile_user.city }}, {% if profile_user.county %}{{ profile_user.county }},{% endif %} {{ profile_user.postcode }}
+			</address>
+			{% else %}
+			<p>No address provided.</p>
+			{% endif %}
+		</div>
+		<!-- Add followers and following lists -->
+		<div class="divider"></div>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<!-- Followers List -->
+			<div>
+				<h3 class="text-xl font-semibold mb-2">Followers</h3>
+				{% if profile_user.user_followers.count() > 0 %}
+				<div class="overflow-y-auto max-h-60">
+					{% for follow in profile_user.user_followers.all() %}
+					<div class="flex items-center space-x-2 mb-2">
+						<div class="avatar">
+							<div class="w-8 rounded-full">
+								{% if follow.follower.profile_picture %}
+								<img src="{{ follow.follower.profile_picture.url }}" alt="Profile" />
+								{% else %}
+								<div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+									{{ follow.follower.username|make_list|first|upper }}
+								</div>
+								{% endif %}
+							</div>
+						</div>
+						<a href="{{ url('user', follow.follower.username) }}" class="link">
+						{{ follow.follower.username }}
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+				{% else %}
+				<p class="text-gray-500">No followers yet</p>
+				{% endif %}
+			</div>
+			<!-- Following List -->
+			<div>
+				<h3 class="text-xl font-semibold mb-2">Following</h3>
+				{% if profile_user.user_following.count() > 0 %}
+				<div class="overflow-y-auto max-h-60">
+					{% for follow in profile_user.user_following.all() %}
+					<div class="flex items-center space-x-2 mb-2">
+						<div class="avatar">
+							<div class="w-8 rounded-full">
+								{% if follow.followed.profile_picture %}
+								<img src="{{ follow.followed.profile_picture.url }}" alt="Profile" />
+								{% else %}
+								<div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+									{{ follow.followed.username|make_list|first|upper }}
+								</div>
+								{% endif %}
+							</div>
+						</div>
+						<a href="{{ url('user', follow.followed.username) }}" class="link">
+						{{ follow.followed.username }}
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+				{% else %}
+				<p class="text-gray-500">Not following anyone yet</p>
+				{% endif %}
+			</div>
+		</div>
+		<!-- User's Posts -->
+		<div class="divider"></div>
+		<h3 class="text-xl font-semibold mb-4">Posts</h3>
+		{% if posts %}
+		<div class="space-y-4">
+			<!-- Limit max posts to 25 -->
+			{% for post in posts[:25] %}
+			  {% include 'posts/post-card.jinja' %}
+			{% endfor %}
+		</div>
+		{% else %}
+		<p class="text-gray-500">No posts yet</p>
+		{% endif %}
+	</div>
 </div>
-{% endblock %} 
+{% endblock %}
